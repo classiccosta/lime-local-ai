@@ -1,0 +1,132 @@
+// Português europeu. Segunda pessoa do plural evitada; tratamento neutro, como
+// no resto do produto.
+export const pt = {
+  'panel.sessions': 'Sessões',
+  'panel.settings': 'Definições',
+  'panel.show': 'Mostrar {label}',
+  'panel.hide': 'Ocultar {label}',
+  'panel.close': 'Fechar {label}',
+  'panel.more': 'Ver mais',
+
+  'sessions.new': 'Nova',
+  'sessions.settings': 'Definições',
+  'settings.models': 'Modelos',
+  'settings.noWebgpu': 'O WebGPU não está disponível neste navegador.',
+  'settings.changeEndpoint': 'Alterar',
+  'settings.downloaded': 'Transferido',
+  'settings.remote': 'Corre no servidor',
+  'settings.endpointTitle': 'Endpoint',
+  'settings.download': 'Transferir {name}',
+  'settings.deleteHint': 'Apagar {name}',
+  'settings.title': 'Definições',
+  'sessions.empty': 'Ainda não há conversas.',
+  'sessions.loadFailed': 'Não foi possível abrir as conversas guardadas.',
+  'sessions.saveFailed': 'Não foi possível guardar esta conversa no navegador.',
+  'sessions.deleteFailed': 'Não foi possível apagar esta conversa.',
+  'sessions.untitled': 'Nova conversa',
+  'sessions.actions': 'Opções da sessão {name}',
+  'sessions.deleteShort': 'Eliminar sessão',
+
+  'language.label': 'Idioma',
+  'language.change': 'Alterar',
+
+  'welcome.title': 'corre os seus modelos localmente',
+  'welcome.subtitle': 'Nada sai do seu dispositivo. Escolha uma das opções:',
+  'welcome.subtitleShort': 'Escolha uma das opções:',
+  'welcome.webgpu': 'Navegador · WebGPU',
+  'welcome.webgpuBody':
+    'Os modelos são transferidos e correm neste separador. Sem configuração — precisa de um navegador com WebGPU e alguns GB por modelo.',
+  'welcome.webgpuBodyShort': 'Correr neste separador.',
+  'welcome.recommended': 'Recomendado',
+  'welcome.endpoint': 'Servidor local',
+  'welcome.endpointBody':
+    'Obtenha os modelos de um servidor seu — Ollama, llama.cpp, LM Studio ou qualquer servidor compatível com a API da OpenAI.',
+  'welcome.endpointBodyShort': 'Usar com o Ollama, LM Studio Bionic.',
+  'welcome.footnote': 'Pode mudar a qualquer momento nas definições.',
+  'welcome.continue': 'Continuar',
+  'welcome.close': 'Fechar',
+  'welcome.hero': 'Mantenha a IA dentro de portas.',
+  'welcome.modelsTitle': 'Escolha um modelo para transferir',
+  'welcome.modelsSubtitle':
+    'É transferido uma vez e depois funciona offline. Pode adicionar outros mais tarde.',
+  'welcome.modelsSubtitleShort': 'Transfere uma vez e funciona offline.',
+  'welcome.download': 'Transferir',
+  'welcome.downloading': 'A transferir…',
+  'welcome.ready': 'Pronto',
+  'welcome.needOne': 'Tem de carregar pelo menos um modelo para continuar.',
+  'welcome.keepsGoing':
+    'Pode fechar isto — a transferência continua e as Definições mostram o progresso. Recarregar a página é que a interrompe.',
+  'welcome.noWebgpu':
+    'Este navegador não consegue correr modelos no separador. Ligue antes um servidor local nas Definições.',
+  'welcome.back': 'Voltar',
+  'welcome.finish': 'Começar a conversar',
+  'welcome.finishShort': 'Conversar',
+  'welcome.stepOf': 'Passo {current} de {total}',
+
+  'runtime.label': 'Ambiente de Execução',
+
+  'model.label': 'Modelo',
+  'model.hint': 'Escolha um modelo para transferir e usar neste dispositivo.',
+  'model.placeholder': 'Selecionar um modelo',
+  'model.loading': 'A carregar…',
+  'model.listError': 'Não foi possível obter os modelos: {error}',
+  'model.load': 'Carregar modelo',
+  'model.loadingButton': 'A carregar...',
+  'model.restoring': 'A carregar modelos…',
+  'model.storageFull':
+    'Não há espaço suficiente no navegador para este modelo. Apague um modelo transferido com o ícone do lixo e tente de novo.',
+  'model.loadNetwork': 'A transferência falhou. Verifique a ligação e tente de novo.',
+  'model.loadGpu':
+    'A GPU deste dispositivo não conseguiu executar o modelo. Feche outros separadores ou experimente um modelo mais pequeno.',
+  'model.loadFailed': 'Não foi possível carregar o modelo. Tente de novo.',
+
+  'progress.loading': 'A carregar o modelo…',
+  'progress.preparing': 'A preparar o modelo…',
+  'progress.stop': 'Parar o carregamento do modelo',
+  'progress.stopShort': 'Parar carregamento',
+  'progress.bar': 'Transferência do modelo',
+
+  'info.loaded': 'Carregado',
+  'info.parameters': 'Parâmetros',
+  'info.quantization': 'Quantização',
+  'info.context': 'Contexto',
+  'info.download': 'Transferência',
+  'info.vram': 'VRAM est.',
+  'info.source': 'Fonte',
+
+  'thread.welcome': 'Como posso ajudá-lo hoje?',
+  'thread.placeholder': 'Escreva uma mensagem...',
+
+  'composer.choose': 'Escolher um modelo',
+  'composer.textOnly': 'Esta versão do Lime só aceita texto',
+  'composer.attachmentsUnavailable': 'Anexos indisponíveis',
+
+  'endpoint.label': 'Endpoint',
+  'endpoint.submit': 'Obter modelos',
+  'endpoint.submitting': 'A carregar…',
+  'endpoint.none': 'Não foram encontrados modelos neste servidor.',
+  'endpoint.count_one': '{count} modelo disponível.',
+  'endpoint.count_other': '{count} modelos disponíveis.',
+
+  'storage.label': 'Armazenamento',
+  'storage.help': 'Como é medido o armazenamento do navegador',
+  'storage.bar': 'Armazenamento do navegador utilizado',
+  'storage.contains': 'O que esta aplicação guarda no seu dispositivo:',
+  'storage.itemModels': 'Ficheiros dos modelos transferidos',
+  'storage.itemConversations': 'Conversas guardadas',
+  'storage.itemSettings': 'Algumas definições',
+  'storage.caveat':
+    'O navegador define este limite a partir do espaço livre no seu dispositivo. Este limite poderá variar.',
+  'storage.free': '{size} livres',
+  'storage.of': 'de {size}',
+  'storage.models': 'Modelos',
+  'storage.conversations': 'Conversas',
+  'storage.tooBig':
+    '{label} precisa de cerca de {size} e pode não caber. Limpe primeiro os modelos guardados.',
+  'storage.notPersisted':
+    'O navegador poderá apagar os modelos guardados quando o disco ficar cheio.',
+  'storage.clear': 'Limpar modelos guardados',
+  'storage.confirm': 'Eliminar modelos',
+  'storage.clearing': 'A limpar…',
+  'storage.cancel': 'Cancelar',
+};
