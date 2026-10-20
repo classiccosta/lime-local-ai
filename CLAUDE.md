@@ -53,7 +53,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 ### Providers and lazy loading
 
 - `services/providers.js` is the only entry point: `getModels(baseURL)`, `generate(...)`, `modelLoader(...)`, `unloadModels()`. Callers never branch on backend. Provider ids are the strings `'Web-GPU'` and `'LM-Studio'`.
-- `services/llm.js` (and so `@huggingface/transformers`, ~23 MB of WASM) must only be reached through `await import('./llm')`. Anything needed just to *list* models or read cache state (`localModels.js`, the `transformers-cache` name in `modelCache.js`) is deliberately kept free of transformers imports. Don't add a static import of `llm.js` or transformers anywhere.
+- `services/llm.js` (and so `@huggingface/transformers`, ~23 MB of WASM) must only be reached through `await import('./llm')`. Anything needed just to _list_ models or read cache state (`localModels.js`, the `transformers-cache` name in `modelCache.js`) is deliberately kept free of transformers imports. Don't add a static import of `llm.js` or transformers anywhere.
 - WebGPU models are offered only when `'gpu' in navigator`. The endpoint's models are offered only if `/models` answers within 3 s. An unreachable endpoint returns `endpointError` instead of throwing.
 - The HTTP backend doesn't stream: `onToken` fires once with the full reply.
 - `llm.js` keeps every loaded model in a module-level `Map` and never disposes one on its own.
@@ -74,7 +74,7 @@ Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a tra
 - React Compiler is enabled (babel preset in `vite.config.js`), so manual `useMemo`/`useCallback` is rarely needed.
 - Tailwind v4 via `@tailwindcss/vite`; theme tokens are in `src/index.css`.
 - `__APP_VERSION__` is injected from `package.json` at build time.
-- Comments explain *why* (constraints, browser quirks, past bugs). Match that density and style.
+- Comments explain _why_ (constraints, browser quirks, past bugs). Match that density and style.
 
 ## Deployment constraints
 

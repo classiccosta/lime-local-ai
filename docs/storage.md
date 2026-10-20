@@ -13,10 +13,10 @@ panel actually reports, and why every number on it is approximate.
 
 Two mechanisms, with very different footprints:
 
-| What                | Where                             | Order of magnitude   |
-| ------------------- | --------------------------------- | -------------------- |
-| Model weights       | Cache API, `transformers-cache`   | 390 MB – 1.5 GB each |
-| Conversations       | IndexedDB, `sessions` store       | kilobytes            |
+| What          | Where                           | Order of magnitude   |
+| ------------- | ------------------------------- | -------------------- |
+| Model weights | Cache API, `transformers-cache` | 390 MB – 1.5 GB each |
+| Conversations | IndexedDB, `sessions` store     | kilobytes            |
 
 The cache name is `transformers-cache` because that is `env.cacheKey` in
 transformers.js. It is hard-coded rather than imported so that reading a string
@@ -48,14 +48,14 @@ ceiling, not a reading. Neither is used here.
 Two different questions, answered by two different pieces of state, and the panel
 shows both:
 
-| Question                          | State                                | Survives reload |
-| --------------------------------- | ------------------------------------ | --------------- |
-| Are the weights on disk?          | `storage.cachedModelIds`             | yes             |
-| Is the model ready to generate?   | `useModels().loadedModelIds`         | no              |
+| Question                        | State                        | Survives reload |
+| ------------------------------- | ---------------------------- | --------------- |
+| Are the weights on disk?        | `storage.cachedModelIds`     | yes             |
+| Is the model ready to generate? | `useModels().loadedModelIds` | no              |
 
 `loadedModelIds` mirrors the module-level `Map` in `llm.js`. A model cached on
 disk still has to be read, compiled and uploaded to the GPU after a reload, so it
-is *cached* but not *loaded* until something loads it.
+is _cached_ but not _loaded_ until something loads it.
 
 The distinction drives three pieces of UI:
 
@@ -69,7 +69,7 @@ The distinction drives three pieces of UI:
   (`lastLoadedModelId`) instead of emptying the picker, so its info card and
   selection survive the trip.
 
-`loadingStatus` describes the most recent load *attempt* and nothing more. It
+`loadingStatus` describes the most recent load _attempt_ and nothing more. It
 cannot answer "is this model ready" once the selection has moved on, which is why
 `isReady` and the button both consult `loadedModelIds` instead. Changing the
 selection resets `loadingStatus`, the progress value and any load error, so a new
@@ -82,14 +82,14 @@ disk costs no further space, so there is nothing to weigh.
 
 Three pieces of state cooperate so a reload comes back where it left off:
 
-| State                | Where                       | Restored by                    |
-| -------------------- | --------------------------- | ------------------------------ |
-| `runtimeId`          | `ai-chat:runtime`           | `useRuntime`                   |
-| `selectedModelId`    | `ai-chat:model`             | `useModels`                    |
-| `loadedModelIds`     | not persisted               | re-loading the cached model    |
+| State             | Where             | Restored by                 |
+| ----------------- | ----------------- | --------------------------- |
+| `runtimeId`       | `ai-chat:runtime` | `useRuntime`                |
+| `selectedModelId` | `ai-chat:model`   | `useModels`                 |
+| `loadedModelIds`  | not persisted     | re-loading the cached model |
 
 The runtime is persisted alongside the model for a reason: restoring a model id
-into a picker filtered to the *other* runtime would leave the select showing
+into a picker filtered to the _other_ runtime would leave the select showing
 nothing. Writing both together keeps them consistent.
 
 `loadedModelIds` is deliberately not persisted. Restoring it would paint a
@@ -125,11 +125,11 @@ The component renders `usage / quota` as a bar and turns it red past 90%.
 
 ### Every browser fuzzes this
 
-| Browser  | Behaviour                                                              |
-| -------- | ---------------------------------------------------------------------- |
-| Chromium | Quota is a share of **free disk**, so it shrinks as the disk fills      |
-| Firefox  | Rounds `usage` into blocks to frustrate fingerprinting                  |
-| Safari   | Starts with a small quota and raises it on demand as the origin grows   |
+| Browser  | Behaviour                                                             |
+| -------- | --------------------------------------------------------------------- |
+| Chromium | Quota is a share of **free disk**, so it shrinks as the disk fills    |
+| Firefox  | Rounds `usage` into blocks to frustrate fingerprinting                |
+| Safari   | Starts with a small quota and raises it on demand as the origin grows |
 
 Consequences the code has to live with: the same cache reports different sizes in
 different browsers; headroom is a snapshot that can be wrong by the time the
@@ -147,7 +147,7 @@ cache from its entries' `Content-Length` headers instead:
 
 ```js
 const cache = await caches.open(MODEL_CACHE_NAME);
-const requests = await cache.keys();       // one call
+const requests = await cache.keys(); // one call
 const response = await cache.match(request); // headers only, no body read
 ```
 
@@ -162,7 +162,7 @@ row remains Chromium-only and is hidden elsewhere.
 The same `keys()` pass yields `cachedModelIds`, by substring-matching each
 catalogue id against the request URLs (transformers.js keys entries by their
 Hugging Face URL, which embeds the repo id). An interrupted download leaves some
-files behind, so this means *has files for*, not *complete* — the loader
+files behind, so this means _has files for_, not _complete_ — the loader
 re-fetches whatever is missing either way.
 
 ## Will the next download fit?
@@ -178,7 +178,7 @@ return free >= needed * HEADROOM;
 
 The 15% covers the Cache API holding a response while it writes, and the quota
 shrinking mid-download as the disk fills. The function is tri-state: `null` means
-*cannot say* (no estimate, or no pending download), which the component renders as
+_cannot say_ (no estimate, or no pending download), which the component renders as
 no message at all rather than as reassurance.
 
 `App.jsx` supplies the requirement only for a model that is not already in
@@ -206,7 +206,7 @@ may prompt, and grants persisted origins a larger quota — which is why
 
 ```js
 // Wrong — `.catch` on undefined throws where the method is missing:
-navigator.storage.persisted?.().catch(() => false)
+navigator.storage.persisted?.().catch(() => false);
 ```
 
 The optional call is awaited before anything is chained onto its result.
