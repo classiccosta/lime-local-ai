@@ -315,9 +315,9 @@ request: [`storage.md`](./storage.md).
 
 ## Configuration
 
-| Variable            | Read by                        | Purpose                                  |
-| ------------------- | ------------------------------ | ---------------------------------------- |
-| `VITE_API_BASE_URL` | the browser                    | default endpoint, overridable at runtime |
+| Variable            | Read by     | Purpose                                  |
+| ------------------- | ----------- | ---------------------------------------- |
+| `VITE_API_BASE_URL` | the browser | default endpoint, overridable at runtime |
 
 See `.env.example`. Machine-specific values belong in `.env.local`, which is gitignored.
 
