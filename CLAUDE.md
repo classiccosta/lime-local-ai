@@ -20,10 +20,13 @@ npm run dev       # Vite dev server (port 5173)
 npm run build     # production build to dist/
 npm run lint      # eslint .
 npm run preview   # serve the build
-npx prettier --write .   # format (singleQuote, trailingComma all, printWidth 100)
+npm test          # vitest run (once)
+npm run test:watch
+npm run format    # prettier --write . (singleQuote, trailingComma all, printWidth 100)
+npm run format:check
 ```
 
-There is no test runner and no tests. `src/state/conversation.js` is a pure reducer and can be exercised directly in Node.
+Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs). CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
 
 Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an optional default endpoint. Endpoint resolution: `localStorage` → `VITE_API_BASE_URL` → `http://localhost:1234/v1` in dev → `''` (endpoint provider disabled). There is no dev proxy, so the server must allow CORS in every mode.
 
