@@ -33,7 +33,7 @@ Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an 
 ## Architecture
 
 ```
-src/App.jsx        composition root: calls every hook, lays out components (large, ~500 lines)
+src/App.jsx        composition root: calls every hook, lays out components (large, ~580 lines)
 src/state/         conversation reducer (pure) + useConversation (owns the useReducer)
 src/features/<x>/  components/ + hooks/ per feature (chat, models, sessions, settings, layout, onboarding)
 src/services/      browser/network I/O: providers facade, openai adapter, llm (WebGPU), sessionStore (IndexedDB), modelCache
@@ -73,7 +73,7 @@ Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a tra
 
 ## Conventions
 
-- Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`, hugeicons) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`.
+- Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`, lucide) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`.
 - React Compiler is enabled (babel preset in `vite.config.js`), so manual `useMemo`/`useCallback` is rarely needed.
 - Tailwind v4 via `@tailwindcss/vite`; theme tokens are in `src/index.css`.
 - `__APP_VERSION__` is injected from `package.json` at build time.
