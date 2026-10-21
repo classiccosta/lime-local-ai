@@ -151,12 +151,10 @@ stateDiagram-v2
   idle --> idle: LOAD_SESSION / NEW_SESSION
 ```
 
-Switching to another chat mid-reply is not a Stop. `useSessions.openSession` dispatches
-`CANCEL` to take ownership away, then rewrites the abandoned row without its unanswered
-user turn, and only then loads the other session. A first turn is kept, as Stop keeps
-it: rolled back, the chat would be untitled and so deleted. A reload mid-reply also keeps
-the turn, since nothing runs to roll it back. What to store is decided by `abandonedMessages` in
-`state/conversation.js`, a pure function with its own tests; the hook only does the write.
+Switching to another chat mid-reply behaves like Stop. `useSessions.openSession` dispatches
+`CANCEL` to take ownership away, then loads the other session. The user turn was already
+stored when it was sent, so it stays. A reload mid-reply keeps it too, since nothing runs
+to roll it back.
 
 Those kept turns are the only way a user message ends up unanswered, so the "Stopped"
 marker is derived, not stored: `features/chat/displayMessages.js` adds a synthetic
@@ -373,10 +371,3 @@ non-secure-context fallback. _This has not been verified empirically — it foll
 
 The practical consequence: the realistic deployment is the user running the app themselves,
 not a publicly hosted page reaching into their network.
-
----
-
-## Known gaps
-
-- **The HTTP backend does not stream.** `onToken` fires once with the finished reply, so
-  the UI shows a placeholder and then the whole answer. Only the WebGPU path streams.

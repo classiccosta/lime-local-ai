@@ -80,15 +80,6 @@ export function conversationReducer(state, action) {
   }
 }
 
-// What to store for a conversation the user leaves mid-reply, or null to leave
-// its row alone. Leaving is not Stop: nobody stays to see what came of the
-// message, so the turn is rolled back as a failure would be. A first turn is
-// kept, because rolled back the chat would be untitled, and so deleted.
-export function abandonedMessages({ status, messages }) {
-  if (status !== 'generating' || messages.length <= 1) return null;
-  return messages.slice(0, -1);
-}
-
 export function getSessionTitle(messages) {
   const firstUserMessage = messages.find((message) => message.role === 'user');
   const textPart = firstUserMessage?.content.find((part) => part.type === 'text');

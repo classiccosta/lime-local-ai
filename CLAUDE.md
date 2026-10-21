@@ -26,7 +26,7 @@ npm run format    # prettier --write . (singleQuote, trailingComma all, printWid
 npm run format:check
 ```
 
-Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs) and `abandonedMessages`; `features/chat/displayMessages.test.js` and `features/models/selection.test.js` cover the other pure decisions. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
+Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); `features/chat/displayMessages.test.js` and `features/models/selection.test.js` cover the other pure decisions. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
 
 Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an optional default endpoint. Endpoint resolution: `localStorage` → `VITE_API_BASE_URL` → `http://localhost:1234/v1` in dev → `''` (endpoint provider disabled). There is no dev proxy, so the server must allow CORS in every mode.
 
@@ -48,7 +48,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 
 - `state/conversation.js` reducer actions: `SEND_START`, `TOKEN`, `REPLY`, `FAIL`, `CANCEL`, `LOAD_SESSION`, `NEW_SESSION`.
 - **`activeRequestId`** decides ownership: `TOKEN`/`REPLY`/`FAIL` carry a `requestId` and are ignored unless it matches. That is how a reply arriving after a session switch gets dropped.
-- **Cancellation** is separate: `useSession` aborts its `AbortController` whenever `activeRequestId` becomes `null`. The WebGPU path resolves with partial output on interrupt, so `llm.js` must call `signal.throwIfAborted()` afterwards. Switching sessions mid-reply (`useSessions.openSession`, decided by the pure `abandonedMessages`) also drops the unanswered user turn from storage, unless it is the chat's first turn; Stop keeps it.
+- **Cancellation** is separate: `useSession` aborts its `AbortController` whenever `activeRequestId` becomes `null`. The WebGPU path resolves with partial output on interrupt, so `llm.js` must call `signal.throwIfAborted()` afterwards. Switching sessions mid-reply (`useSessions.openSession`) dispatches `CANCEL`, so it behaves like Stop: the user turn stays and shows as stopped.
 - **`dirty`** controls persistence: only dirty conversations are written, so opening a chat doesn't bump `updatedAt`. Writes happen in effects, never during render.
 - `useSession.send` builds the outgoing `messages` from the current render's state, because the dispatch isn't visible until the next render.
 - `features/chat/hooks/useAssistantRuntime.js` adapts the reducer to assistant-ui via `useExternalStoreRuntime`, appending a synthetic `__streaming__` message while generating and a `__stopped__:<id>` marker after every unanswered user turn (`features/chat/displayMessages.js`; derived, not stored).
@@ -59,7 +59,6 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 - `services/providers.js` is the only entry point: `getModels(baseURL)`, `generate(...)`, `modelLoader(...)`, `unloadModels()`. Callers never branch on backend. Provider ids are the strings `'Web-GPU'` and `'LM-Studio'`.
 - `services/llm.js` (and so `@huggingface/transformers`, ~23 MB of WASM) must only be reached through `await import('./llm')`. Anything needed just to _list_ models or read cache state (`localModels.js`, the `transformers-cache` name in `modelCache.js`) is deliberately kept free of transformers imports. Don't add a static import of `llm.js` or transformers anywhere.
 - WebGPU models are offered only when `'gpu' in navigator`. The endpoint's models are offered only if `/models` answers within 3 s. An unreachable endpoint returns `endpointError` instead of throwing.
-- The HTTP backend doesn't stream: `onToken` fires once with the full reply.
 - `llm.js` keeps every loaded model in a module-level `Map` and never disposes one on its own.
 
 ### Storage
