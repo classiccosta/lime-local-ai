@@ -66,7 +66,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 
 - `navigator.storage.estimate()` numbers are fuzzed per browser. Use them to warn, never to gate. A `QuotaExceededError` is caught in `features/models/hooks/useModels.js`.
 - "Cached" (weights on disk, `storage.cachedModelIds`) is not "loaded" (on GPU, `loadedModelIds`, not persisted). On startup `App.jsx` reloads every cached model (selected first), skipping downloads the user stopped.
-- `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:runtime`, `ai-chat:model`). The runtime and model are persisted together on purpose.
+- `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:runtime`, `ai-chat:model`). The runtime and model are persisted together on purpose. A restored model id the list no longer offers is cleared after the cache restore (`isStaleSelection`), except an endpoint model while the endpoint is unreachable.
 
 ### i18n
 
