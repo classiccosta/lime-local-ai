@@ -116,7 +116,7 @@ const ThreadRoot = ({ isEmpty }) => {
       }}
     >
       <ThreadPrimitive.Viewport
-        turnAnchor="top"
+        turnAnchor="bottom"
         // The keyboard opening must not move the chat; see keepBottomOnResize.
         ref={keepBottomOnResize}
         data-slot="aui_thread-viewport"
