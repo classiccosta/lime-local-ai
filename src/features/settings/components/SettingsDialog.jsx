@@ -44,9 +44,9 @@ export function SettingsDialog({ open, onOpenChange, children }) {
         onCloseAutoFocus={(event) => event.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}
         overlayClassName="bg-black/40"
-        // A 24px icon in a 32px target, placed so the icon's edge sits on the
+        // An 18px icon in a 32px target, placed so the icon's edge sits on the
         // 16px padding and its centre on the title's line (20px tall, 16px down).
-        closeClassName="top-2.5 right-3 size-8 [&_svg]:size-6!"
+        closeClassName="top-2.5 right-2.25 size-8 [&_svg]:size-4.5!"
         // Closes on the touch itself, not the click after it: see closeOnTouchDown.
         onOverlayPointerDown={closeOnTouchDown(onOpenChange)}
         onFocus={keepFieldInView}
