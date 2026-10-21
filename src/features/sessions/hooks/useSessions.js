@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { DEFAULT_SESSION_NAME } from '@/state/conversation';
+import { abandonedMessages, DEFAULT_SESSION_NAME } from '@/state/conversation';
 import { deleteSession, getSession, listSessions, saveSession } from '@/services/sessionStore';
 
 // A session is only stored — and so only listed — once it has a title, which
@@ -41,6 +41,24 @@ export function useSessions({ conversation, dispatch, title }) {
     },
     [dispatch, report],
   );
+
+  async function openSession(id) {
+    const kept = abandonedMessages(conversation);
+    // Ownership goes first, so a reply landing while the row is rewritten is
+    // dropped instead of saved and then clobbered by the rollback. CANCEL
+    // leaves `dirty` alone, so the save effect does not race this write.
+    if (status === 'generating') dispatch({ type: 'CANCEL' });
+    if (kept) {
+      try {
+        // The first user message stays, so the title is unchanged.
+        await saveSession({ id: sessionId, name: title, messages: kept });
+        setSessionList(await listTitled());
+      } catch (error) {
+        report('sessions.saveFailed', error);
+      }
+    }
+    await getSessionFromList(id);
+  }
 
   // No row is written here: the save effect creates it on the first send.
   function newSession() {
@@ -110,6 +128,7 @@ export function useSessions({ conversation, dispatch, title }) {
     newSession,
     canCreate,
     getSessionFromList,
+    openSession,
     deleteSessionFromList,
     sessionList,
     storageError,

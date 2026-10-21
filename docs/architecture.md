@@ -151,6 +151,13 @@ stateDiagram-v2
   idle --> idle: LOAD_SESSION / NEW_SESSION
 ```
 
+Switching to another chat mid-reply is not a Stop. `useSessions.openSession` dispatches
+`CANCEL` to take ownership away, then rewrites the abandoned row without its unanswered
+user turn, and only then loads the other session. A first turn is kept, as Stop keeps
+it: rolled back, the chat would be untitled and so deleted. A reload mid-reply also keeps
+the turn, since nothing runs to roll it back. What to store is decided by `abandonedMessages` in
+`state/conversation.js`, a pure function with its own tests; the hook only does the write.
+
 `LOAD_SESSION` and `NEW_SESSION` rebuild state from `createConversation()`, so they
 reset `activeRequestId`, `status`, `error`, `streamed` and `dirty` without listing them
 individually.
