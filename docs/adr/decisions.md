@@ -46,3 +46,9 @@ Consequences: one fewer dependency, consistent icons.
 ## ADR-008 · 2026-10-20 · Accepted — v1 date fixed, scope flexes
 
 Decision: v1.0.0 on 2026-11-20. Slip → cut Sprint 3 polish first, never Sprint 1.
+
+## ADR-009 · 2026-10-21 · Accepted — Switching chat mid-reply rolls back the turn
+
+Context: switching session aborts the in-flight request; the user turn is already persisted and would stay unanswered.
+Decision: switching (openSession) rolls the turn back like a failure. Stop keeps it. A first turn is always kept so the chat isn't deleted. Reload keeps it (nothing runs).
+Consequences: no orphan questions from switching. Stop, reload and first-turn cases still leave an unanswered turn, which s1-07's marker covers.

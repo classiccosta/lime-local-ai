@@ -243,18 +243,12 @@ export default function App() {
 
   const { send } = useSession({ conversation, dispatch, models, selectedModelId, endpoint });
 
-  const {
-    sessionList,
-    getSessionFromList,
-    deleteSessionFromList,
-    newSession,
-    canCreate,
-    storageError,
-  } = useSessions({
-    conversation,
-    dispatch,
-    title,
-  });
+  const { sessionList, openSession, deleteSessionFromList, newSession, canCreate, storageError } =
+    useSessions({
+      conversation,
+      dispatch,
+      title,
+    });
 
   const runtime = useAssistantRuntime({ conversation, dispatch, send });
 
@@ -435,7 +429,7 @@ export default function App() {
             closeDrawer();
             return;
           }
-          getSessionFromList(id);
+          openSession(id);
         }}
         onDelete={deleteSessionFromList}
         onNew={newSession}
