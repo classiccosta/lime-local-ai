@@ -2,6 +2,8 @@ import { ModelPicker } from '@/features/models/components/ModelPicker';
 import { useComposerModels } from '@/features/models/composerModels';
 import { shortLabel } from '@/features/models/labels';
 import { useT } from '@/i18n/context';
+import { menuContent } from '@/lib/menu';
+import { cn } from '@/lib/utils';
 import { ChevronDown, Loader2 } from 'lucide-react';
 import { Popover } from 'radix-ui';
 import { useState } from 'react';
@@ -55,7 +57,10 @@ export function ComposerModelPicker() {
           align="end"
           sideOffset={6}
           collisionPadding={8}
-          className="bg-secondary text-secondary-foreground border-border z-50 text-xs flex max-h-80 w-72 max-w-[calc(100vw-1rem)] flex-col gap-1 overflow-y-auto rounded-md border p-1 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.65)] outline-none"
+          className={cn(
+            menuContent,
+            'flex max-h-80 w-72 max-w-[calc(100vw-1rem)] flex-col gap-1 overflow-y-auto text-xs outline-none',
+          )}
         >
           <ModelPicker
             {...picker}

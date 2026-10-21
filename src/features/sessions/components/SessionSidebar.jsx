@@ -1,6 +1,7 @@
 import { Version } from '@/components/Version';
 import { PanelToggle } from '@/features/settings/components/PanelToggle';
 import { useT } from '@/i18n/context';
+import { menuContent, menuItem } from '@/lib/menu';
 import { cn } from '@/lib/utils';
 import { Ellipsis, MessagesSquare, Plus, Settings, Trash2 } from 'lucide-react';
 import { DropdownMenu } from 'radix-ui';
@@ -201,16 +202,18 @@ export function SessionSidebar({
                       <Ellipsis className="size-3.5" />
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Portal>
-                      {/* The same surface as the composer's model picker. */}
                       <DropdownMenu.Content
                         align="end"
                         sideOffset={4}
                         collisionPadding={8}
-                        className="bg-secondary text-secondary-foreground border-border z-50 min-w-32 rounded-md border p-1 text-sm shadow-[0_8px_24px_-4px_rgba(0,0,0,0.65)] outline-none"
+                        className={cn(menuContent, 'outline-none')}
                       >
                         <DropdownMenu.Item
                           onSelect={() => onDelete(session.id)}
-                          className="data-highlighted:bg-destructive/10 data-highlighted:text-destructive flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 outline-none select-none"
+                          className={cn(
+                            menuItem,
+                            'hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive',
+                          )}
                         >
                           <Trash2 className="size-3.5 shrink-0" />
                           {t('sessions.deleteShort')}
