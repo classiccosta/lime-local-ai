@@ -51,7 +51,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 - **Cancellation** is separate: `useSession` aborts its `AbortController` whenever `activeRequestId` becomes `null`. The WebGPU path resolves with partial output on interrupt, so `llm.js` must call `signal.throwIfAborted()` afterwards. Switching sessions mid-reply (`useSessions.openSession`, decided by the pure `abandonedMessages`) also drops the unanswered user turn from storage, unless it is the chat's first turn; Stop keeps it.
 - **`dirty`** controls persistence: only dirty conversations are written, so opening a chat doesn't bump `updatedAt`. Writes happen in effects, never during render.
 - `useSession.send` builds the outgoing `messages` from the current render's state, because the dispatch isn't visible until the next render.
-- `features/chat/hooks/useAssistantRuntime.js` adapts the reducer to assistant-ui via `useExternalStoreRuntime`, appending a synthetic `__streaming__` message while generating.
+- `features/chat/hooks/useAssistantRuntime.js` adapts the reducer to assistant-ui via `useExternalStoreRuntime`, appending a synthetic `__streaming__` message while generating and a `__stopped__:<id>` marker after every unanswered user turn (`features/chat/displayMessages.js`; derived, not stored).
 - The full history is sent on every request. Don't reintroduce `previous_response_id`: it broke on reload, session switch, and endpoint change.
 
 ### Providers and lazy loading

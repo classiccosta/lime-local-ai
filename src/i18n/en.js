@@ -102,6 +102,7 @@ export const en = {
 
   'thread.welcome': 'How can I help you today?',
   'thread.placeholder': 'Send a message...',
+  'thread.stopped': 'Stopped',
 
   'composer.choose': 'Choose a model',
   'composer.textOnly': 'Text only in this version of Lime',

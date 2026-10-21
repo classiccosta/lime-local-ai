@@ -1,7 +1,5 @@
 import { useExternalStoreRuntime } from '@assistant-ui/react';
-import { useMemo } from 'react';
-
-const STREAMING_ID = '__streaming__';
+import { displayMessages, STOPPED_PREFIX, STREAMING_ID } from '../displayMessages';
 
 function convertMessage(message) {
   return {
@@ -11,27 +9,16 @@ function convertMessage(message) {
       .filter((part) => part.type === 'text')
       .map((part) => ({ type: 'text', text: part.text })),
     ...(message.id === STREAMING_ID && { status: { type: 'running' } }),
+    ...(message.id?.startsWith(STOPPED_PREFIX) && {
+      status: { type: 'incomplete', reason: 'cancelled' },
+    }),
   };
 }
 
 export function useAssistantRuntime({ conversation, dispatch, send }) {
-  const isRunning = conversation.status === 'generating';
-  const { messages, streamed } = conversation;
-
-  const withStreaming = useMemo(
-    () =>
-      isRunning
-        ? [
-            ...messages,
-            { id: STREAMING_ID, role: 'assistant', content: [{ type: 'text', text: streamed }] },
-          ]
-        : messages,
-    [isRunning, messages, streamed],
-  );
-
   return useExternalStoreRuntime({
-    messages: withStreaming,
-    isRunning,
+    messages: displayMessages(conversation),
+    isRunning: conversation.status === 'generating',
     convertMessage,
     onNew: (message) =>
       send(
