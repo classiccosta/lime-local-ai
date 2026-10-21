@@ -46,6 +46,8 @@ export const pt = {
   'thread.welcome': 'Como posso ajudá-lo hoje?',
   'thread.placeholder': 'Escreva uma mensagem...',
   'thread.stopped': 'Interrompido',
+  'thread.copy': 'Copiar',
+  'thread.export': 'Exportar como Markdown',
 
   'composer.choose': 'Escolher um modelo',
   'composer.textOnly': 'Esta versão do Lime só aceita texto',
