@@ -24,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ComposerAttachmentAction } from '@/features/chat/components/ComposerAttachmentAction';
 import { ComposerModelPicker } from '@/features/models/components/ComposerModelPicker';
 import { useT } from '@/i18n/context';
+import { followBottom } from '@/lib/followBottom';
 import { keepBottomOnResize } from '@/lib/keepBottomOnResize';
 import { cn } from '@/lib/utils';
 import {
@@ -102,6 +103,13 @@ export const Thread = ({ components = EMPTY_COMPONENTS }) => {
 const COARSE_POINTER =
   typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches;
 
+// The keyboard opening must not move the chat (keepBottomOnResize), and a
+// streaming reply is followed down while its end is in view (followBottom).
+const threadViewportRef = (node) => {
+  const cleanups = [keepBottomOnResize(node), followBottom(node)];
+  return () => cleanups.forEach((cleanup) => cleanup?.());
+};
+
 const ThreadRoot = ({ isEmpty }) => {
   const { Welcome = ThreadWelcome } = useContext(ThreadComponentsContext);
 
@@ -117,8 +125,9 @@ const ThreadRoot = ({ isEmpty }) => {
     >
       <ThreadPrimitive.Viewport
         turnAnchor="bottom"
-        // The keyboard opening must not move the chat; see keepBottomOnResize.
-        ref={keepBottomOnResize}
+        // Following the reply is ours, not assistant-ui's; see followBottom.
+        autoScroll={false}
+        ref={threadViewportRef}
         data-slot="aui_thread-viewport"
         className="relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll scroll-smooth"
       >
