@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { findLocalModel } from '@/services/localModels';
-import { clearIncomplete, markIncomplete } from '@/services/modelCache';
 import { useT } from '@/i18n/context';
-import { getModels, modelLoader, unloadModel, unloadModels } from '@/services/providers';
+import { getModels, modelLoader, unloadModel } from '@/services/providers';
 
 const SELECTED_KEY = 'ai-chat:model';
 
@@ -23,7 +21,7 @@ function describeLoadFailure(error, t) {
   return t('model.loadFailed');
 }
 
-const IDLE_ATTEMPT = { id: '', status: 'idle', progress: null, error: null };
+const IDLE_ATTEMPT = { id: '', status: 'idle', error: null };
 
 export function useModels({ endpoint } = {}) {
   const t = useT();
@@ -38,9 +36,6 @@ export function useModels({ endpoint } = {}) {
     () => localStorage.getItem(SELECTED_KEY) ?? '',
   );
   // The single load attempt in flight, tagged with the model it belongs to.
-  // Several models can be brought back after a refresh, but only one set of
-  // progress/error widgets exists, so the UI shows this attempt's figures only
-  // while it concerns the selected model.
   const [attempt, setAttempt] = useState(IDLE_ATTEMPT);
   // Which models this tab has actually loaded. `attempt` describes the most
   // recent load and nothing else, so it cannot answer "is *this* model ready"
@@ -52,9 +47,9 @@ export function useModels({ endpoint } = {}) {
   // reaching for the same model in the same tick — the startup sweep and the
   // Load button — cannot both start it.
   const claimed = useRef(new Set());
-  // The id the running attempt belongs to, readable outside a render. Cancel
+  // The id the running attempt belongs to, readable outside a render. A delete
   // needs it, and reaching for it through the state updater would run the
-  // cancel's side effects twice under StrictMode.
+  // abort twice under StrictMode.
   const loadingId = useRef('');
   // Aborts the running load's requests. llm.js threads this through env.fetch,
   // which is the only place transformers.js can be interrupted.
@@ -113,54 +108,14 @@ export function useModels({ endpoint } = {}) {
       loadingId.current = id;
       const attemptController = new AbortController();
       controller.current = attemptController;
-      setAttempt({ id, status: 'loading', progress: null, error: null });
+      setAttempt({ id, status: 'loading', error: null });
       try {
-        // A model is several files, each reporting its own 0-100, which is what
-        // made the bar restart per file. `from_pretrained` also emits
-        // `progress_total`, carrying the bytes loaded across every file it has
-        // registered so far.
-        //
-        // Its own percentage cannot be used directly: the denominator is only the
-        // files seen so far, so it reads 100% the moment the first file lands and
-        // then falls back as the rest register. The catalogue knows what the whole
-        // download weighs, so `loaded` is measured against that instead — a fixed
-        // denominator against a total that only grows. `event.total` takes over if
-        // it ever exceeds the published figure, so an out-of-date estimate cannot
-        // strand the bar above 100.
-        const expected = findLocalModel(id)?.info?.downloadBytes ?? 0;
-        let known = expected;
-        await modelLoader(
-          id,
-          (event) => {
-            let next;
-            if (event?.status === 'progress_total') {
-              known = Math.max(known, event.total ?? 0);
-              next = known ? ((event.loaded ?? 0) / known) * 100 : event.progress;
-            } else if (event?.status === 'progress' && !expected) {
-              // No published size and no aggregate to weigh against — one file's
-              // own figure is better than an empty bar.
-              next = event.progress;
-            } else {
-              // initiate, download, done: no percentage, and writing them would
-              // blank the bar.
-              return;
-            }
-            if (typeof next !== 'number' || Number.isNaN(next)) return;
-            const clamped = Math.min(100, Math.max(0, next));
-            setAttempt((current) =>
-              current.id !== id || current.progress === clamped
-                ? current
-                : { ...current, progress: clamped },
-            );
-          },
-          attemptController.signal,
-        );
+        await modelLoader(id, attemptController.signal);
         // Aborting stops the downloads, but a model already past them is being
         // compiled on the GPU and will finish regardless. It is dropped rather
-        // than adopted, so a cancel means the same thing wherever it lands.
+        // than adopted, so an abort means the same thing wherever it lands.
         if (attemptController.signal.aborted) return;
         loadingId.current = '';
-        clearIncomplete(id);
         setAttempt((current) => (current.id === id ? { ...current, status: 'loaded' } : current));
         // Re-loading an already-known model would otherwise push a duplicate and
         // move it to the end of the list.
@@ -169,13 +124,13 @@ export function useModels({ endpoint } = {}) {
         // Released so the user can retry a failed model; a loaded one stays
         // claimed for the life of the tab, matching the map in llm.js.
         claimed.current.delete(id);
-        // The abort surfaces as a fetch failure. It is the outcome the user
-        // asked for, and cancelLoad has already put the panel where it belongs.
+        // The abort surfaces as a fetch failure. It is the outcome asked for,
+        // and forgetModel has already put the state where it belongs.
         if (attemptController.signal.aborted) return;
         loadingId.current = '';
         setAttempt((current) =>
           current.id === id
-            ? { ...current, status: 'idle', progress: null, error: describeLoadFailure(err, t) }
+            ? { ...current, status: 'idle', error: describeLoadFailure(err, t) }
             : current,
         );
       } finally {
@@ -187,51 +142,10 @@ export function useModels({ endpoint } = {}) {
   );
 
   /**
-   * Stop the running load.
-   *
-   * Aborts its requests through the signal llm.js hands to `env.fetch`, so the
-   * download really does end rather than carrying on unwatched. Files already
-   * written stay in the cache — a later attempt skips them — but the model is
-   * flagged incomplete, so the next startup does not mistake that partial set
-   * for a finished download and quietly fetch the rest.
-   */
-  const cancelLoad = useCallback(() => {
-    const id = loadingId.current;
-    if (!id) return;
-    controller.current?.abort();
-    // Released here rather than in the rejection handler so Load is usable the
-    // moment the button is pressed.
-    claimed.current.delete(id);
-    loadingId.current = '';
-    markIncomplete(id);
-    setAttempt(IDLE_ATTEMPT);
-  }, []);
-
-  /**
-   * Drop every loaded model, in this hook and in GPU memory.
-   *
-   * Paired with clearing the cache: the weights going off disk does not unload
-   * what is already compiled, so without this the panel would go on reporting —
-   * correctly, and uselessly — that a model the user just deleted is loaded.
-   * Any running load is aborted first, or it would write its files straight
-   * back into a cache that is about to be deleted.
-   */
-  const forgetLoaded = useCallback(async () => {
-    controller.current?.abort();
-    loadingId.current = '';
-    // Nothing has ever been loaded, so llm.js was never imported and must not
-    // be imported now just to clear an empty map.
-    const anyLoaded = claimed.current.size > 0;
-    claimed.current.clear();
-    setAttempt(IDLE_ATTEMPT);
-    setLoadedModelIds([]);
-    if (anyLoaded) await unloadModels();
-  }, []);
-
-  /**
-   * Drop one model, in this hook and in GPU memory — `forgetLoaded` for a single
-   * id, ahead of deleting just its files. A load still running for it is
-   * aborted for the same reason: it would write the files straight back.
+   * Drop one model, in this hook and in GPU memory, ahead of deleting its files.
+   * Deleting the weights does not unload what is already compiled, so without
+   * this the model would go on reporting as loaded. A load still running for it
+   * is aborted, or it would write the files straight back.
    */
   const forgetModel = useCallback(async (id) => {
     if (loadingId.current === id) {
@@ -249,12 +163,6 @@ export function useModels({ endpoint } = {}) {
     return loadModelById(selectedModelId);
   }, [requiresLoad, selectedModelId, loadModelById]);
 
-  // Progress, status and error belong to whichever model is loading. Reporting
-  // them against a different selection would attach one model's bar or failure
-  // to another's card, so they read as idle unless the attempt is the selected
-  // model's own.
-  const isSelectedAttempt = attempt.id === selectedModelId;
-
   return {
     models: models ?? [],
     loading: models === null && error === null,
@@ -269,8 +177,6 @@ export function useModels({ endpoint } = {}) {
     isSelectedLoaded,
     loader,
     loadModelById,
-    cancelLoad,
-    forgetLoaded,
     forgetModel,
     // The model of the current attempt, for as long as it still has something
     // to show — a bar while it runs, an error once it fails. A runtime switch
@@ -281,13 +187,10 @@ export function useModels({ endpoint } = {}) {
     // load is in flight, which is the right gate for a control and the wrong
     // one for a label: a list keyed on it reports every row as downloading.
     loadingModelId: attempt.status === 'loading' ? attempt.id : '',
-    loadingStatus: isSelectedAttempt ? attempt.status : 'idle',
-    loadingError: isSelectedAttempt ? attempt.error : null,
     // The last attempt's error whichever model it was for — the selection can
     // move on while a load fails, and that failure still needs reporting.
     attemptError: attempt.error,
     attemptModelId: attempt.id,
-    progress: isSelectedAttempt ? attempt.progress : null,
     // Any model loading, selected or not — one graph compiles at a time, so the
     // Load button stays disabled while a background restore is still running.
     busy: attempt.status === 'loading',

@@ -35,7 +35,7 @@ Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an 
 ```
 src/App.jsx        composition root: calls every hook, lays out components (large, ~600 lines)
 src/state/         conversation reducer (pure) + useConversation (owns the useReducer)
-src/features/<x>/  components/ + hooks/ per feature (chat, models, sessions, settings, layout, onboarding)
+src/features/<x>/  components/ + hooks/ per feature (chat, models, sessions, settings, layout)
 src/services/      browser/network I/O: providers facade, openai adapter, llm (WebGPU), sessionStore (IndexedDB), modelCache
 src/i18n/          en.js (source language) + pt.js, LocaleProvider, useT()
 src/lib/           framework-free helpers and generic hooks
@@ -56,15 +56,15 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 
 ### Providers and lazy loading
 
-- `services/providers.js` is the only entry point: `getModels(baseURL)`, `generate(...)`, `modelLoader(...)`, `unloadModels()`. Callers never branch on backend. Provider ids are the strings `'Web-GPU'` and `'LM-Studio'`.
+- `services/providers.js` is the only entry point: `getModels(baseURL)`, `generate(...)`, `modelLoader(...)`, `unloadModel(id)`. Callers never branch on backend. Provider ids are the strings `'Web-GPU'` and `'LM-Studio'`.
 - `services/llm.js` (and so `@huggingface/transformers`, ~23 MB of WASM) must only be reached through `await import('./llm')`. Anything needed just to _list_ models or read cache state (`localModels.js`, the `transformers-cache` name in `modelCache.js`) is deliberately kept free of transformers imports. Don't add a static import of `llm.js` or transformers anywhere.
 - WebGPU models are offered only when `'gpu' in navigator`. The endpoint's models are offered only if `/models` answers within 3 s. An unreachable endpoint returns `endpointError` instead of throwing.
-- `llm.js` keeps every loaded model in a module-level `Map` and never disposes one on its own.
+- `llm.js` keeps every loaded model in a module-level `Map` and disposes one only when the user deletes it.
 
 ### Storage
 
 - `navigator.storage.estimate()` numbers are fuzzed per browser. Use them to warn, never to gate. A `QuotaExceededError` is caught in `features/models/hooks/useModels.js`.
-- "Cached" (weights on disk, `storage.cachedModelIds`) is not "loaded" (on GPU, `loadedModelIds`, not persisted). On startup `App.jsx` reloads every cached model (selected first), skipping downloads the user stopped.
+- "Cached" (weights on disk, `storage.cachedModelIds`) is not "loaded" (on GPU, `loadedModelIds`, not persisted). On startup `App.jsx` reloads every cached model (selected first).
 - `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:runtime`, `ai-chat:model`). The runtime and model are persisted together on purpose. A restored model id the list no longer offers is cleared after the cache restore and on every list change (`isStaleSelection`), except an endpoint model while the endpoint is unreachable. A stale clear re-arms the once-only auto-select.
 
 ### i18n

@@ -45,21 +45,14 @@ export async function getModels(baseURL) {
 }
 
 // Load Web-GPU Model
-export async function modelLoader(modelId, callback, signal) {
+export async function modelLoader(modelId, signal) {
   const { loadModel } = await import('./llm');
-  return loadModel(modelId, callback, signal);
+  return loadModel(modelId, signal);
 }
 
-// Release every in-browser model. Only call this once something has actually
-// been loaded: the import pulls in the ~23 MB runtime, which is free when it is
-// already in memory and wasteful otherwise.
-export async function unloadModels() {
-  const { unloadAll } = await import('./llm');
-  return unloadAll();
-}
-
-// Release one in-browser model. Same rule as unloadModels: only for a model
-// that was actually loaded, so the runtime is already in memory.
+// Release one in-browser model. Only for a model that was actually loaded: the
+// import pulls in the ~23 MB runtime, which is free when it is already in memory
+// and wasteful otherwise.
 export async function unloadModel(modelId) {
   const { unloadModel: unload } = await import('./llm');
   return unload(modelId);

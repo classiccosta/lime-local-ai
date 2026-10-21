@@ -58,3 +58,10 @@ Consequences: no orphan questions from switching. Stop, reload and first-turn ca
 Context: with HTTP streaming the user sees the reply start; rolling the question back on a switch reads as data loss, and it was the only interruption with its own rule.
 Decision: switching session mid-reply dispatches CANCEL and nothing else. The user turn is kept and shows the "Stopped" marker, same as Stop and reload.
 Consequences: one rule for every interruption; abandonedMessages and its rollback write are deleted. Partial reply is still discarded everywhere (bl-06).
+
+## ADR-011 · 2026-10-21 · Accepted — Remove onboarding, info panels and settings rail
+
+Context: three features sat behind SHOW_* flags set to false; v1 allows no dead code behind flags.
+Decision: delete WelcomeModal/first-run, ModelInfo, StorageMeter and the settings rail with their flags. Settings live only in SettingsDialog.
+Consequences: less code and UI. No pre-download storage warning or "Clear models": a full disk surfaces as the QuotaExceededError on load; models are deleted one by one in the model list. Persistence is still requested before the first download.
+No download progress or stop button: the model row shows a spinner until the load finishes.” It’s the most visible consequence, and it should be on record.
