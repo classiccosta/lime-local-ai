@@ -10,6 +10,7 @@ import { ScrollNudge } from '@/features/layout/components/ScrollNudge';
 import { ModelPicker } from '@/features/models/components/ModelPicker';
 import { ModelInfo } from '@/features/models/components/ModelInfo';
 import { shortLabel } from '@/features/models/labels';
+import { isStaleSelection } from '@/features/models/selection';
 import { ComposerModelsContext } from '@/features/models/composerModels';
 import { useModels } from '@/features/models/hooks/useModels';
 import { useRuntime } from '@/features/models/hooks/useRuntime';
@@ -205,7 +206,14 @@ export default function App() {
   // clears the selection deliberately, and re-picking there would fight it.
   const autoSelected = useRef(false);
   useEffect(() => {
-    if (autoSelected.current || !restored || selectedModelId) return;
+    if (autoSelected.current || !restored) return;
+    // A list that failed outright says nothing about what exists. Cleared
+    // rather than replaced: the run this triggers picks in the usual order.
+    if (!error && isStaleSelection({ selectedModelId, models, endpointError })) {
+      setSelectedModelId('');
+      return;
+    }
+    if (selectedModelId) return;
     const first =
       models.find((model) => model.requiresLoad && loadedModelIds.includes(model.id)) ??
       models.find((model) => !model.requiresLoad);
@@ -214,7 +222,7 @@ export default function App() {
     chooseModel(first.id);
     // chooseModel is redefined every render and would restart the effect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restored, selectedModelId, models, loadedModelIds]);
+  }, [restored, selectedModelId, models, loadedModelIds, error, endpointError]);
 
   // Shown on a browser with no stored preferences, and never again once
   // answered. The choice is applied through the same paths the settings panel
