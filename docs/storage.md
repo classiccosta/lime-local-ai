@@ -98,10 +98,13 @@ A restored `selectedModelId` can point at a model the list no longer offers: the
 endpoint dropped it, or the browser has no WebGPU for a catalogue model. Once the
 restore settles, `App.jsx` clears such an id (persisting `''`) so auto-select can
 pick one that answers. The check is `isStaleSelection` in
-`features/models/selection.js`. It runs once, after the restore, because the list is
-`[]` while `/models` loads and every id would look missing. An endpoint model is
-kept while the endpoint is unreachable, since LM Studio not running yet is a normal
-startup and the model comes back on reconnect.
+`features/models/selection.js`. It runs after the restore and on every list
+change. It waits for the restore because the list is `[]` while `/models` first
+loads and every id would look missing. An endpoint model is kept while the
+endpoint is unreachable, since LM Studio not running yet is a normal startup and
+the model comes back on reconnect. A stale clear re-arms auto-select, which
+otherwise fires once, so a loaded WebGPU model takes over from a dropped endpoint
+model.
 
 The cost is real and worth stating: every refresh spends the VRAM of every cached
 model whether or not the user goes on to chat. A download the user stopped is
