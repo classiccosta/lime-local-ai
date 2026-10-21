@@ -377,6 +377,3 @@ not a publicly hosted page reaching into their network.
   the UI shows a placeholder and then the whole answer. Only the WebGPU path streams.
 - **Model selection is not invalidated** when the model list changes, so a stale
   `selectedModelId` produces "No model selected." on send.
-- **An abandoned session keeps its unanswered turn.** `SEND_START` persists the user turn;
-  if the user navigates away and the request then fails, the rollback cannot reach a
-  conversation that is no longer loaded.

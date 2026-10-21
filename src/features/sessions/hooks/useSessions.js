@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { abandonedMessages, DEFAULT_SESSION_NAME } from '@/state/conversation';
 import { deleteSession, getSession, listSessions, saveSession } from '@/services/sessionStore';
-
+import { abandonedMessages, DEFAULT_SESSION_NAME } from '@/state/conversation';
+import { useCallback, useEffect, useState } from 'react';
 // A session is only stored — and so only listed — once it has a title, which
 // its first user message gives it. Before that it lives in the reducer alone:
 // a blank "New chat" row in the sidebar is a promise of a conversation that may
@@ -127,7 +126,6 @@ export function useSessions({ conversation, dispatch, title }) {
   return {
     newSession,
     canCreate,
-    getSessionFromList,
     openSession,
     deleteSessionFromList,
     sessionList,
