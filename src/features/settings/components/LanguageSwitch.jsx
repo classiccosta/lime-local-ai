@@ -1,6 +1,7 @@
 import { SettingValue } from '@/features/settings/components/SettingValue';
 import { useLocale } from '@/i18n/context';
 import { LOCALES } from '@/i18n/locales';
+import { menuContent, menuItem } from '@/lib/menu';
 import { cn } from '@/lib/utils';
 import { Check, ChevronDown } from 'lucide-react';
 import { DropdownMenu } from 'radix-ui';
@@ -45,14 +46,15 @@ export function LanguageSwitch() {
               align="start"
               sideOffset={6}
               collisionPadding={8}
-              className="bg-secondary text-secondary-foreground border-border z-50 min-w-[var(--radix-dropdown-menu-trigger-width)] rounded-md border p-1 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.65)]"
+              className={cn(menuContent, 'min-w-[var(--radix-dropdown-menu-trigger-width)]')}
             >
               {LOCALES.map((entry) => (
                 <DropdownMenu.Item
                   key={entry.id}
                   onSelect={() => setLocale(entry.id)}
                   className={cn(
-                    'data-[highlighted]:bg-primary/20 flex cursor-default items-center justify-between gap-3 rounded-sm px-2.5 py-1 text-xs outline-none select-none',
+                    menuItem,
+                    'justify-between gap-3',
                     entry.id === locale && 'text-primary',
                   )}
                 >
