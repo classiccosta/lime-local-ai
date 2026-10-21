@@ -204,16 +204,21 @@ export default function App() {
   // Waits for the restore to finish so a model coming back from cache is
   // preferred over an endpoint's, and fires once — a later runtime switch
   // clears the selection deliberately, and re-picking there would fight it.
+  // The stale check has its own guard and runs on every list change: behind
+  // the once-only guard, a model dropped after auto-select stayed selected.
   const autoSelected = useRef(false);
   useEffect(() => {
-    if (autoSelected.current || !restored) return;
+    if (!restored) return;
     // A list that failed outright says nothing about what exists. Cleared
     // rather than replaced: the run this triggers picks in the usual order.
+    // Re-armed because nobody chose this empty selection, unlike a runtime
+    // switch, so a loaded model can take over from the one that went away.
     if (!error && isStaleSelection({ selectedModelId, models, endpointError })) {
+      autoSelected.current = false;
       setSelectedModelId('');
       return;
     }
-    if (selectedModelId) return;
+    if (autoSelected.current || selectedModelId) return;
     const first =
       models.find((model) => model.requiresLoad && loadedModelIds.includes(model.id)) ??
       models.find((model) => !model.requiresLoad);
@@ -242,7 +247,12 @@ export default function App() {
     setEndpoint(url);
     // Only a model from the old endpoint stops being reachable. An in-browser
     // one is listed beside it now, and pointing elsewhere does not touch it.
-    if (endpointModels.some((model) => model.id === selectedModelId)) setSelectedModelId('');
+    // The same endpoint reloaded is left to the stale check, so a model it
+    // still offers stays selected. Re-armed for the same reason as there.
+    if (url !== endpoint && endpointModels.some((model) => model.id === selectedModelId)) {
+      autoSelected.current = false;
+      setSelectedModelId('');
+    }
     setEditingEndpoint(false);
     load(url);
   };
