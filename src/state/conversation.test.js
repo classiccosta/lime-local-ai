@@ -290,8 +290,6 @@ describe('getSessionTitle', () => {
   });
 });
 
-// What `openSession` writes for the chat the user leaves: the messages to
-// store, or null to leave its row as it is.
 describe('DEFAULT_SESSION_NAME', () => {
   // Stored in IndexedDB and matched by components; changing it orphans old rows.
   it('stays the stored marker', () => {
