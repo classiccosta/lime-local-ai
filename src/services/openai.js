@@ -1,3 +1,5 @@
+import { parseSSE } from './sse';
+
 export async function getOpenAiModels({ baseURL, timeoutMs = 3000 }) {
   const response = await fetch(`${baseURL}/models`, {
     signal: AbortSignal.timeout(timeoutMs),
@@ -17,6 +19,7 @@ export async function generate({ model, messages, onToken, baseURL, signal }) {
     signal,
     body: JSON.stringify({
       model,
+      stream: true,
       // The full history goes with every request. Letting the server hold it via
       // previous_response_id meant any discontinuity — a page reload, opening a
       // saved session, changing endpoint — silently sent a single orphaned turn
@@ -35,21 +38,45 @@ export async function generate({ model, messages, onToken, baseURL, signal }) {
     throw new Error(`Request failed: ${response.status} ${await response.text()}`);
   }
 
-  const data = await response.json();
+  // A server that ignores `stream` answers with plain JSON; keep that path so
+  // any OpenAI-compatible backend works whatever it supports.
+  if (!response.headers.get('Content-Type')?.includes('text/event-stream')) {
+    const text = readJsonText(await response.json());
+    onToken?.(text);
+    return { text };
+  }
 
-  // `output_text` is an SDK convenience field that raw HTTP replies don't
-  // always carry, so fall back to walking the `output` array.
-  const text =
+  let text = '';
+  let buffer = '';
+  // Abort reaches here through `signal` on fetch: the pending read rejects
+  // with an AbortError.
+  for await (const chunk of response.body.pipeThrough(new TextDecoderStream())) {
+    const parsed = parseSSE(buffer + chunk);
+    buffer = parsed.rest;
+    for (const event of parsed.events) {
+      if (event.type === 'response.output_text.delta') {
+        text += event.delta;
+        onToken?.(event.delta);
+      } else if (event.type === 'response.failed' || event.type === 'error') {
+        throw new Error(event.response?.error?.message ?? event.message ?? 'Request failed');
+      } else if (event.type === 'response.completed') {
+        return { text };
+      }
+    }
+  }
+
+  return { text };
+}
+
+// `output_text` is an SDK convenience field that raw HTTP replies don't
+// always carry, so fall back to walking the `output` array.
+function readJsonText(data) {
+  return (
     data.output_text ??
     (data.output ?? [])
       .flatMap((item) => item.content ?? [])
       .filter((part) => part.type === 'output_text')
       .map((part) => part.text)
-      .join('');
-
-  // Not streaming yet: emit the whole reply once so the UI's streaming
-  // placeholder still resolves.
-  onToken?.(text);
-
-  return { text };
+      .join('')
+  );
 }

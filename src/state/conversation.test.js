@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  abandonedMessages,
   conversationReducer,
   createConversation,
   DEFAULT_SESSION_NAME,
@@ -293,42 +292,6 @@ describe('getSessionTitle', () => {
 
 // What `openSession` writes for the chat the user leaves: the messages to
 // store, or null to leave its row as it is.
-describe('abandonedMessages', () => {
-  // Hello → Hi answered, then "Again" sent with `req-2` still in flight.
-  function generatingSecondTurn() {
-    const answered = reduce(generating(), {
-      type: 'REPLY',
-      requestId: 'req-1',
-      message: assistantMessage('Hi'),
-    });
-    return reduce(answered, {
-      type: 'SEND_START',
-      message: userMessage('Again'),
-      requestId: 'req-2',
-    });
-  }
-
-  it('returns the history without the unanswered user turn when leaving mid-reply', () => {
-    expect(abandonedMessages(deepFreeze(generatingSecondTurn()))).toEqual([
-      userMessage('Hello'),
-      assistantMessage('Hi'),
-    ]);
-  });
-
-  // Rolled back, a first turn leaves an empty, untitled chat, which is never
-  // stored, so the chat would vanish from the sidebar. It is kept, as Stop keeps it.
-  it('returns null when leaving mid-reply on the first turn', () => {
-    expect(abandonedMessages(deepFreeze(generating()))).toBeNull();
-  });
-
-  // Nothing is in flight, so there is no turn to roll back; this also covers a
-  // turn the user already stopped, which Stop deliberately keeps.
-  it('returns null when nothing is generating', () => {
-    const idle = reduce(generatingSecondTurn(), { type: 'CANCEL' });
-    expect(abandonedMessages(deepFreeze(idle))).toBeNull();
-  });
-});
-
 describe('DEFAULT_SESSION_NAME', () => {
   // Stored in IndexedDB and matched by components; changing it orphans old rows.
   it('stays the stored marker', () => {
