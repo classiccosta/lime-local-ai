@@ -5,6 +5,9 @@ OpenAI-compatible server (LM Studio, llama.cpp, vLLM). No backend of its own:
 conversations stay in IndexedDB, model weights in the browser cache. English and
 Portuguese (pt-PT).
 
+**Live demo:** [lime-zeta-three.vercel.app](https://lime-zeta-three.vercel.app/) (in-browser
+models need a WebGPU browser, e.g. recent Chrome or Edge).
+
 ```bash
 npm install
 npm run dev   # http://localhost:5173
