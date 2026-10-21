@@ -19,10 +19,12 @@ export function displayMessages({ messages, status, streamed }) {
   });
 
   if (isRunning) {
+    // No part until the first token: assistant-ui only renders its indicator
+    // when the last part isn't text, and an empty text part counts as text.
     result.push({
       id: STREAMING_ID,
       role: 'assistant',
-      content: [{ type: 'text', text: streamed }],
+      content: streamed ? [{ type: 'text', text: streamed }] : [],
     });
   }
   return result;
