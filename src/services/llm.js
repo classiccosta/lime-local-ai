@@ -28,13 +28,13 @@ const baseFetch = env.fetch;
 let activeSignal = null;
 env.fetch = (input, init) => baseFetch(input, { ...init, signal: activeSignal ?? init?.signal });
 
-export async function loadModel(modelId, onProgress, signal) {
+export async function loadModel(modelId, signal) {
   if (loaded.has(modelId)) return;
 
   const spec = findLocalModel(modelId);
   if (!spec) throw new Error(`Unknown in-browser model: ${modelId}`);
 
-  const options = { dtype: spec.dtype, device: 'webgpu', progress_callback: onProgress };
+  const options = { dtype: spec.dtype, device: 'webgpu' };
 
   const mine = signal ?? null;
   activeSignal = mine;
@@ -60,27 +60,12 @@ export function isLoaded(modelId) {
 }
 
 /**
- * Release every loaded model.
+ * Release one loaded model, for a per-model delete.
  *
- * Deleting the weights off disk leaves the compiled graphs sitting in GPU
- * memory, still usable — so without this a cleared cache would keep reporting
- * its models as loaded, and they would be. Disposal frees the GPU buffers too,
- * which is the point of clearing.
+ * Deleting the weights off disk leaves the compiled graph sitting in GPU
+ * memory, still usable — so without this a deleted model would keep reporting
+ * as loaded, and it would be. Disposal frees the GPU buffers too.
  */
-export async function unloadAll() {
-  for (const entry of loaded.values()) {
-    // A session that failed to build, or one the runtime has already torn down,
-    // must not stop the rest from being released.
-    try {
-      await entry.model?.dispose?.();
-    } catch {
-      /* already gone */
-    }
-  }
-  loaded.clear();
-}
-
-/** Release one loaded model, for a per-model delete. See `unloadAll`. */
 export async function unloadModel(modelId) {
   const entry = loaded.get(modelId);
   loaded.delete(modelId);

@@ -23,11 +23,10 @@ src/
 
   features/
     chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, Title, ErrorBanner
-    models/      hooks/{useModels,useRuntime}.js, selection.js, ModelPicker, ModelList, ModelInfo
+    models/      hooks/{useModels,useRuntime}.js, selection.js, ModelPicker, ModelList
     sessions/    hooks/useSessions.js, SessionSidebar
-    settings/    hooks/{useEndpoint,usePanel,useStorage}.js, SettingsDialog, StorageMeter
-    layout/      MobileHeader, MobileSheet, ScrollNudge
-    onboarding/  useFirstRun, WelcomeModal
+    settings/    hooks/{useEndpoint,usePanel,useStorage}.js, SettingsDialog
+    layout/      MobileHeader, MobileSheet
 
   services/
     providers.js     facade — chooses a backend, normalises the result
@@ -51,7 +50,7 @@ src/
 > `state/` and `services/` never import from `features/`.
 
 The second rule is currently broken in a few places (`chat` → `models`,
-`layout` → `chat`, `sessions` → `settings`, `onboarding` → `models`). Don't treat
+`layout` → `chat`, `sessions` → `settings`). Don't treat
 it as enforced, but avoid adding new cross-feature imports.
 
 Imports that cross a top-level folder use the `@/` alias, defined in `vite.config.js`
@@ -312,23 +311,16 @@ every re-render, including once per streamed token.
 ### Storage accounting
 
 Conversations are kilobytes; the cached model weights beside them in the Cache API are
-hundreds of megabytes to gigabytes. `services/modelCache.js` reports both through
-`navigator.storage.estimate()` — the one storage API present in every target browser —
-and the settings panel renders the result.
+hundreds of megabytes to gigabytes. `services/modelCache.js` reads which models are on
+disk (`cachedModelIds`); there is no storage meter in the UI (ADR-011). A full disk is
+not predicted: the real `QuotaExceededError` is caught in
+`features/models/hooks/useModels.js`, and persistence is requested before the first
+download.
 
-Two things are worth knowing before touching that code. `estimate()` returns a `quota`
-that is the origin's **total** budget rather than what is left, so free space is derived
-as `quota - usage`. And every browser deliberately fuzzes the numbers: Chromium's quota
-tracks free disk and moves as it fills, Firefox rounds usage into blocks, Safari raises
-the quota on demand. They are good enough to warn with and not good enough to gate on,
-which is why a download that looks too large is flagged but never blocked — the real
-`QuotaExceededError` is caught in `features/models/hooks/useModels.js` instead.
+Nothing in the codebase reports resident GPU memory, and `llm.js` keeps every model
+loaded this session until the user deletes it.
 
-The meter measures disk, not memory. Nothing in the codebase reports resident GPU memory,
-and `llm.js` keeps every model loaded this session without disposing any of them.
-
-Full detail, including the Chromium-only `usageDetails` fallback and the persistence
-request: [`storage.md`](./storage.md).
+Full detail: [`storage.md`](./storage.md).
 
 ---
 

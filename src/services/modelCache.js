@@ -5,25 +5,6 @@ import { LOCAL_MODELS } from './localModels';
 // ~23 MB runtime into the initial bundle just to read a string.
 const MODEL_CACHE_NAME = 'transformers-cache';
 
-// A download needs more room than its own byte count: the Cache API holds the
-// response while it writes, and the quota itself can shrink mid-download as the
-// disk fills. 15% covers both without being so cautious that a download which
-// would have succeeded gets flagged as impossible.
-const HEADROOM = 1.15;
-
-/**
- * Whether `needed` bytes plausibly fit in `free`.
- *
- * Returns null when there is nothing to judge — no estimate available, or no
- * pending download — so callers can tell "will not fit" from "cannot say".
- * Every browser reports quota approximately, so a true here is a likelihood,
- * not a reservation; the download can still fail and must still be caught.
- */
-export function fitsInStorage(free, needed) {
-  if (free == null || !needed) return null;
-  return free >= needed * HEADROOM;
-}
-
 /**
  * Size and contents of the model cache, without reading a single response body.
  *
@@ -140,79 +121,9 @@ export async function readStorage() {
   };
 }
 
-// Models whose download was stopped part-way. The cache itself cannot answer
-// "complete?" — transformers.js writes each file as it lands and keys them by
-// URL, so a half-finished model looks exactly like a whole one. Without this
-// list a cancelled download would be auto-restored on the next refresh, quietly
-// fetching the rest of a 1.5 GB model behind a skeleton.
-const INCOMPLETE_KEY = 'ai-chat:incomplete-models';
-
-// localStorage itself throws where site data is blocked, not just on bad JSON.
-function readIds(key) {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(key) ?? '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeIds(key, ids) {
-  try {
-    localStorage.setItem(key, JSON.stringify(ids));
-  } catch {
-    /* nothing to record it in; the download simply is not remembered */
-  }
-}
-
-export function readIncompleteModels() {
-  return readIds(INCOMPLETE_KEY);
-}
-
-export function markIncomplete(modelId) {
-  const ids = readIncompleteModels();
-  if (ids.includes(modelId)) return;
-  writeIds(INCOMPLETE_KEY, [...ids, modelId]);
-}
-
-/** Called once a model has loaded in full, whatever it was flagged as before. */
-export function clearIncomplete(modelId) {
-  const ids = readIncompleteModels();
-  if (!ids.includes(modelId)) return;
-  writeIds(
-    INCOMPLETE_KEY,
-    ids.filter((id) => id !== modelId),
-  );
-}
-
-/**
- * Delete every cache transformers.js writes to, and report whether they went.
- *
- * `env.cacheKey` is configurable and the library's cross-origin backend keeps a
- * second cache of its own, so matching by name rather than deleting one
- * constant means a renamed or additional store cannot survive the clear and
- * leave the panel reporting models that were supposed to be gone.
- */
-export async function clearModelCache() {
-  // Nothing is half-downloaded once nothing is downloaded at all.
-  try {
-    localStorage.removeItem(INCOMPLETE_KEY);
-  } catch {
-    /* never written in the first place */
-  }
-  if (typeof caches === 'undefined') return true;
-
-  const targets = await modelCacheNames();
-  await Promise.all(targets.map((name) => caches.delete(name)));
-
-  // `caches.delete` resolves false for a cache that was not there, which is not
-  // a failure. What matters is that none of them is there now.
-  const remaining = await caches.keys();
-  return !remaining.some((name) => targets.includes(name));
-}
-
-// Every cache transformers.js may have written to — see clearModelCache for why
-// this matches by name rather than trusting one constant.
+// Every cache transformers.js may have written to. `env.cacheKey` is configurable
+// and the library's cross-origin backend keeps a second cache of its own, so
+// matching by name means neither can keep a deleted model's files.
 async function modelCacheNames() {
   const names = await caches.keys();
   return names.filter((name) => name === MODEL_CACHE_NAME || name.includes('transformers'));
@@ -226,7 +137,6 @@ async function modelCacheNames() {
  * whatever made it count as downloaded is exactly what goes.
  */
 export async function deleteModelFromCache(modelId) {
-  clearIncomplete(modelId);
   if (typeof caches === 'undefined') return;
 
   for (const name of await modelCacheNames()) {

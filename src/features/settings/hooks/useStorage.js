@@ -1,14 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  clearModelCache,
-  deleteModelFromCache,
-  readStorage,
-  requestPersistence,
-} from '@/services/modelCache';
+import { deleteModelFromCache, readStorage, requestPersistence } from '@/services/modelCache';
 
 export function useStorage() {
   const [storage, setStorage] = useState(null);
-  const [clearing, setClearing] = useState(false);
   // A browser without `estimate()` leaves `storage` null for good, so null
   // alone cannot say whether the first read has happened. Callers that wait on
   // the cache contents — the startup restore — need to tell the two apart.
@@ -38,16 +32,6 @@ export function useStorage() {
     setReady(true);
   }, []);
 
-  const clear = useCallback(async () => {
-    setClearing(true);
-    try {
-      await clearModelCache();
-      await refresh();
-    } finally {
-      setClearing(false);
-    }
-  }, [refresh]);
-
   // One model's files, then a re-read so the list stops marking it downloaded.
   const removeModel = useCallback(
     async (id) => {
@@ -65,5 +49,5 @@ export function useStorage() {
     return granted;
   }, [refresh]);
 
-  return { storage, storageReady: ready, clear, clearing, refresh, requestPersist, removeModel };
+  return { storage, storageReady: ready, refresh, requestPersist, removeModel };
 }
