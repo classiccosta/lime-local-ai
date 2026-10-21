@@ -1,9 +1,5 @@
 # Architecture
 
-> A visual version of this document — layer diagram, state machine, request ownership
-> and bundle split — is in [`architecture.html`](./architecture.html). Open it in a
-> browser; it is self-contained apart from a Google Fonts stylesheet.
-
 A local-first chat client for large language models. Two backends are supported and
 presented identically to the user: a model running in the browser on WebGPU, and any
 OpenAI-compatible HTTP server reachable from the browser (LM Studio, llama.cpp, vLLM).
@@ -19,17 +15,19 @@ secret; everything the app needs is either in the browser or on the user's netwo
 src/
   App.jsx            composition root — calls the hooks, lays out the components
   main.jsx           React entry point
-  index.css          global styles
+  index.css          global styles, Tailwind theme tokens
 
   state/
     conversation.js    pure reducer + factory + title derivation
     useConversation.js owns the useReducer instance
 
   features/
-    chat/       components/{Output,TextArea,Title}.jsx   hooks/useSession.js
-    models/     components/{Dropdown,ProgressBar}.jsx    hooks/useModels.js
-    sessions/   components/SessionList.jsx               hooks/useSessions.js
-    settings/   hooks/useEndpoint.js
+    chat/        hooks/{useSession,useAssistantRuntime}.js, Title, ErrorBanner
+    models/      hooks/{useModels,useRuntime}.js, ModelPicker, ModelList, ModelInfo
+    sessions/    hooks/useSessions.js, SessionSidebar
+    settings/    hooks/{useEndpoint,usePanel,useStorage}.js, SettingsDialog, StorageMeter
+    layout/      MobileHeader, MobileSheet, ScrollNudge
+    onboarding/  useFirstRun, WelcomeModal
 
   services/
     providers.js     facade — chooses a backend, normalises the result
@@ -38,16 +36,23 @@ src/
     localModels.js   in-browser model catalogue, free of any transformers import
     modelCache.js    storage estimates, model cache size, persistence
     sessionStore.js  IndexedDB access
+
+  i18n/          en.js (source language) + pt.js, LocaleProvider, useT()
+  lib/           framework-free helpers and generic hooks
+  components/
+    ui/            shadcn generated components
+    assistant-ui/  assistant-ui generated components; thread.jsx is the chat UI
 ```
 
 ### The dependency rule
 
-> A module in `features/*` may import from `state/` and `services/`.
-> It may **never** import from another `features/*`.
-> `state/` and `services/` import from neither.
+> A module in `features/*` may import from `state/`, `services/` and `lib/`.
+> It should not import from another `features/*`.
+> `state/` and `services/` never import from `features/`.
 
-This is checkable mechanically by resolving every relative and aliased import and
-comparing top-level folders. It currently holds with no exceptions.
+The second rule is currently broken in a few places (`chat` → `models`,
+`layout` → `chat`, `sessions` → `settings`, `onboarding` → `models`). Don't treat
+it as enforced, but avoid adding new cross-feature imports.
 
 Imports that cross a top-level folder use the `@/` alias, defined in `vite.config.js`
 and mirrored in `jsconfig.json` for editor resolution:
@@ -64,11 +69,12 @@ import { generate } from '@/services/providers';
 flowchart TD
   subgraph view["View"]
     App["App.jsx"]
-    Cmp["Output · TextArea · Title<br/>Dropdown · ProgressBar · SessionList"]
+    Cmp["Thread (assistant-ui) · SessionSidebar<br/>ModelPicker · SettingsDialog"]
   end
 
   subgraph hooks["Hooks"]
     UE["useEndpoint"]
+    UAR["useAssistantRuntime"]
     UM["useModels"]
     UC["useConversation"]
     US["useSession"]
@@ -92,6 +98,8 @@ flowchart TD
 
   App --> Cmp
   App --> UE & UM & UC & US & USS
+  Cmp -- "useExternalStoreRuntime" --> UAR
+  UAR -- "dispatch" --> R
 
   UC -- "owns" --> R
   US -- "dispatch" --> R
@@ -237,8 +245,8 @@ flowchart LR
 { id: string, provider: 'Web-GPU' | 'LM-Studio', requiresLoad: boolean }
 ```
 
-- The **WebGPU** model is offered only when `'gpu' in navigator`, and `requiresLoad` is
-  true — the user must click Load Model, which downloads roughly 390 MB.
+- The **WebGPU** models are offered only when `'gpu' in navigator`, and `requiresLoad`
+  is true — each must be downloaded (390 MB – 1.5 GB) and loaded before it can answer.
 - **LM-Studio** models are offered only when an endpoint is configured and answers
   `/models` within a 3-second timeout. An unreachable server drops the provider and the
   app continues with whatever remains.
@@ -256,9 +264,10 @@ Resending history costs nothing against a local server, and it makes sessions po
 ### Lazy loading
 
 `llm.js` is reached only through `await import('./llm')`. This matters because
-`@huggingface/transformers` pulls in about 23.5 MB of WASM. The model constants are
-duplicated in `providers.js` precisely so that _listing_ models does not import the
-module that would download the runtime.
+`@huggingface/transformers` pulls in about 23.5 MB of WASM. The model catalogue lives
+in `localModels.js`, and the `transformers-cache` name is hard-coded in `modelCache.js`,
+precisely so that _listing_ models does not import the module that would download the
+runtime.
 
 | Chunk             | Size (gzip) | When             |
 | ----------------- | ----------- | ---------------- |
@@ -357,17 +366,10 @@ not a publicly hosted page reaching into their network.
 
 ## Known gaps
 
-- **Several states are wired but unrendered.** `setEndpoint`, `storageError` and the
-  `CANCEL` action all work and nothing calls them. Until the UI exists there is no way to
-  configure an endpoint in a production build, and a storage failure means silent data loss.
 - **The HTTP backend does not stream.** `onToken` fires once with the finished reply, so
   the UI shows a placeholder and then the whole answer. Only the WebGPU path streams.
 - **Model selection is not invalidated** when the model list changes, so a stale
   `selectedModelId` produces "No model selected." on send.
-- **Absent WebGPU is silent.** The model is correctly omitted, but nothing explains why the
-  picker is empty.
 - **An abandoned session keeps its unanswered turn.** `SEND_START` persists the user turn;
   if the user navigates away and the request then fails, the rollback cannot reach a
   conversation that is no longer loaded.
-- **No tests.** The reducer is a pure function with seven transitions and is the obvious
-  first target.

@@ -11,7 +11,7 @@ Local-first LLM chat client (React 19 + Vite 8, plain JS/JSX, no TypeScript). Tw
 
 No backend of our own. Conversations live in IndexedDB; model weights in the Cache API. UI is in English and Portuguese (pt-PT).
 
-`docs/architecture.md` and `docs/storage.md` are the detailed design docs — read them before touching state, providers, or storage. Parts are stale: the chat UI is now built on `@assistant-ui/react` (`src/components/assistant-ui/thread.jsx`), not the `Output`/`TextArea` components the doc names.
+`docs/architecture.md` and `docs/storage.md` are the detailed design docs — read them before touching state, providers, or storage. `docs/adr/decisions.md` records why things are the way they are (JS until v1, assistant-ui, git workflow, lucide).
 
 ## Commands
 
@@ -38,6 +38,7 @@ src/state/         conversation reducer (pure) + useConversation (owns the useRe
 src/features/<x>/  components/ + hooks/ per feature (chat, models, sessions, settings, layout, onboarding)
 src/services/      browser/network I/O: providers facade, openai adapter, llm (WebGPU), sessionStore (IndexedDB), modelCache
 src/i18n/          en.js (source language) + pt.js, LocaleProvider, useT()
+src/lib/           framework-free helpers and generic hooks
 src/components/ui/ and src/components/assistant-ui/   shadcn / assistant-ui generated components (eslint-ignored)
 ```
 
@@ -64,7 +65,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 ### Storage
 
 - `navigator.storage.estimate()` numbers are fuzzed per browser. Use them to warn, never to gate. A `QuotaExceededError` is caught in `features/models/hooks/useModels.js`.
-- "Cached" (weights on disk, `storage.cachedModelIds`) is not "loaded" (on GPU, `loadedModelIds`, not persisted). `App.jsx` reloads a restored, cached model on startup.
+- "Cached" (weights on disk, `storage.cachedModelIds`) is not "loaded" (on GPU, `loadedModelIds`, not persisted). On startup `App.jsx` reloads every cached model (selected first), skipping downloads the user stopped.
 - `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:runtime`, `ai-chat:model`). The runtime and model are persisted together on purpose.
 
 ### i18n
@@ -73,11 +74,27 @@ Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a tra
 
 ## Conventions
 
-- Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`, lucide) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`.
-- React Compiler is enabled (babel preset in `vite.config.js`), so manual `useMemo`/`useCallback` is rarely needed.
+- Plain JS/JSX until the post-v1 TypeScript migration (ADR-001).
+- Prettier: single quotes, trailing commas, width 100, semis. ESLint flat config (react-hooks, react-refresh).
+- Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`; don't hand-edit them beyond small fixes.
+- Icons: lucide only (ADR-007).
+- zustand is only used by generated code (`assistant-ui/attachment.jsx`). Don't use it for app state; that lives in the reducer and feature hooks.
+- React Compiler is enabled (babel preset in `vite.config.js`): no manual `useMemo`/`useCallback` unless profiled.
 - Tailwind v4 via `@tailwindcss/vite`; theme tokens are in `src/index.css`.
 - `__APP_VERSION__` is injected from `package.json` at build time.
-- Comments explain _why_ (constraints, browser quirks, past bugs). Match that density and style.
+- Comments explain _why_ (constraints, browser quirks, past bugs), never _what_. Match that density and style.
+
+### Tests
+
+Test density follows risk: the reducer densely (inputs deep-frozen), hooks and services on their critical paths, UI checked manually (one smoke test planned).
+
+### Git
+
+Per ADR-006: `main` always deployable; one ticket → one branch (`type/short-name`) → one PR → squash merge → delete branch. Conventional commits (`feat|fix|test|ci|chore|style|refactor|docs`); check the squash title before merging; CI green before merge.
+
+### Definition of Done
+
+- Lint + format + tests + build pass · strings in en + pt · docs updated if behaviour changed · checked on mobile + desktop.
 
 ## Deployment constraints
 

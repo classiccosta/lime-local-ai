@@ -1,27 +1,24 @@
-# React + Vite
+# AI Chat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Local-first LLM chat client. Run models in the browser on WebGPU, or point it at any
+OpenAI-compatible server (LM Studio, llama.cpp, vLLM). No backend of its own:
+conversations stay in IndexedDB, model weights in the browser cache. English and
+Portuguese (pt-PT).
 
-Currently, two official plugins are available:
+```bash
+npm install
+npm run dev   # http://localhost:5173
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The endpoint must allow CORS. See [`docs/architecture.md`](docs/architecture.md) for the
+design, [`docs/storage.md`](docs/storage.md) for browser storage, and
+[`docs/adr/decisions.md`](docs/adr/decisions.md) for the decisions behind them.
 
 ## Roadmap
 
 ### v1
 
-- **Two ways to run models:** in your browser with WebGPU (no server, nothing leaves your machine), or via any OpenAI-compatible endpoint (LM Studio, Ollama, OpenAI).
+- **Two ways to run models:** in your browser with WebGPU (no server, nothing leaves your machine), or via any OpenAI-compatible endpoint (LM Studio, llama.cpp, vLLM).
 - **Sessions saved locally:** create, rename and delete conversations; everything stays in your browser (IndexedDB).
 - **Streaming replies you can stop** at any time.
 - **Clear errors:** model load, endpoint and storage failures are explained in the UI, not swallowed.
