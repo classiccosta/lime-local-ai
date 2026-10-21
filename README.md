@@ -2,8 +2,8 @@
 
 Local-first LLM chat client. Run models in the browser on WebGPU, or point it at any
 OpenAI-compatible server (LM Studio, llama.cpp, vLLM). No backend of its own:
-conversations stay in IndexedDB, model weights in the browser cache. English and
-Portuguese (pt-PT).
+conversations stay in IndexedDB, model weights in the browser cache. English,
+Portuguese (pt-PT) and German.
 
 **Live demo:** [lime-zeta-three.vercel.app](https://lime-zeta-three.vercel.app/) (in-browser
 models need a WebGPU browser, e.g. recent Chrome or Edge)...
@@ -25,7 +25,7 @@ design, [`docs/storage.md`](docs/storage.md) for browser storage, and
 - **Sessions saved locally:** create, rename and delete conversations; everything stays in your browser (IndexedDB).
 - **Streaming replies you can stop** at any time.
 - **Clear errors:** model load, endpoint and storage failures are explained in the UI, not swallowed.
-- **English and Portuguese (pt-PT).**
+- **English, Portuguese (pt-PT) and German.**
 
 Quality: unit-tested state logic; CI runs lint, format, tests and build on every PR.
 
