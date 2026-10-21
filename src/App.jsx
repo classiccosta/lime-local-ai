@@ -6,24 +6,18 @@ import { useAssistantRuntime } from '@/features/chat/hooks/useAssistantRuntime';
 import { useSession } from '@/features/chat/hooks/useSession';
 import { MobileHeader } from '@/features/layout/components/MobileHeader';
 import { MobileSheet } from '@/features/layout/components/MobileSheet';
-import { ScrollNudge } from '@/features/layout/components/ScrollNudge';
 import { ModelPicker } from '@/features/models/components/ModelPicker';
-import { ModelInfo } from '@/features/models/components/ModelInfo';
 import { shortLabel } from '@/features/models/labels';
 import { isStaleSelection } from '@/features/models/selection';
 import { ComposerModelsContext } from '@/features/models/composerModels';
 import { useModels } from '@/features/models/hooks/useModels';
 import { useRuntime } from '@/features/models/hooks/useRuntime';
-import { WelcomeModal } from '@/features/onboarding/components/WelcomeModal';
-import { useFirstRun } from '@/features/onboarding/useFirstRun';
 import { SessionSidebar } from '@/features/sessions/components/SessionSidebar';
 import { useSessions } from '@/features/sessions/hooks/useSessions';
 import { EndpointField } from '@/features/settings/components/EndpointField';
 import { LanguageSwitch } from '@/features/settings/components/LanguageSwitch';
-import { PanelToggle } from '@/features/settings/components/PanelToggle';
 import { SettingsDialog } from '@/features/settings/components/SettingsDialog';
 import { SettingValue } from '@/features/settings/components/SettingValue';
-import { StorageMeter } from '@/features/settings/components/StorageMeter';
 import { useEndpoint } from '@/features/settings/hooks/useEndpoint';
 import { usePanel } from '@/features/settings/hooks/usePanel';
 import { useStorage } from '@/features/settings/hooks/useStorage';
@@ -32,19 +26,10 @@ import { useKeyboardInset } from '@/lib/useKeyboardInset';
 import { useIsMobile } from '@/lib/useMediaQuery';
 import { cn } from '@/lib/utils';
 import { findLocalModel } from '@/services/localModels';
-import { readIncompleteModels } from '@/services/modelCache';
 import { useConversation } from '@/state/useConversation';
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
-import { Cloud, HardDrive, Settings } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
-
-// Switched off for now; flip back to restore. The components and their hooks are
-// untouched, so nothing else needs to change to bring them back.
-const SHOW_ONBOARDING = false;
-const SHOW_INFO_PANELS = false;
-// The settings rail on the right, and its top sheet on a phone. Settings now
-// lives in the dialog opened from the session sidebar (or the mobile header).
-const SHOW_SETTINGS_RAIL = false;
+import { Cloud, HardDrive } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function App() {
   const t = useT();
@@ -52,16 +37,13 @@ export default function App() {
   const {
     storage,
     storageReady,
-    clear: clearStorage,
-    clearing,
     refresh: refreshStorage,
     requestPersist,
     removeModel,
   } = useStorage();
   const sessions = usePanel('sessions');
-  const config = usePanel('config', false);
-  // Below `md` the panels stop fitting beside the thread, so they become sheets
-  // over it. Their own open state is separate from the desktop one and starts
+  // Below `md` the sessions panel stops fitting beside the thread, so it becomes
+  // a sheet over it. Its open state is separate from the desktop one and starts
   // shut: a remembered "expanded" rail is a reasonable thing to restore, a
   // remembered open drawer covering the whole screen is not.
   const isMobile = useIsMobile();
@@ -75,16 +57,10 @@ export default function App() {
     setSelectedModelId,
     selectedModelId,
     loadedModelIds,
-    isSelectedLoaded,
     loadModelById,
-    cancelLoad,
     loadingModelId,
-    forgetLoaded,
     forgetModel,
     busy,
-    loadingStatus,
-    loadingError,
-    progress,
     attemptError,
     attemptModelId,
     fetching,
@@ -115,30 +91,7 @@ export default function App() {
     if (loadedModelIds.length || attemptError) refreshStorage();
   }, [loadedModelIds, attemptError, refreshStorage]);
 
-  // The panel is the only place these figures appear, so they are re-read when
-  // it opens rather than polled. That also picks up conversations written to
-  // IndexedDB since the last read, which nothing else would notice.
   const [settingsOpen, setSettingsOpen] = useState(false);
-  useEffect(() => {
-    if (config.open || settingsOpen) refreshStorage();
-  }, [config.open, settingsOpen, refreshStorage]);
-
-  // Weighing a download against free space only means something while the model
-  // still has to be fetched; one already in the cache costs nothing further.
-  const pendingDownload = useMemo(() => {
-    const local = findLocalModel(selectedModelId);
-    if (!local || storage?.cachedModelIds?.includes(selectedModelId)) return null;
-    return { label: local.label.split(' · ')[0], bytes: local.info.downloadBytes };
-  }, [selectedModelId, storage]);
-
-  // Clearing is two jobs, and the disk half alone would leave the panel saying
-  // "Loaded" about models whose weights had just been deleted. Memory is
-  // released first: it aborts any running load, which would otherwise write its
-  // files back into the cache between the delete and the re-read.
-  const clearModels = async () => {
-    await forgetLoaded();
-    await clearStorage();
-  };
 
   // A refresh empties the map in llm.js, so every model whose weights are still
   // on disk comes back listed as cached but unable to generate. All of them are
@@ -155,17 +108,10 @@ export default function App() {
     if (restoreStarted.current || loading || !storageReady) return;
     restoreStarted.current = true;
     const cached = storage?.cachedModelIds ?? [];
-    // Files from a stopped download are still files, so the cache lists that
-    // model as present. Restoring it would resume the download it was told to
-    // stop — behind a skeleton, unasked. It waits for a deliberate Load.
-    const incomplete = readIncompleteModels();
     // A cached id missing from the list has no runtime to load it — no WebGPU,
     // so providers dropped the in-browser models entirely.
     const restorable = models
-      .filter(
-        (model) =>
-          model.requiresLoad && cached.includes(model.id) && !incomplete.includes(model.id),
-      )
+      .filter((model) => model.requiresLoad && cached.includes(model.id))
       .map((model) => model.id)
       .sort((a, b) => (a === selectedModelId ? -1 : b === selectedModelId ? 1 : 0));
     (async () => {
@@ -229,20 +175,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restored, selectedModelId, models, loadedModelIds, error, endpointError]);
 
-  // Shown on a browser with no stored preferences, and never again once
-  // answered. The choice is applied through the same paths the settings panel
-  // uses, so there is no second way for a runtime to be set.
-  const firstRun = useFirstRun();
-  const confirmFirstRun = ({ runtimeId: chosen, endpoint: url }) => {
-    firstRun.complete();
-    if (chosen === 'LM-Studio' && url) {
-      loadFromEndpoint(url);
-      setRuntimeId('LM-Studio');
-      return;
-    }
-    setRuntimeId('Web-GPU');
-  };
-
   const loadFromEndpoint = (url) => {
     setEndpoint(url);
     // Only a model from the old endpoint stops being reachable. An in-browser
@@ -270,14 +202,10 @@ export default function App() {
 
   const runtime = useAssistantRuntime({ conversation, dispatch, send });
 
-  // Defined once and mounted in whichever container the viewport calls for — an
-  // <aside> beside the thread, or a sheet over it. Written as elements rather
-  // than extracted components because the settings body reads two dozen values
-  // from this scope; a component would be that same list again as props.
   const closeDrawer = () => setDrawer(null);
 
-  // Memory first, for the reason clearModels gives: a load still running for
-  // this model would write its files back between the delete and the re-read.
+  // Memory first: a load still running for this model would write its files
+  // back between the delete and the re-read.
   const deleteModel = async (id) => {
     await forgetModel(id);
     await removeModel(id);
@@ -355,9 +283,9 @@ export default function App() {
   // A failing endpoint always shows the field, where its error is.
   const editEndpoint = editingEndpoint || endpointModels.length === 0 || Boolean(endpointError);
 
-  // Shared by the settings rail and the settings dialog while both exist; the
-  // rail is on its way out. One column, both providers: a tab per provider
-  // hid half of what could be picked at any moment.
+  // Written as elements rather than an extracted component because they read
+  // two dozen values from this scope. One column, both providers: a tab per
+  // provider hid half of what could be picked at any moment.
   const settingsSections = (
     <>
       <section className="flex flex-col gap-2">
@@ -365,7 +293,6 @@ export default function App() {
         <h3 className="text-muted-foreground text-xs">{t('settings.models')}</h3>
 
         <ModelPicker {...modelPicker} />
-        {SHOW_INFO_PANELS && <ModelInfo modelId={selectedModelId} loaded={isSelectedLoaded} />}
       </section>
 
       {/* The field carries its own "Endpoint" label, so the title is only
@@ -391,41 +318,8 @@ export default function App() {
         )}
       </section>
 
-      {SHOW_INFO_PANELS && (
-        <StorageMeter
-          storage={storage}
-          onClear={clearModels}
-          clearing={clearing}
-          requirement={pendingDownload}
-        />
-      )}
-
       <LanguageSwitch />
     </>
-  );
-
-  const settingsBody = (
-    <div
-      className={cn(
-        'flex flex-col gap-5 text-xs',
-        isMobile ? 'p-4' : 'h-full overflow-y-auto',
-        isMobile ? '' : config.open ? 'px-4 py-3' : 'px-2 py-3',
-      )}
-    >
-      <PanelToggle
-        icon={Settings}
-        labelKey="panel.settings"
-        side="right"
-        sheet={isMobile}
-        // Expanded the moment the sheet opens: the collapsed rail exists to
-        // reclaim width beside the thread, and a sheet is not beside anything.
-        open={isMobile || config.open}
-        onToggle={isMobile ? closeDrawer : config.toggle}
-      />
-      {/* Not while the dialog shows the same controls: two endpoint fields
-          would share one id, and two pickers would both answer every load. */}
-      {(isMobile || config.open) && !settingsOpen && settingsSections}
-    </div>
   );
 
   const sessionsBody = (
@@ -470,19 +364,6 @@ export default function App() {
   return (
     <AssistantRuntimeProvider runtime={runtime}>
       <ComposerModelsContext.Provider value={composerModels}>
-        <WelcomeModal
-          open={SHOW_ONBOARDING && firstRun.open}
-          onConfirm={confirmFirstRun}
-          models={models}
-          loadedModelIds={loadedModelIds}
-          onLoadModel={loadFromComposer}
-          progress={progress}
-          loadingStatus={loadingStatus}
-          loadingError={loadingError}
-          loadingModelId={loadingModelId}
-          busy={busy}
-          onCancelLoad={cancelLoad}
-        />
         <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen}>
           {settingsSections}
         </SettingsDialog>
@@ -510,9 +391,7 @@ export default function App() {
               <MobileHeader
                 title={title}
                 onOpenSessions={() => setDrawer('sessions')}
-                onOpenSettings={() =>
-                  SHOW_SETTINGS_RAIL ? setDrawer('config') : setSettingsOpen(true)
-                }
+                onOpenSettings={() => setSettingsOpen(true)}
               />
             ) : (
               <div className="absolute inset-x-0 top-0 z-10">
@@ -550,45 +429,19 @@ export default function App() {
               <Thread />
             </div>
           </main>
-
-          {SHOW_SETTINGS_RAIL && (
-            <aside
-              hidden={isMobile}
-              className={cn(
-                'bg-sidebar shrink-0 border-l transition-[width] duration-200 motion-reduce:transition-none',
-                config.open ? 'w-72' : 'w-13',
-              )}
-            >
-              {settingsBody}
-            </aside>
-          )}
         </div>
 
-        {/* Mounted only below the breakpoint, so the panels exist in exactly one
+        {/* Mounted only below the breakpoint, so the panel exists in exactly one
             container at a time and nothing is rendered twice. */}
         {isMobile && (
-          <>
-            <MobileSheet
-              open={drawer === 'sessions'}
-              onOpenChange={(next) => setDrawer(next ? 'sessions' : null)}
-              side="left"
-              label={t('panel.sessions')}
-              selectable={false}
-            >
-              <div className="min-h-0 flex-1">{sessionsBody}</div>
-            </MobileSheet>
-
-            {SHOW_SETTINGS_RAIL && (
-              <MobileSheet
-                open={drawer === 'config'}
-                onOpenChange={(next) => setDrawer(next ? 'config' : null)}
-                side="top"
-                label={t('panel.settings')}
-              >
-                <ScrollNudge label={t('panel.more')}>{settingsBody}</ScrollNudge>
-              </MobileSheet>
-            )}
-          </>
+          <MobileSheet
+            open={drawer === 'sessions'}
+            onOpenChange={(next) => setDrawer(next ? 'sessions' : null)}
+            label={t('panel.sessions')}
+            selectable={false}
+          >
+            <div className="min-h-0 flex-1">{sessionsBody}</div>
+          </MobileSheet>
         )}
       </ComposerModelsContext.Provider>
     </AssistantRuntimeProvider>
