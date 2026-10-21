@@ -39,6 +39,7 @@ function DialogOverlay({ className, ...props }) {
 function DialogContent({
   className,
   overlayClassName,
+  closeClassName,
   onOverlayPointerDown,
   children,
   showCloseButton = true,
@@ -58,7 +59,11 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close data-slot="dialog-close" asChild>
-            <Button variant="ghost" className="absolute top-2 right-2" size="icon-sm">
+            <Button
+              variant="ghost"
+              className={cn('absolute top-2 right-2', closeClassName)}
+              size="icon-sm"
+            >
               <XIcon strokeWidth={2} />
               <span className="sr-only">Close</span>
             </Button>

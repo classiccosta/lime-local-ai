@@ -54,7 +54,7 @@ export function LanguageSwitch() {
                   onSelect={() => setLocale(entry.id)}
                   className={cn(
                     menuItem,
-                    'justify-between gap-3',
+                    'justify-between gap-3 text-xs',
                     entry.id === locale && 'text-primary',
                   )}
                 >
