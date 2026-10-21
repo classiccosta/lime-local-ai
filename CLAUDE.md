@@ -26,14 +26,14 @@ npm run format    # prettier --write . (singleQuote, trailingComma all, printWid
 npm run format:check
 ```
 
-Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs). CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
+Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs) and `abandonedMessages`; `features/chat/displayMessages.test.js` and `features/models/selection.test.js` cover the other pure decisions. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
 
 Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an optional default endpoint. Endpoint resolution: `localStorage` → `VITE_API_BASE_URL` → `http://localhost:1234/v1` in dev → `''` (endpoint provider disabled). There is no dev proxy, so the server must allow CORS in every mode.
 
 ## Architecture
 
 ```
-src/App.jsx        composition root: calls every hook, lays out components (large, ~580 lines)
+src/App.jsx        composition root: calls every hook, lays out components (large, ~600 lines)
 src/state/         conversation reducer (pure) + useConversation (owns the useReducer)
 src/features/<x>/  components/ + hooks/ per feature (chat, models, sessions, settings, layout, onboarding)
 src/services/      browser/network I/O: providers facade, openai adapter, llm (WebGPU), sessionStore (IndexedDB), modelCache
@@ -66,7 +66,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 
 - `navigator.storage.estimate()` numbers are fuzzed per browser. Use them to warn, never to gate. A `QuotaExceededError` is caught in `features/models/hooks/useModels.js`.
 - "Cached" (weights on disk, `storage.cachedModelIds`) is not "loaded" (on GPU, `loadedModelIds`, not persisted). On startup `App.jsx` reloads every cached model (selected first), skipping downloads the user stopped.
-- `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:runtime`, `ai-chat:model`). The runtime and model are persisted together on purpose. A restored model id the list no longer offers is cleared after the cache restore (`isStaleSelection`), except an endpoint model while the endpoint is unreachable.
+- `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:runtime`, `ai-chat:model`). The runtime and model are persisted together on purpose. A restored model id the list no longer offers is cleared after the cache restore and on every list change (`isStaleSelection`), except an endpoint model while the endpoint is unreachable. A stale clear re-arms the once-only auto-select.
 
 ### i18n
 

@@ -22,8 +22,8 @@ src/
     useConversation.js owns the useReducer instance
 
   features/
-    chat/        hooks/{useSession,useAssistantRuntime}.js, Title, ErrorBanner
-    models/      hooks/{useModels,useRuntime}.js, ModelPicker, ModelList, ModelInfo
+    chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, Title, ErrorBanner
+    models/      hooks/{useModels,useRuntime}.js, selection.js, ModelPicker, ModelList, ModelInfo
     sessions/    hooks/useSessions.js, SessionSidebar
     settings/    hooks/{useEndpoint,usePanel,useStorage}.js, SettingsDialog, StorageMeter
     layout/      MobileHeader, MobileSheet, ScrollNudge
@@ -380,5 +380,3 @@ not a publicly hosted page reaching into their network.
 
 - **The HTTP backend does not stream.** `onToken` fires once with the finished reply, so
   the UI shows a placeholder and then the whole answer. Only the WebGPU path streams.
-- **Model selection is not invalidated** when the model list changes, so a stale
-  `selectedModelId` produces "No model selected." on send.
