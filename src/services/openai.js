@@ -48,21 +48,31 @@ export async function generate({ model, messages, onToken, baseURL, signal }) {
 
   let text = '';
   let buffer = '';
+  // A reader, not `for await`: Safari's ReadableStream is not async iterable.
   // Abort reaches here through `signal` on fetch: the pending read rejects
   // with an AbortError.
-  for await (const chunk of response.body.pipeThrough(new TextDecoderStream())) {
-    const parsed = parseSSE(buffer + chunk);
-    buffer = parsed.rest;
-    for (const event of parsed.events) {
-      if (event.type === 'response.output_text.delta') {
-        text += event.delta;
-        onToken?.(event.delta);
-      } else if (event.type === 'response.failed' || event.type === 'error') {
-        throw new Error(event.response?.error?.message ?? event.message ?? 'Request failed');
-      } else if (event.type === 'response.completed') {
-        return { text };
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const parsed = parseSSE(buffer + value);
+      buffer = parsed.rest;
+      for (const event of parsed.events) {
+        if (event.type === 'response.output_text.delta') {
+          text += event.delta;
+          onToken?.(event.delta);
+        } else if (event.type === 'response.failed' || event.type === 'error') {
+          throw new Error(event.response?.error?.message ?? event.message ?? 'Request failed');
+        } else if (event.type === 'response.completed') {
+          return { text };
+        }
       }
     }
+  } finally {
+    // Closes the connection when we return on `response.completed` or throw
+    // before the server ends the stream.
+    reader.cancel().catch(() => {});
   }
 
   return { text };
