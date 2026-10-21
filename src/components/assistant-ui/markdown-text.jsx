@@ -1,7 +1,5 @@
 'use client';
 
-import '@assistant-ui/react-markdown/styles/dot.css';
-
 import {
   MarkdownTextPrimitive,
   unstable_memoizeMarkdownComponents as memoizeMarkdownComponents,

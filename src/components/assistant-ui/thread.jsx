@@ -41,6 +41,7 @@ import {
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  BrainIcon,
   CheckIcon,
   CopyIcon,
   DownloadIcon,
@@ -452,11 +453,27 @@ const AssistantMessage = () => {
                 );
               case 'indicator':
                 return (
-                  <span
+                  <div
                     data-slot="aui_assistant-message-indicator"
-                    className="bg-primary animate-blink ml-0.5 inline-block h-3.5 w-2 align-text-bottom motion-reduce:animate-none"
-                    aria-label="Assistant is working"
-                  />
+                    role="status"
+                    className="text-muted-foreground flex items-center gap-2 py-1.5 text-sm"
+                  >
+                    {/* background-clip: text can't reach an SVG stroke, so the icon pulses instead. */}
+                    <BrainIcon
+                      aria-hidden
+                      className="size-4 shrink-0 animate-pulse motion-reduce:animate-none"
+                    />
+                    <span className="relative inline-block leading-none">
+                      {t('thread.thinking')}
+                      {/* Highlight to full foreground, not the default faint tint, so the hint reads at a glance. */}
+                      <span
+                        aria-hidden
+                        className="shimmer shimmer-color-foreground pointer-events-none absolute inset-0 motion-reduce:animate-none"
+                      >
+                        {t('thread.thinking')}
+                      </span>
+                    </span>
+                  </div>
                 );
               default:
                 return null;
