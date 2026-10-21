@@ -1,9 +1,10 @@
 import { createContext, useContext } from 'react';
 import { en } from './en';
 import { pt } from './pt';
+import { de } from './de';
 import { DEFAULT_LOCALE } from './locales';
 
-export const DICTIONARIES = { en, pt };
+export const DICTIONARIES = { en, pt, de };
 
 /**
  * Fill `{name}` placeholders from `values`.

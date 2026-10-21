@@ -9,7 +9,7 @@ Local-first LLM chat client (React 19 + Vite 8, plain JS/JSX, no TypeScript). Tw
 - **WebGPU** — models run in the browser via `@huggingface/transformers` (catalogue in `src/services/localModels.js`).
 - **Endpoint** — any OpenAI-compatible server (LM Studio, llama.cpp, vLLM), called via the Responses API (`POST {baseURL}/responses`).
 
-No backend of our own. Conversations live in IndexedDB; model weights in the Cache API. UI is in English and Portuguese (pt-PT).
+No backend of our own. Conversations live in IndexedDB; model weights in the Cache API. UI is in English, Portuguese (pt-PT) and German.
 
 `docs/architecture.md` and `docs/storage.md` are the detailed design docs — read them before touching state, providers, or storage. `docs/adr/decisions.md` records why things are the way they are (JS until v1, assistant-ui, git workflow, lucide).
 
@@ -51,7 +51,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 - **Cancellation** is separate: `useSession` aborts its `AbortController` whenever `activeRequestId` becomes `null`. The WebGPU path resolves with partial output on interrupt, so `llm.js` must call `signal.throwIfAborted()` afterwards. Switching sessions mid-reply (`useSessions.openSession`) dispatches `CANCEL`, so it behaves like Stop: the user turn stays and shows as stopped.
 - **`dirty`** controls persistence: only dirty conversations are written, so opening a chat doesn't bump `updatedAt`. Writes happen in effects, never during render.
 - `useSession.send` builds the outgoing `messages` from the current render's state, because the dispatch isn't visible until the next render.
-- `features/chat/hooks/useAssistantRuntime.js` adapts the reducer to assistant-ui via `useExternalStoreRuntime`, appending a synthetic `__streaming__` message while generating and a `__stopped__:<id>` marker after every unanswered user turn (`features/chat/displayMessages.js`; derived, not stored).
+- `features/chat/hooks/useAssistantRuntime.js` adapts the reducer to assistant-ui via `useExternalStoreRuntime`, appending a synthetic `__streaming__` message while generating and a `__stopped__:<id>` marker after every unanswered user turn (`features/chat/displayMessages.js`; derived, not stored). The streaming message has no parts until the first token: assistant-ui renders its `indicator` ("Thinking…") only when the last part isn't text, and an empty text part counts as text.
 - The full history is sent on every request. Don't reintroduce `previous_response_id`: it broke on reload, session switch, and endpoint change.
 
 ### Providers and lazy loading

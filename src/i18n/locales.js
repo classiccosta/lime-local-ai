@@ -4,6 +4,7 @@
 export const LOCALES = [
   { id: 'en', label: 'English', tag: 'en' },
   { id: 'pt', label: 'Português', tag: 'pt-PT' },
+  { id: 'de', label: 'Deutsch', tag: 'de' },
 ];
 
 export const DEFAULT_LOCALE = 'en';
