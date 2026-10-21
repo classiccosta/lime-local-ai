@@ -96,6 +96,7 @@ export const pt = {
 
   'thread.welcome': 'Como posso ajudá-lo hoje?',
   'thread.placeholder': 'Escreva uma mensagem...',
+  'thread.stopped': 'Interrompido',
 
   'composer.choose': 'Escolher um modelo',
   'composer.textOnly': 'Esta versão do Lime só aceita texto',

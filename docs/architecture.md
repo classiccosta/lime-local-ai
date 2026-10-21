@@ -158,6 +158,11 @@ it: rolled back, the chat would be untitled and so deleted. A reload mid-reply a
 the turn, since nothing runs to roll it back. What to store is decided by `abandonedMessages` in
 `state/conversation.js`, a pure function with its own tests; the hook only does the write.
 
+Those kept turns are the only way a user message ends up unanswered, so the "Stopped"
+marker is derived, not stored: `features/chat/displayMessages.js` adds a synthetic
+`__stopped__:<id>` assistant message (status `incomplete`, reason `cancelled`) after every
+user turn that nothing answers. Old sessions get the marker too, with no migration.
+
 `LOAD_SESSION` and `NEW_SESSION` rebuild state from `createConversation()`, so they
 reset `activeRequestId`, `status`, `error`, `streamed` and `dirty` without listing them
 individually.

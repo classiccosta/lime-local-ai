@@ -374,6 +374,10 @@ const AssistantMessage = () => {
     ToolGroup,
     ReasoningGroup,
   } = useContext(ThreadComponentsContext);
+  const t = useT();
+  const stopped = useAuiState(
+    (s) => s.message.status?.type === 'incomplete' && s.message.status.reason === 'cancelled',
+  );
 
   const ACTION_BAR_PT = 'pt-1.5';
   // Keep the action bar inside the contained root's paint box, then cancel its reserved space in flow.
@@ -467,8 +471,14 @@ const AssistantMessage = () => {
         data-slot="aui_assistant-message-footer"
         className={cn('ms-2 flex items-center', ACTION_BAR_HEIGHT)}
       >
-        <BranchPicker />
-        <AssistantActionBar />
+        {stopped ? (
+          <span className="text-muted-foreground text-sm">{t('thread.stopped')}</span>
+        ) : (
+          <>
+            <BranchPicker />
+            <AssistantActionBar />
+          </>
+        )}
       </div>
     </MessagePrimitive.Root>
   );
