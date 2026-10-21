@@ -57,21 +57,14 @@ shows both:
 disk still has to be read, compiled and uploaded to the GPU after a reload, so it
 is _cached_ but not _loaded_ until something loads it.
 
-The distinction drives three pieces of UI:
-
-- The Load Model button is removed once the selected model is in
-  `loadedModelIds` — it has nothing left to do. The info card reports the state
-  instead, with a full-width `Loaded` strip along its top edge.
-- Loaded models get a `✓` after their name in the dropdown. A native `<option>`
-  renders text and nothing else, so the mark is part of the label string rather
-  than an icon beside it.
-- Switching the runtime away and back restores the most recently loaded model
-  (`lastLoadedModelId`) instead of emptying the picker, so its info card and
-  selection survive the trip.
+In the settings model list ([`ModelList.jsx`](../src/features/models/components/ModelList.jsx),
+rows built in `App.jsx`), a model on disk gets a drive icon and can be picked; one
+that isn't is dimmed and fetched from its own download icon. Only a model that is
+both selected _and_ in `loadedModelIds` is marked active.
 
 `loadingStatus` describes the most recent load _attempt_ and nothing more. It
 cannot answer "is this model ready" once the selection has moved on, which is why
-`isReady` and the button both consult `loadedModelIds` instead. Changing the
+`isReady` consults `loadedModelIds` instead. Changing the
 selection resets `loadingStatus`, the progress value and any load error, so a new
 model never inherits the previous one's progress bar.
 
@@ -82,27 +75,30 @@ disk costs no further space, so there is nothing to weigh.
 
 Three pieces of state cooperate so a reload comes back where it left off:
 
-| State             | Where             | Restored by                 |
-| ----------------- | ----------------- | --------------------------- |
-| `runtimeId`       | `ai-chat:runtime` | `useRuntime`                |
-| `selectedModelId` | `ai-chat:model`   | `useModels`                 |
-| `loadedModelIds`  | not persisted     | re-loading the cached model |
+| State             | Where             | Restored by              |
+| ----------------- | ----------------- | ------------------------ |
+| `runtimeId`       | `ai-chat:runtime` | `useRuntime`             |
+| `selectedModelId` | `ai-chat:model`   | `useModels`              |
+| `loadedModelIds`  | not persisted     | re-loading cached models |
 
 The runtime is persisted alongside the model for a reason: restoring a model id
 into a picker filtered to the _other_ runtime would leave the select showing
 nothing. Writing both together keeps them consistent.
 
-`loadedModelIds` is deliberately not persisted. Restoring it would paint a
-`Loaded` strip over a model that `generate()` would reject with "Model is not
-loaded yet." Instead `App.jsx` re-establishes the fact: an effect loads the
-restored model on startup when its weights are already in `cachedModelIds`.
-Reading from the cache costs GPU memory and compile time but no network, and a
-`useRef` guard stops a later storage refresh from firing it again.
+`loadedModelIds` is deliberately not persisted. Restoring it would mark as ready a
+model that `generate()` would reject with "Model is not loaded yet." Instead
+`App.jsx` re-establishes the fact: once the model list and cache contents are
+known, an effect loads **every** in-browser model whose weights are in
+`cachedModelIds`, one at a time, selected model first. Reading from the cache
+costs GPU memory and compile time but no network, and a `useRef` guard stops a
+later storage refresh from firing it again. The picker's in-browser rows stay
+hidden until this settles.
 
-The cost is real and worth stating: every refresh with a cached model selected
-spends that model's VRAM whether or not the user goes on to chat. The optimism in
-`cachedModelIds` also applies here — an interrupted download looks cached, so
-startup resumes fetching the missing files rather than loading instantly.
+The cost is real and worth stating: every refresh spends the VRAM of every cached
+model whether or not the user goes on to chat. A download the user stopped is
+recorded in `ai-chat:incomplete-models` (`markIncomplete` / `clearIncomplete` in
+`modelCache.js`) and skipped by the restore, so a refresh doesn't silently resume
+it; it waits for a deliberate download.
 
 ---
 
@@ -137,7 +133,7 @@ download finishes; and a pessimistic reading in Safari may describe a download
 that would in fact have succeeded.
 
 **The figures are good enough to warn with and not good enough to gate on.** That
-is the reason the Load Model button is never disabled by the fit check.
+is the reason a download is never blocked by the fit check.
 
 ## The per-mechanism breakdown
 
@@ -181,7 +177,7 @@ shrinking mid-download as the disk fills. The function is tri-state: `null` mean
 _cannot say_ (no estimate, or no pending download), which the component renders as
 no message at all rather than as reassurance.
 
-`App.jsx` supplies the requirement only for a model that is not already in
+`App.jsx` passes the requirement (`pendingDownload`) to `StorageMeter` only for a model not already in
 `cachedModelIds`, since a cached model costs no further space.
 
 **Detect** — `describeLoadFailure()` in
@@ -195,7 +191,7 @@ exception.
 
 A non-persisted origin can have its storage evicted under disk pressure — losing a
 1.5 GB download and every saved conversation. `requestPersistence()` calls
-`navigator.storage.persist()`, and `App.jsx` calls it via `startLoad` **before**
+`navigator.storage.persist()`, and `App.jsx` calls it via `loadFromComposer` **before**
 the first download rather than warning about its absence afterwards.
 
 Chromium decides silently from engagement heuristics and never prompts. Firefox
