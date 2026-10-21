@@ -47,8 +47,14 @@ Consequences: one fewer dependency, consistent icons.
 
 Decision: v1.0.0 on 2026-11-20. Slip → cut Sprint 3 polish first, never Sprint 1.
 
-## ADR-009 · 2026-10-21 · Accepted — Switching chat mid-reply rolls back the turn
+## ADR-009 · 2026-10-21 · Superseded by ADR-10 — Switching chat mid-reply rolls back the turn
 
 Context: switching session aborts the in-flight request; the user turn is already persisted and would stay unanswered.
 Decision: switching (openSession) rolls the turn back like a failure. Stop keeps it. A first turn is always kept so the chat isn't deleted. Reload keeps it (nothing runs).
 Consequences: no orphan questions from switching. Stop, reload and first-turn cases still leave an unanswered turn, which s1-07's marker covers.
+
+## ADR-010 · 2026-10-21 · Accepted — Switching chat mid-reply is a Stop (supersedes ADR-009)
+
+Context: with HTTP streaming the user sees the reply start; rolling the question back on a switch reads as data loss, and it was the only interruption with its own rule.
+Decision: switching session mid-reply dispatches CANCEL and nothing else. The user turn is kept and shows the "Stopped" marker, same as Stop and reload.
+Consequences: one rule for every interruption; abandonedMessages and its rollback write are deleted. Partial reply is still discarded everywhere (bl-06).
