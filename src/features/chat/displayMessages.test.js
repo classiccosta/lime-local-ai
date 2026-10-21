@@ -23,6 +23,13 @@ describe('displayMessages', () => {
     expect(result[1].content).toEqual([{ type: 'text', text: 'hi' }]);
   });
 
+  it('gives the streaming message no parts before the first token', () => {
+    const result = displayMessages(
+      deepFreeze({ messages: [user('u1')], status: 'generating', streamed: '' }),
+    );
+    expect(result[1].content).toEqual([]);
+  });
+
   it('marks a trailing user turn as stopped when idle', () => {
     expect(display({ messages: [user('u1')], status: 'idle', streamed: '' })).toEqual([
       'u1',

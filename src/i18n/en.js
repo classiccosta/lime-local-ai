@@ -50,6 +50,7 @@ export const en = {
   'thread.welcome': 'How can I help you today?',
   'thread.placeholder': 'Send a message...',
   'thread.stopped': 'Stopped',
+  'thread.thinking': 'Thinking…',
   'thread.copy': 'Copy',
   'thread.export': 'Export as Markdown',
 

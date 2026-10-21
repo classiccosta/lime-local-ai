@@ -229,3 +229,37 @@ html body[data-scroll-locked] {
 @custom-variant data-open (&:where([data-state="open"], [data-open]:not([data-open="false"])));
 
 @custom-variant data-closed (&:where([data-state="closed"], [data-closed]:not([data-closed="false"])));
+
+/* Streaming cursor: the welcome screen's blinking block in place of
+   assistant-ui's pulsing dot (react-markdown/styles/dot.css). Same selectors,
+   so it lands after the last character even inside lists and code blocks. */
+.aui-md[data-status='running']:empty::after,
+.aui-md[data-status='running'] > :where(:not(ol):not(ul):not(pre)):last-child::after,
+.aui-md[data-status='running'] > pre:last-child code::after,
+.aui-md[data-status='running']
+  > :where(:is(ol, ul):last-child)
+  > :where(li:last-child:not(:has(* > li)))::after,
+.aui-md[data-status='running']
+  > :where(:is(ol, ul):last-child)
+  > :where(li:last-child)
+  > :where(:is(ol, ul):last-child)
+  > :where(li:last-child:not(:has(* > li)))::after,
+.aui-md[data-status='running']
+  > :where(:is(ol, ul):last-child)
+  > :where(li:last-child)
+  > :where(:is(ol, ul):last-child)
+  > :where(li:last-child)
+  > :where(:is(ol, ul):last-child)
+  > :where(li:last-child)::after {
+  content: '';
+  display: inline-block;
+  width: 0.42em;
+  height: 0.8em;
+  margin-left: 0.15em;
+  background-color: var(--primary);
+  animation: var(--animate-blink);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
