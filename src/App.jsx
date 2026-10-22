@@ -1,13 +1,13 @@
 import { Thread } from '@/components/assistant-ui/thread';
 import { Mark } from '@/components/Mark';
 import { ErrorBanner } from '@/features/chat/components/ErrorBanner';
-import { Title } from '@/features/chat/components/Title';
+import { Title } from '@/features/layout/components/Title';
 import { useAssistantRuntime } from '@/features/chat/hooks/useAssistantRuntime';
 import { useSession } from '@/features/chat/hooks/useSession';
 import { MobileHeader } from '@/features/layout/components/MobileHeader';
 import { MobileSheet } from '@/features/layout/components/MobileSheet';
 import { ModelPicker } from '@/features/models/components/ModelPicker';
-import { ComposerModelsContext } from '@/features/models/composerModels';
+import { ComposerModelsContext } from '@/state/composerModels';
 import { useModelSetup } from '@/features/models/hooks/useModelSetup';
 import { SessionSidebar } from '@/features/sessions/components/SessionSidebar';
 import { useSessions } from '@/features/sessions/hooks/useSessions';
