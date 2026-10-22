@@ -4,8 +4,8 @@ import { isStaleSelection } from './selection';
 
 const catalogueId = LOCAL_MODELS[0].id;
 const endpointId = 'qwen3-8b';
-const webgpu = { id: catalogueId, provider: 'Web-GPU', requiresLoad: true };
-const endpoint = { id: endpointId, provider: 'LM-Studio', requiresLoad: false };
+const webgpu = { id: catalogueId, provider: 'webgpu', requiresLoad: true };
+const endpoint = { id: endpointId, provider: 'endpoint', requiresLoad: false };
 
 // Whether the id restored from `ai-chat:model` points at nothing, so App can
 // clear it and let auto-select pick a model that can actually answer.

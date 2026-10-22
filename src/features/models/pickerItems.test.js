@@ -4,9 +4,9 @@ import { buildPickerItems } from './pickerItems';
 
 const t = (key, values) => (values ? `${key} ${JSON.stringify(values)}` : key);
 
-const small = { id: 'small', label: 'Small · 500 MB', provider: 'Web-GPU', requiresLoad: true };
-const large = { id: 'large', label: 'Large · 2 GB', provider: 'Web-GPU', requiresLoad: true };
-const remote = { id: 'qwen3-8b', provider: 'LM-Studio', requiresLoad: false };
+const small = { id: 'small', label: 'Small · 500 MB', provider: 'webgpu', requiresLoad: true };
+const large = { id: 'large', label: 'Large · 2 GB', provider: 'webgpu', requiresLoad: true };
+const remote = { id: 'qwen3-8b', provider: 'endpoint', requiresLoad: false };
 
 function build(overrides = {}) {
   return buildPickerItems({
