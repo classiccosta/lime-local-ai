@@ -8,7 +8,7 @@ import {
   env,
   load_image,
 } from '@huggingface/transformers';
-import { findLocalModel } from './localModels';
+import { findLocalModel, generationOptions } from './localModels';
 
 // One entry per model that has been loaded this session; switching models keeps
 // the previous one warm rather than re-downloading it.
@@ -118,8 +118,7 @@ export async function generate({ modelId, messages, imageURL, onToken, signal })
   try {
     outputs = await model.generate({
       ...inputs,
-      max_new_tokens: 512,
-      do_sample: false,
+      ...generationOptions(findLocalModel(modelId)),
       stopping_criteria: stopper,
       streamer: new TextStreamer(tokenizer, {
         skip_prompt: true,
