@@ -10,7 +10,8 @@ export const de = {
   'sessions.new': 'Neu',
   'sessions.settings': 'Einstellungen',
   'settings.models': 'Modelle',
-  'settings.noWebgpu': 'WebGPU ist in diesem Browser nicht verfügbar.',
+  'settings.noWebgpu':
+    'WebGPU ist in diesem Browser nicht verfügbar. Verwenden Sie Chrome oder Edge, oder verbinden Sie unten einen Endpunkt.',
   'settings.changeEndpoint': 'Ändern',
   'settings.downloaded': 'Heruntergeladen',
   'settings.remote': 'Läuft auf dem Endpunkt',
@@ -34,7 +35,8 @@ export const de = {
   'model.label': 'Modell',
   'model.placeholder': 'Modell auswählen',
   'model.loading': 'Wird geladen…',
-  'model.listError': 'Modelle konnten nicht geladen werden: {error}',
+  'model.listError':
+    'Die Modellliste konnte nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut.',
   'model.restoring': 'Modelle werden geladen…',
   'model.storageFull':
     'Nicht genug Browserspeicher für dieses Modell. Löschen Sie ein heruntergeladenes Modell über das Papierkorb-Symbol und versuchen Sie es erneut.',
@@ -55,6 +57,18 @@ export const de = {
   'composer.choose': 'Modell auswählen',
   'composer.textOnly': 'Diese Version von Lime unterstützt nur Text',
   'composer.attachmentsUnavailable': 'Anhänge nicht verfügbar',
+  'composer.noWebgpu':
+    'WebGPU ist in diesem Browser nicht verfügbar. Verwenden Sie Chrome oder Edge, oder verbinden Sie in den Einstellungen einen Endpunkt.',
+  'composer.noModels':
+    'Keine Modelle verfügbar. Verwenden Sie Chrome oder Edge, um sie im Browser auszuführen, oder verbinden Sie in den Einstellungen einen Endpunkt.',
+
+  'banner.noModel': 'Wählen Sie zuerst ein Modell.',
+  'banner.unreachable':
+    'Der Endpunkt ist nicht erreichbar. Prüfen Sie, ob er läuft und CORS erlaubt.',
+  'banner.httpError': 'Der Server hat einen Fehler gemeldet ({status}).',
+  'banner.serverFailed':
+    'Der Server konnte die Antwort nicht abschließen. Versuchen Sie es erneut.',
+  'banner.failed': 'Etwas ist schiefgelaufen. Versuchen Sie es erneut.',
 
   'endpoint.label': 'Endpunkt',
   'endpoint.submit': 'Modelle laden',
@@ -62,4 +76,10 @@ export const de = {
   'endpoint.none': 'Unter diesem Endpunkt wurden keine Modelle gefunden.',
   'endpoint.count_one': '{count} Modell verfügbar.',
   'endpoint.count_other': '{count} Modelle verfügbar.',
+  'endpoint.unreachable':
+    'Dieser Endpunkt ist nicht erreichbar. Prüfen Sie, ob er läuft und CORS erlaubt.',
+  'endpoint.timeout': 'Der Endpunkt hat nicht rechtzeitig geantwortet. Prüfen Sie, ob er läuft.',
+  'endpoint.httpError': 'Der Endpunkt hat einen Fehler gemeldet ({status}).',
+  'endpoint.failed':
+    'Unter dieser Adresse konnte keine Modellliste gelesen werden. Prüfen Sie die URL.',
 };

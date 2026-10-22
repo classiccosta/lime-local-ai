@@ -10,7 +10,8 @@ export const pt = {
   'sessions.new': 'Nova',
   'sessions.settings': 'Definições',
   'settings.models': 'Modelos',
-  'settings.noWebgpu': 'O WebGPU não está disponível neste navegador.',
+  'settings.noWebgpu':
+    'O WebGPU não está disponível neste navegador. Use o Chrome ou o Edge, ou ligue um endpoint abaixo.',
   'settings.changeEndpoint': 'Alterar',
   'settings.downloaded': 'Transferido',
   'settings.remote': 'Corre no servidor',
@@ -34,7 +35,8 @@ export const pt = {
   'model.label': 'Modelo',
   'model.placeholder': 'Selecionar um modelo',
   'model.loading': 'A carregar…',
-  'model.listError': 'Não foi possível obter os modelos: {error}',
+  'model.listError':
+    'Não foi possível obter a lista de modelos. Recarregue a página e tente de novo.',
   'model.restoring': 'A carregar modelos…',
   'model.storageFull':
     'Não há espaço suficiente no navegador para este modelo. Apague um modelo transferido com o ícone do lixo e tente de novo.',
@@ -54,6 +56,17 @@ export const pt = {
   'composer.choose': 'Escolher um modelo',
   'composer.textOnly': 'Esta versão do Lime só aceita texto',
   'composer.attachmentsUnavailable': 'Anexos indisponíveis',
+  'composer.noWebgpu':
+    'O WebGPU não está disponível neste navegador. Use o Chrome ou o Edge, ou ligue um endpoint nas Definições.',
+  'composer.noModels':
+    'Não há modelos disponíveis. Use o Chrome ou o Edge para os executar no navegador, ou ligue um endpoint nas Definições.',
+
+  'banner.noModel': 'Escolha primeiro um modelo.',
+  'banner.unreachable':
+    'Não foi possível contactar o servidor. Verifique se está a correr e se permite CORS.',
+  'banner.httpError': 'O servidor devolveu um erro ({status}).',
+  'banner.serverFailed': 'O servidor não conseguiu terminar a resposta. Tente de novo.',
+  'banner.failed': 'Algo correu mal. Tente de novo.',
 
   'endpoint.label': 'Endpoint',
   'endpoint.submit': 'Obter modelos',
@@ -61,4 +74,9 @@ export const pt = {
   'endpoint.none': 'Não foram encontrados modelos neste servidor.',
   'endpoint.count_one': '{count} modelo disponível.',
   'endpoint.count_other': '{count} modelos disponíveis.',
+  'endpoint.unreachable':
+    'Não foi possível contactar este servidor. Verifique se está a correr e se permite CORS.',
+  'endpoint.timeout': 'O servidor não respondeu a tempo. Verifique se está a correr.',
+  'endpoint.httpError': 'O servidor devolveu um erro ({status}).',
+  'endpoint.failed': 'Não foi possível ler uma lista de modelos neste endereço. Verifique o URL.',
 };

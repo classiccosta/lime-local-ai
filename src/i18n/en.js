@@ -14,7 +14,8 @@ export const en = {
   'sessions.new': 'New',
   'sessions.settings': 'Settings',
   'settings.models': 'Models',
-  'settings.noWebgpu': 'WebGPU is not available in this browser.',
+  'settings.noWebgpu':
+    "WebGPU isn't available in this browser. Use Chrome or Edge, or connect an endpoint below.",
   'settings.changeEndpoint': 'Change',
   'settings.downloaded': 'Downloaded',
   'settings.remote': 'Runs on the endpoint',
@@ -38,7 +39,7 @@ export const en = {
   'model.label': 'Model',
   'model.placeholder': 'Select a model',
   'model.loading': 'Loading…',
-  'model.listError': 'Could not load models: {error}',
+  'model.listError': "Couldn't load the model list. Reload the page to try again.",
   'model.restoring': 'Loading models…',
   'model.storageFull':
     'Not enough browser storage for this model. Delete a downloaded model with its trash icon, then try again.',
@@ -58,6 +59,16 @@ export const en = {
   'composer.choose': 'Choose a model',
   'composer.textOnly': 'Text only in this version of Lime',
   'composer.attachmentsUnavailable': 'Attachments unavailable',
+  'composer.noWebgpu':
+    "WebGPU isn't available in this browser. Use Chrome or Edge, or connect an endpoint in Settings.",
+  'composer.noModels':
+    'No models available. Use Chrome or Edge to run them in the browser, or connect an endpoint in Settings.',
+
+  'banner.noModel': 'Choose a model first.',
+  'banner.unreachable': "Can't reach the endpoint. Check it's running and allows CORS.",
+  'banner.httpError': 'The server returned an error ({status}).',
+  'banner.serverFailed': "The server couldn't finish the reply. Try again.",
+  'banner.failed': 'Something went wrong. Try again.',
 
   'endpoint.label': 'Endpoint',
   'endpoint.submit': 'Load models',
@@ -65,4 +76,8 @@ export const en = {
   'endpoint.none': 'No models found at this endpoint.',
   'endpoint.count_one': '{count} model available.',
   'endpoint.count_other': '{count} models available.',
+  'endpoint.unreachable': "Can't reach this endpoint. Check it's running and allows CORS.",
+  'endpoint.timeout': "The endpoint didn't answer in time. Check it's running.",
+  'endpoint.httpError': 'The endpoint returned an error ({status}).',
+  'endpoint.failed': "Couldn't read a model list from this address. Check the URL.",
 };

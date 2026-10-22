@@ -18,7 +18,8 @@ export async function getModels(baseURL) {
   let openaiCompatible = [];
   // Reported rather than thrown: an unreachable endpoint must not take the
   // in-browser provider down with it, but the caller still needs to tell
-  // "unreachable" apart from "reachable and empty".
+  // "unreachable" apart from "reachable and empty". The error itself, not its
+  // message: the UI words it for the user.
   let endpointError = null;
   // No endpoint configured is a normal state, not a failure — skip the probe.
   if (baseURL) {
@@ -26,7 +27,7 @@ export async function getModels(baseURL) {
       const { data } = await getOpenAiModels({ baseURL });
       openaiCompatible = data ?? [];
     } catch (error) {
-      endpointError = error.message;
+      endpointError = error;
     }
   }
 

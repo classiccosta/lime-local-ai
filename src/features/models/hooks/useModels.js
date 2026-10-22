@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { describeEndpointFailure } from '@/features/models/endpointFailure';
 import { useT } from '@/i18n/context';
 import { getModels, modelLoader, unloadModel } from '@/services/providers';
 
@@ -66,11 +67,17 @@ export function useModels({ endpoint } = {}) {
     try {
       const { models: next, endpointError: probeError } = await getModels(baseURL);
       if (id === requestId.current) {
+        if (probeError) console.error(probeError);
         setModels(next);
         setEndpointError(probeError);
       }
     } catch (err) {
-      if (id === requestId.current) setError(err.message);
+      // Shown as a fixed sentence: whatever broke here is a bug, not something
+      // the user can fix, so the detail is only for the console.
+      if (id === requestId.current) {
+        console.error(err);
+        setError(err);
+      }
     } finally {
       if (id === requestId.current) setFetching(false);
     }
@@ -168,7 +175,7 @@ export function useModels({ endpoint } = {}) {
     loading: models === null && error === null,
     fetching,
     error,
-    endpointError,
+    endpointError: endpointError && describeEndpointFailure(endpointError, t),
     load,
     selectedModelId,
     setSelectedModelId: selectModel,
