@@ -71,17 +71,12 @@ short of deleting the model.
 
 ### Restoring the state across a refresh
 
-Three pieces of state cooperate so a reload comes back where it left off:
+Two pieces of state cooperate so a reload comes back where it left off:
 
-| State             | Where             | Restored by              |
-| ----------------- | ----------------- | ------------------------ |
-| `runtimeId`       | `ai-chat:runtime` | `useRuntime`             |
-| `selectedModelId` | `ai-chat:model`   | `useModels`              |
-| `loadedModelIds`  | not persisted     | re-loading cached models |
-
-The runtime is persisted alongside the model for a reason: restoring a model id
-into a picker filtered to the _other_ runtime would leave the select showing
-nothing. Writing both together keeps them consistent.
+| State             | Where           | Restored by              |
+| ----------------- | --------------- | ------------------------ |
+| `selectedModelId` | `ai-chat:model` | `useModels`              |
+| `loadedModelIds`  | not persisted   | re-loading cached models |
 
 `loadedModelIds` is deliberately not persisted. Restoring it would mark as ready a
 model that `generate()` would reject with "Model is not loaded yet." Instead

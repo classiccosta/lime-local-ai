@@ -4,7 +4,7 @@ const HOUR = 60 * MINUTE;
 
 // Past this, seconds stop ticking: they reassure that a slow local model is
 // still working, but `14m 37s` vs `14m 38s` is just noise.
-export const SECONDS_UNTIL = 10 * MINUTE;
+const SECONDS_UNTIL = 10 * MINUTE;
 
 const pad = (n) => String(n).padStart(2, '0');
 

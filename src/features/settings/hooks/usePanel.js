@@ -1,27 +1,20 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
-const KEY = (name) => `ai-chat:panel:${name}`;
+const KEY = 'ai-chat:panel:sessions';
 
-export function usePanel(name, defaultOpen = true) {
+export function usePanel() {
   const [open, setOpen] = useState(() => {
-    const stored = localStorage.getItem(KEY(name));
-    return stored === null ? defaultOpen : stored === 'true';
+    const stored = localStorage.getItem(KEY);
+    return stored === null || stored === 'true';
   });
 
-  const toggle = useCallback(() => {
+  function toggle() {
     setOpen((previous) => {
       const next = !previous;
-      localStorage.setItem(KEY(name), String(next));
+      localStorage.setItem(KEY, String(next));
       return next;
     });
-  }, [name]);
+  }
 
-  // Opening on purpose, for a control elsewhere that needs this panel visible —
-  // toggling would shut it when it happened to be open already.
-  const show = useCallback(() => {
-    localStorage.setItem(KEY(name), 'true');
-    setOpen(true);
-  }, [name]);
-
-  return { open, toggle, show };
+  return { open, toggle };
 }

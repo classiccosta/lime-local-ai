@@ -41,21 +41,18 @@ export function useStorage() {
   }, []);
 
   // One model's files, then a re-read so the list stops marking it downloaded.
-  const removeModel = useCallback(
-    async (id) => {
-      await deleteModelFromCache(id);
-      await refresh();
-    },
-    [refresh],
-  );
+  async function removeModel(id) {
+    await deleteModelFromCache(id);
+    await refresh();
+  }
 
   // Granting persistence can raise the quota in Firefox, so the figures are
   // re-read afterwards rather than left showing the pre-grant numbers.
-  const requestPersist = useCallback(async () => {
+  async function requestPersist() {
     const granted = await requestPersistence();
     await refresh();
     return granted;
-  }, [refresh]);
+  }
 
   return { storage, storageReady: ready, refresh, requestPersist, removeModel };
 }
