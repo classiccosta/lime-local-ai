@@ -62,9 +62,10 @@ export function ComposerModelPicker() {
           align="end"
           sideOffset={6}
           collisionPadding={8}
+          aria-label={t('composer.choose')}
           className={cn(
             menuContent,
-            'flex max-h-80 w-72 max-w-[calc(100vw-1rem)] flex-col gap-1 overflow-y-auto text-xs outline-none',
+            'flex max-h-80 w-72 max-w-[calc(100vw-1rem)] flex-col gap-1 overflow-y-auto text-xs outline-hidden',
           )}
         >
           <ModelPicker
