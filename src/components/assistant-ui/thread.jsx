@@ -25,7 +25,9 @@ import { ComposerAttachmentAction } from '@/features/chat/components/ComposerAtt
 import { ComposerModelPicker } from '@/features/models/components/ComposerModelPicker';
 import { useT } from '@/i18n/context';
 import { followBottom } from '@/lib/followBottom';
+import { formatElapsed } from '@/lib/formatElapsed';
 import { keepBottomOnResize } from '@/lib/keepBottomOnResize';
+import { useElapsed } from '@/lib/useElapsed';
 import { cn } from '@/lib/utils';
 import {
   ActionBarPrimitive,
@@ -367,6 +369,42 @@ const MessageError = () => {
   );
 };
 
+const ThinkingIndicator = () => {
+  const t = useT();
+  const startedAt = useAuiState((s) => s.message.createdAt?.getTime() ?? null);
+  const elapsed = formatElapsed(useElapsed(startedAt));
+  return (
+    <div
+      data-slot="aui_assistant-message-indicator"
+      role="status"
+      className="text-muted-foreground flex items-center gap-2 py-1.5 text-sm"
+    >
+      {/* Same blinking block as the welcome screen and the streaming cursor. */}
+      <span
+        aria-hidden
+        className="bg-primary animate-blink inline-block h-[0.8em] w-[0.42em] shrink-0 motion-reduce:animate-none"
+      />
+      <span className="relative inline-block leading-none">
+        {t('thread.thinking')}
+        {/* Highlight to full foreground, not the default faint tint, so the hint reads at a glance. */}
+        <span
+          aria-hidden
+          className="shimmer shimmer-color-foreground pointer-events-none absolute inset-0 motion-reduce:animate-none"
+        >
+          {t('thread.thinking')}
+        </span>
+      </span>
+      {/* Outside the shimmer so the number stays steady; hidden from screen
+              readers because role="status" would announce every tick. */}
+      {elapsed && (
+        <span aria-hidden className="tabular-nums">
+          {elapsed}
+        </span>
+      )}
+    </div>
+  );
+};
+
 const AssistantMessage = () => {
   const {
     ToolFallback: ToolFallbackComponent = ToolFallback,
@@ -451,29 +489,7 @@ const AssistantMessage = () => {
                   </div>
                 );
               case 'indicator':
-                return (
-                  <div
-                    data-slot="aui_assistant-message-indicator"
-                    role="status"
-                    className="text-muted-foreground flex items-center gap-2 py-1.5 text-sm"
-                  >
-                    {/* Same blinking block as the welcome screen and the streaming cursor. */}
-                    <span
-                      aria-hidden
-                      className="bg-primary animate-blink inline-block h-[0.8em] w-[0.42em] shrink-0 motion-reduce:animate-none"
-                    />
-                    <span className="relative inline-block leading-none">
-                      {t('thread.thinking')}
-                      {/* Highlight to full foreground, not the default faint tint, so the hint reads at a glance. */}
-                      <span
-                        aria-hidden
-                        className="shimmer shimmer-color-foreground pointer-events-none absolute inset-0 motion-reduce:animate-none"
-                      >
-                        {t('thread.thinking')}
-                      </span>
-                    </span>
-                  </div>
-                );
+                return <ThinkingIndicator />;
               default:
                 return null;
             }
