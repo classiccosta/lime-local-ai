@@ -136,6 +136,7 @@ directly in Node.
 | `dirty`           | whether `messages` holds changes the store has not seen       |
 | `activeRequestId` | the one in-flight generation whose result will be accepted    |
 | `startedAt`       | `Date.now()` when the in-flight request was sent, else `null` |
+| `thinkingMs`      | time to first token of the in-flight reply, else `null`       |
 
 ### Transitions
 
@@ -150,6 +151,10 @@ stateDiagram-v2
   generating --> idle: LOAD_SESSION / NEW_SESSION
   idle --> idle: LOAD_SESSION / NEW_SESSION
 ```
+
+`REPLY` copies `thinkingMs` onto the stored assistant message (falling back to the whole
+wait when nothing streamed), where the thread shows it as "Thought for 12s". Messages saved
+before this have no field and show nothing; no migration.
 
 Switching to another chat mid-reply behaves like Stop. `useSessions.openSession` dispatches
 `CANCEL` to take ownership away, then loads the other session. The user turn was already

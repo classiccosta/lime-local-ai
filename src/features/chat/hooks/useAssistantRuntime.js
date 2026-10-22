@@ -8,6 +8,7 @@ function convertMessage(message) {
     content: message.content
       .filter((part) => part.type === 'text')
       .map((part) => ({ type: 'text', text: part.text })),
+    ...(message.thinkingMs != null && { metadata: { custom: { thinkingMs: message.thinkingMs } } }),
     ...(message.id === STREAMING_ID && {
       status: { type: 'running' },
       ...(message.startedAt && { createdAt: new Date(message.startedAt) }),

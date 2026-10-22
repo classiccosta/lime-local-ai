@@ -51,6 +51,7 @@ export const en = {
   'thread.placeholder': 'Send a message...',
   'thread.stopped': 'Stopped',
   'thread.thinking': 'Thinking…',
+  'thread.thoughtFor': 'Thought for {time}',
   'thread.copy': 'Copy',
   'thread.export': 'Export as Markdown',
 

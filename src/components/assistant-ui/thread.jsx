@@ -395,12 +395,25 @@ const ThinkingIndicator = () => {
         </span>
       </span>
       {/* Outside the shimmer so the number stays steady; hidden from screen
-              readers because role="status" would announce every tick. */}
+          readers because role="status" would announce every tick. */}
       {elapsed && (
         <span aria-hidden className="tabular-nums">
           {elapsed}
         </span>
       )}
+    </div>
+  );
+};
+
+// Takes over from ThinkingIndicator once the first token lands, so the wait
+// stays visible on the reply. Under a second formats to '' and shows nothing.
+const ThoughtFor = () => {
+  const t = useT();
+  const time = formatElapsed(useAuiState((s) => s.message.metadata?.custom?.thinkingMs));
+  if (!time) return null;
+  return (
+    <div className="text-muted-foreground pt-1.5 text-sm tabular-nums">
+      {t('thread.thoughtFor', { time })}
     </div>
   );
 };
@@ -430,6 +443,7 @@ const AssistantMessage = () => {
         data-slot="aui_assistant-message-content"
         className="text-foreground px-2 leading-relaxed wrap-break-word"
       >
+        <ThoughtFor />
         <MessagePrimitive.GroupedParts
           groupBy={groupPartByType({
             reasoning: ['group-chainOfThought', 'group-reasoning'],

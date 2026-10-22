@@ -42,12 +42,13 @@ export function useSession({
         provider: selectedModel.provider,
         baseURL: endpoint,
         signal: controller.signal,
-        onToken: (token) => dispatch({ type: 'TOKEN', token, requestId }),
+        onToken: (token) => dispatch({ type: 'TOKEN', token, requestId, at: Date.now() }),
       });
 
       dispatch({
         type: 'REPLY',
         requestId,
+        at: Date.now(),
         message: { id: crypto.randomUUID(), role: 'assistant', content: [{ type: 'text', text }] },
       });
     } catch (err) {

@@ -48,6 +48,7 @@ export const de = {
   'thread.placeholder': 'Nachricht senden…',
   'thread.stopped': 'Abgebrochen',
   'thread.thinking': 'Denkt nach…',
+  'thread.thoughtFor': 'Dachte {time} nach',
   'thread.copy': 'Kopieren',
   'thread.export': 'Als Markdown exportieren',
 

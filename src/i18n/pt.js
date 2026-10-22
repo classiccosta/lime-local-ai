@@ -47,6 +47,7 @@ export const pt = {
   'thread.placeholder': 'Escreva uma mensagem...',
   'thread.stopped': 'Interrompido',
   'thread.thinking': 'A pensar…',
+  'thread.thoughtFor': 'Pensou durante {time}',
   'thread.copy': 'Copiar',
   'thread.export': 'Exportar como Markdown',
 
