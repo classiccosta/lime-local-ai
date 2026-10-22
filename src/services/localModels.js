@@ -5,23 +5,22 @@ export const LOCAL_PROVIDER_ID = 'Web-GPU';
 
 export const LOCAL_MODELS = [
   {
-    id: 'HuggingFaceTB/SmolVLM-500M-Instruct',
-    label: 'SmolVLM-500M · 390 MB',
-    // Vision-language: separate embedding, vision and decoder graphs, each
-    // quantised on its own.
-    kind: 'vision2seq',
-    dtype: {
-      embed_tokens: 'fp16',
-      vision_encoder: 'q4',
-      decoder_model_merged: 'q4',
-    },
+    id: 'onnx-community/Qwen3-0.6B-ONNX',
+    label: 'Qwen3-0.6B · 570 MB',
+    // Text-only causal LM; multilingual and small enough for a phone.
+    kind: 'causal',
+    dtype: 'q4f16',
+    // Qwen3's template writes a <think> block unless told not to.
+    chatTemplate: { enable_thinking: false },
     info: {
-      parameters: '500M',
-      quantization: 'q4 · fp16 embeds',
-      context: '8K',
-      // Sum of the three ONNX graphs this dtype map selects, read from the repo.
-      downloadBytes: 391_000_000,
+      parameters: '0.6B',
+      quantization: 'q4f16',
+      context: '32K',
+      // model_q4f16.onnx, read from the repo.
+      downloadBytes: 569_789_750,
     },
+    // The model card's values for non-thinking mode.
+    generation: { max_new_tokens: 2048, do_sample: true, temperature: 0.7, top_p: 0.8, top_k: 20 },
   },
   {
     id: 'LiquidAI/LFM2.5-2.6B-ONNX',
@@ -36,8 +35,24 @@ export const LOCAL_MODELS = [
       // model_q4f16.onnx plus its two external data files, read from the repo.
       downloadBytes: 1_534_000_000,
     },
+    // Sampling values from the model card. Its 512 tokens is only the quick-start
+    // example and cut long answers off mid-sentence.
+    generation: {
+      max_new_tokens: 2048,
+      do_sample: true,
+      temperature: 0.1,
+      top_k: 50,
+      repetition_penalty: 1.1,
+    },
   },
 ];
+
+// For a model without its own values: long enough not to cut a normal reply off.
+const DEFAULT_GENERATION = { max_new_tokens: 2048, do_sample: false };
+
+export function generationOptions(spec) {
+  return { ...DEFAULT_GENERATION, ...spec?.generation };
+}
 
 export function findLocalModel(id) {
   return LOCAL_MODELS.find((model) => model.id === id);
