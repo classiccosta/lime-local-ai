@@ -9,6 +9,7 @@ export const pt = {
 
   'sessions.new': 'Nova',
   'sessions.settings': 'Definições',
+  'sessions.github': 'Código no GitHub',
   'settings.models': 'Modelos',
   'settings.noModels': 'Não há modelos disponíveis. Ligue um endpoint abaixo.',
   'settings.changeEndpoint': 'Alterar',

@@ -13,6 +13,7 @@ export const en = {
 
   'sessions.new': 'New',
   'sessions.settings': 'Settings',
+  'sessions.github': 'Source on GitHub',
   'settings.models': 'Models',
   'settings.noModels': 'No models available. Connect an endpoint below.',
   'settings.changeEndpoint': 'Change',
