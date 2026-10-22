@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LocaleContext, makeTranslator } from './context';
+import { readPref, writePref } from '@/lib/prefs';
 import { DEFAULT_LOCALE, LOCALES, resolveLocale } from './locales';
 
-const STORAGE_KEY = 'ai-chat:locale';
+const STORAGE_KEY = 'locale';
 
 function readStoredLocale() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (LOCALES.some((locale) => locale.id === stored)) return stored;
-  } catch {
-    /* site data blocked; fall through to the browser's own languages */
-  }
+  const stored = readPref(STORAGE_KEY);
+  if (LOCALES.some((locale) => locale.id === stored)) return stored;
   // No stored choice is not the same as choosing English: the browser already
   // states which languages the reader has, so it is asked before defaulting.
   return resolveLocale(navigator.languages ?? [navigator.language]);
@@ -20,11 +17,7 @@ export function LocaleProvider({ children }) {
   const [locale, setLocaleState] = useState(readStoredLocale);
 
   const setLocale = useCallback((next) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      /* the choice holds for this session even if it cannot be remembered */
-    }
+    writePref(STORAGE_KEY, next);
     setLocaleState(next);
   }, []);
 

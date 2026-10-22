@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { readPref, writePref } from '@/lib/prefs';
 
-const STORAGE_KEY = 'ai-chat:endpoint';
+const STORAGE_KEY = 'endpoint';
 
 // Dev assumes LM Studio on its default port with "Enable CORS" on; the browser
 // calls it cross-origin, so without that toggle every request fails. A build has
@@ -10,12 +11,10 @@ const fallback =
   import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:1234/v1' : '');
 
 export function useEndpoint() {
-  const [endpoint, setEndpointState] = useState(
-    () => localStorage.getItem(STORAGE_KEY) ?? fallback,
-  );
+  const [endpoint, setEndpointState] = useState(() => readPref(STORAGE_KEY, fallback));
 
   function setEndpoint(value) {
-    localStorage.setItem(STORAGE_KEY, value);
+    writePref(STORAGE_KEY, value);
     setEndpointState(value);
   }
 
