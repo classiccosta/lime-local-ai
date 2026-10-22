@@ -3,6 +3,8 @@ import { InfoHint } from '@/components/InfoHint';
 import { supportsFileInput } from '@/features/models/capabilities';
 import { useComposerModels } from '@/features/models/composerModels';
 import { useT } from '@/i18n/context';
+import { focusRing } from '@/lib/focusRing';
+import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 
 /**
@@ -29,7 +31,10 @@ export function ComposerAttachmentAction() {
       label={t('composer.attachmentsUnavailable')}
       side="top"
       content={t('composer.textOnly')}
-      className="text-muted-foreground/40 hover:text-muted-foreground/70 focus-visible:ring-ring grid size-7 place-items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
+      className={cn(
+        'text-muted-foreground/60 hover:text-muted-foreground grid size-7 place-items-center rounded-full transition-colors',
+        focusRing,
+      )}
     >
       <Plus aria-hidden="true" className="size-4" />
     </InfoHint>

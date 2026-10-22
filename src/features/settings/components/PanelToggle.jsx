@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { useT } from '@/i18n/context';
 import { cn } from '@/lib/utils';
 import { PanelLeft, PanelRight, X } from 'lucide-react';
@@ -20,28 +21,28 @@ export function PanelToggle({ icon: Icon, labelKey, side, open, onToggle, sheet 
   });
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size={open ? 'default' : 'icon'}
       onClick={onToggle}
       aria-expanded={open}
       aria-label={action}
-      title={action}
       className={cn(
-        'hover:bg-accent hover:text-accent-foreground flex w-full items-center rounded-md transition-colors',
-        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-        // Collapsed the section icon is the whole control, so it grows and centres.
-        open ? 'gap-2 p-1.5' : 'text-muted-foreground justify-center px-1.5 py-2',
+        // Its aria-expanded is the panel's, not a menu's: no pressed fill.
+        'aria-expanded:hover:bg-muted h-auto w-full aria-expanded:bg-transparent',
+        // Collapsed the section icon is the whole control, so it centres.
+        open ? 'justify-start gap-2 p-1.5' : 'text-muted-foreground px-1.5 py-2',
       )}
     >
-      <Icon className={cn('shrink-0', open ? 'size-4' : 'size-[17px]')} />
+      <Icon aria-hidden="true" className="size-4" />
       {open && (
         <>
           <span className="text-foreground min-w-0 flex-1 truncate text-left text-sm font-semibold">
             {label}
           </span>
-          <Panel className="size-3.5 shrink-0 opacity-60" />
+          <Panel aria-hidden="true" className="size-3.5 opacity-60" />
         </>
       )}
-    </button>
+    </Button>
   );
 }

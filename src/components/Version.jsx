@@ -1,5 +1,6 @@
 import { Mark } from '@/components/Mark';
 import { useT } from '@/i18n/context';
+import { focusRing } from '@/lib/focusRing';
 import { cn } from '@/lib/utils';
 
 // Vite's define, from package.json — one string rather than a build-time import
@@ -56,11 +57,10 @@ export function Version({ open }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={t('sessions.github')}
-          title={t('sessions.github')}
           className={cn(
             'text-muted-foreground ml-auto shrink-0 rounded-md border p-1',
             'hover:text-primary hover:border-primary/50 transition-colors',
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+            focusRing,
           )}
         >
           <GithubIcon className="size-3.5" />

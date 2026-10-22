@@ -1,6 +1,8 @@
+import { Button } from '@/components/ui/button';
 import { Version } from '@/components/Version';
 import { PanelToggle } from '@/features/settings/components/PanelToggle';
 import { useT } from '@/i18n/context';
+import { focusRing } from '@/lib/focusRing';
 import { menuContent, menuItem } from '@/lib/menu';
 import { cn } from '@/lib/utils';
 import { Ellipsis, MessagesSquare, Plus, Settings, Trash2 } from 'lucide-react';
@@ -83,25 +85,22 @@ export function SessionSidebar({
         onToggle={onToggle}
       />
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size={open ? 'default' : 'icon'}
         onClick={onNew}
         disabled={!canCreate}
         aria-label={open ? undefined : t('sessions.new')}
-        title={open ? undefined : t('sessions.new')}
         className={cn(
-          'flex w-full items-center gap-2 rounded-sm border border-dashed p-1.5 text-sm',
+          'border-border hover:border-muted h-auto w-full rounded-sm border-dashed p-1.5 text-sm font-normal',
           // Centred as a rail, where the icon is the whole control; aligned to
           // the label once there is a label for it to sit beside.
-          open ? 'justify-start px-2.5' : 'justify-center',
-          'hover:bg-accent hover:text-accent-foreground hover:border-accent transition-colors',
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-          'disabled:pointer-events-none disabled:opacity-50',
+          open && 'justify-start gap-2 px-2.5',
         )}
       >
-        <Plus className="size-3.5 shrink-0" />
+        <Plus aria-hidden="true" className="size-3.5" />
         {open && <span className="truncate">{t('sessions.new')}</span>}
-      </button>
+      </Button>
 
       {open &&
         (sessions.length === 0 ? (
@@ -163,7 +162,7 @@ export function SessionSidebar({
                       // No colour transition: fading the old highlight out
                       // leaves two rows looking selected at once.
                       'hover:bg-muted',
-                      'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                      focusRing,
                       // The tick carries the active state; the fill only seats it.
                       isActive && 'bg-accent hover:bg-accent pl-2.5',
                       // The row a long press opened the menu for stays marked.
@@ -184,22 +183,25 @@ export function SessionSidebar({
                     open={menuFor === session.id}
                     onOpenChange={(next) => setMenuFor(next ? session.id : null)}
                   >
-                    <DropdownMenu.Trigger
-                      aria-label={t('sessions.actions', { name })}
-                      className={cn(
-                        'absolute top-1/2 right-1 -translate-y-1/2 rounded p-1.5 opacity-0 transition-opacity',
-                        // Revealed on approach where there is a pointer, and kept
-                        // while its menu is open, after the pointer has left.
-                        'group-hover/session:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100',
-                        // On a touch screen a long press on the row opens the
-                        // menu, so the button is never shown or tapped there.
-                        // Hidden, not removed: it is still what the menu is
-                        // placed against.
-                        'touch:pointer-events-none touch:opacity-0!',
-                        'hover:text-foreground focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                      )}
-                    >
-                      <Ellipsis className="size-3.5" />
+                    <DropdownMenu.Trigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={t('sessions.actions', { name })}
+                        className={cn(
+                          'absolute top-1/2 right-1 -translate-y-1/2 opacity-0 transition-opacity',
+                          // Revealed on approach where there is a pointer, and kept
+                          // while its menu is open, after the pointer has left.
+                          'group-hover/session:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100',
+                          // On a touch screen a long press on the row opens the
+                          // menu, so the button is never shown or tapped there.
+                          // Hidden, not removed: it is still what the menu is
+                          // placed against.
+                          'touch:pointer-events-none touch:opacity-0!',
+                        )}
+                      >
+                        <Ellipsis aria-hidden="true" className="size-3.5" />
+                      </Button>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Portal>
                       <DropdownMenu.Content
@@ -232,21 +234,19 @@ export function SessionSidebar({
           sheet: the mobile header already carries a settings icon. */}
       <div className="mt-auto flex shrink-0 flex-col gap-2">
         {!sheet && (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size={open ? 'default' : 'icon'}
             onClick={onOpenSettings}
             aria-label={open ? undefined : t('sessions.settings')}
-            title={open ? undefined : t('sessions.settings')}
             className={cn(
-              'flex w-full items-center gap-2 rounded-sm p-1.5 text-sm',
-              open ? 'justify-start px-2.5' : 'justify-center',
-              'hover:bg-accent hover:text-accent-foreground transition-colors',
-              'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+              'h-auto w-full rounded-sm p-1.5 text-sm font-normal',
+              open && 'justify-start gap-2 px-2.5',
             )}
           >
-            <Settings className="size-3.5 shrink-0" />
+            <Settings aria-hidden="true" className="size-3.5" />
             {open && <span className="truncate">{t('sessions.settings')}</span>}
-          </button>
+          </Button>
         )}
 
         <Version open={open} />
