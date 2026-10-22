@@ -120,6 +120,12 @@ keys entries by their Hugging Face URL, which embeds the repo id). An interrupte
 download leaves some files behind, so this means _has files for_, not _complete_
 — the loader re-fetches whatever is missing either way.
 
+Before that first read, `pruneRetiredModels()` deletes the files of any repo the
+catalogue no longer lists (e.g. SmolVLM after Qwen3 replaced it). Such a model has
+no row left in the list to delete it from, so without this its weights would stay
+on disk for good. Only entries whose URL parses as `{org}/{repo}/resolve/…` are
+touched.
+
 ## A full disk
 
 There is no pre-download fit check. The browser aborts a Cache API write that

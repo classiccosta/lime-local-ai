@@ -1,12 +1,9 @@
 import {
   AutoModelForCausalLM,
-  AutoModelForVision2Seq,
-  AutoProcessor,
   AutoTokenizer,
   InterruptableStoppingCriteria,
   TextStreamer,
   env,
-  load_image,
 } from '@huggingface/transformers';
 import { findLocalModel, generationOptions } from './localModels';
 
@@ -39,16 +36,9 @@ export async function loadModel(modelId, signal) {
   const mine = signal ?? null;
   activeSignal = mine;
   try {
-    if (spec.kind === 'vision2seq') {
-      const processor = await AutoProcessor.from_pretrained(modelId);
-      const model = await AutoModelForVision2Seq.from_pretrained(modelId, options);
-      loaded.set(modelId, { kind: spec.kind, model, processor, tokenizer: processor.tokenizer });
-      return;
-    }
-
     const tokenizer = await AutoTokenizer.from_pretrained(modelId);
     const model = await AutoModelForCausalLM.from_pretrained(modelId, options);
-    loaded.set(modelId, { kind: spec.kind, model, tokenizer });
+    loaded.set(modelId, { model, tokenizer });
   } finally {
     // Only if no later load has taken over in the meantime.
     if (activeSignal === mine) activeSignal = null;
@@ -76,8 +66,7 @@ export async function unloadModel(modelId) {
   }
 }
 
-// A text-only chat template wants plain string content; the VLM template reads
-// the parts array directly.
+// A text-only chat template wants plain string content, not the parts array.
 function flatten(messages) {
   return messages.map((message) => ({
     role: message.role,
@@ -88,27 +77,19 @@ function flatten(messages) {
   }));
 }
 
-export async function generate({ modelId, messages, imageURL, onToken, signal }) {
+export async function generate({ modelId, messages, onToken, signal }) {
   signal?.throwIfAborted();
 
   const entry = loaded.get(modelId);
   if (!entry) throw new Error('Model is not loaded yet.');
-  const { kind, model, processor, tokenizer } = entry;
+  const { model, tokenizer } = entry;
+  const spec = findLocalModel(modelId);
 
-  let inputs;
-  if (kind === 'vision2seq') {
-    const prompt = processor.apply_chat_template(messages, { add_generation_prompt: true });
-    // Idefics3Processor always dereferences its image inputs, so it throws on
-    // text-only prompts. Go straight to the tokenizer instead.
-    inputs = imageURL
-      ? await processor(prompt, [await load_image(imageURL)])
-      : processor.tokenizer(prompt);
-  } else {
-    inputs = tokenizer.apply_chat_template(flatten(messages), {
-      add_generation_prompt: true,
-      return_dict: true,
-    });
-  }
+  const inputs = tokenizer.apply_chat_template(flatten(messages), {
+    add_generation_prompt: true,
+    return_dict: true,
+    ...spec?.chatTemplate,
+  });
 
   const stopper = new InterruptableStoppingCriteria();
   const onAbort = () => stopper.interrupt();
@@ -118,7 +99,7 @@ export async function generate({ modelId, messages, imageURL, onToken, signal })
   try {
     outputs = await model.generate({
       ...inputs,
-      ...generationOptions(findLocalModel(modelId)),
+      ...generationOptions(spec),
       stopping_criteria: stopper,
       streamer: new TextStreamer(tokenizer, {
         skip_prompt: true,

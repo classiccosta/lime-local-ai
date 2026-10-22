@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { deleteModelFromCache, readStorage, requestPersistence } from '@/services/modelCache';
+import {
+  deleteModelFromCache,
+  pruneRetiredModels,
+  readStorage,
+  requestPersistence,
+} from '@/services/modelCache';
 
 export function useStorage() {
   const [storage, setStorage] = useState(null);
@@ -15,7 +20,10 @@ export function useStorage() {
     // `ready` gates the startup restore, so a rejection here would hold the
     // whole model picker behind a skeleton that never resolves. Not knowing the
     // figures is a state the panel already renders; never finding out is not.
-    readStorage()
+    // Retired models go first so the read already reflects the freed space.
+    pruneRetiredModels()
+      .catch(() => {})
+      .then(() => readStorage())
       .catch(() => null)
       .then((next) => {
         if (cancelled) return;
