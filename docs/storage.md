@@ -9,7 +9,7 @@ the UI (ADR-011); the figures are read only to know what is cached.
 > and preferences (`localStorage`) are written.
 
 - **Service:** [`src/services/modelCache.js`](../src/services/modelCache.js)
-- **Hook:** [`src/features/settings/hooks/useStorage.js`](../src/features/settings/hooks/useStorage.js)
+- **Hook:** [`src/features/models/hooks/useStorage.js`](../src/features/models/hooks/useStorage.js)
 
 ---
 
