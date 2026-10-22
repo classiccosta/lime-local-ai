@@ -1,3 +1,6 @@
+import { focusRing } from '@/lib/focusRing';
+import { cn } from '@/lib/utils';
+
 /**
  * A setting shown as its current value, with a "Change" link to edit it.
  *
@@ -12,7 +15,10 @@ export function SettingValue({ value, changeLabel, onChange }) {
       <button
         type="button"
         onClick={onChange}
-        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring shrink-0 rounded-sm text-xs underline underline-offset-2 focus-visible:ring-2 focus-visible:outline-none"
+        className={cn(
+          'text-muted-foreground hover:text-foreground shrink-0 rounded-sm text-xs underline underline-offset-2',
+          focusRing,
+        )}
       >
         {changeLabel}
       </button>

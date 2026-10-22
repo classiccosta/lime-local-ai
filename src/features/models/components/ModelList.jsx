@@ -1,8 +1,9 @@
+import { Spinner } from '@/components/Spinner';
+import { focusRing } from '@/lib/focusRing';
 import { cn } from '@/lib/utils';
-import { Check, Download, Loader2, Trash2 } from 'lucide-react';
+import { Check, Download, Trash2 } from 'lucide-react';
 
-const ACTION =
-  'focus-visible:ring-ring rounded-sm p-0.5 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50';
+const ACTION = cn('rounded-sm p-0.5 disabled:pointer-events-none disabled:opacity-50', focusRing);
 
 /**
  * Every model as a column of rows, for the settings dialog.
@@ -51,7 +52,7 @@ export function ModelList({ items, onPick, ariaLabel }) {
                 aria-current={active ? 'true' : undefined}
                 className={cn(
                   rowClass,
-                  'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                  focusRing,
                   'disabled:pointer-events-none disabled:opacity-50',
                 )}
               >
@@ -69,19 +70,15 @@ export function ModelList({ items, onPick, ariaLabel }) {
                   type="button"
                   onClick={item.onDelete}
                   aria-label={item.deleteLabel}
-                  title={item.deleteLabel}
                   className={cn(ACTION, 'text-muted-foreground hover:text-destructive')}
                 >
-                  <Trash2 aria-hidden="true" className="size-3" />
+                  <Trash2 aria-hidden="true" className="size-3.5" />
                 </button>
               )}
               {busy ? (
-                <Loader2
-                  aria-hidden="true"
-                  className="size-3 animate-spin motion-reduce:animate-none"
-                />
+                <Spinner />
               ) : active ? (
-                <Check aria-hidden="true" className="size-3" />
+                <Check aria-hidden="true" className="size-3.5" />
               ) : (
                 item.onDownload && (
                   <button
@@ -89,10 +86,9 @@ export function ModelList({ items, onPick, ariaLabel }) {
                     onClick={item.onDownload}
                     disabled={disabled}
                     aria-label={item.downloadLabel}
-                    title={item.downloadLabel}
                     className={cn(ACTION, 'hover:text-foreground')}
                   >
-                    <Download aria-hidden="true" className="size-3" />
+                    <Download aria-hidden="true" className="size-3.5" />
                   </button>
                 )
               )}
