@@ -44,6 +44,7 @@ describe('createConversation', () => {
       dirty: false,
       activeRequestId: null,
       startedAt: null,
+      thinkingMs: null,
     });
     expect(typeof state.sessionId).toBe('string');
   });
@@ -200,6 +201,58 @@ describe('startedAt', () => {
     ['CANCEL', {}],
   ])('is cleared by %s', (type, payload) => {
     expect(reduce(generating(), { type, ...payload }).startedAt).toBeNull();
+  });
+});
+
+describe('thinkingMs', () => {
+  const token = (at) => ({ type: 'TOKEN', requestId: 'req-1', token: 'x', at });
+  const reply = (at) => ({
+    type: 'REPLY',
+    requestId: 'req-1',
+    message: assistantMessage('Hi'),
+    at,
+  });
+
+  it('is fixed by the first token, not later ones', () => {
+    let state = reduce(generating(), token(3500));
+    state = reduce(state, token(9000));
+    expect(state.thinkingMs).toBe(2500);
+  });
+
+  it('is stored on the reply and cleared from the conversation', () => {
+    const state = reduce(reduce(generating(), token(3500)), reply(9000));
+    expect(state.messages.at(-1)).toEqual({ ...assistantMessage('Hi'), thinkingMs: 2500 });
+    expect(state.thinkingMs).toBeNull();
+  });
+
+  // A backend that doesn't stream sends no TOKEN, so the whole wait counts.
+  it('falls back to the reply time when nothing streamed', () => {
+    const state = reduce(generating(), reply(4000));
+    expect(state.messages.at(-1).thinkingMs).toBe(3000);
+  });
+
+  it('leaves the reply untouched without timestamps', () => {
+    const state = reduce(generating(), reply(undefined));
+    expect(state.messages.at(-1)).toEqual(assistantMessage('Hi'));
+  });
+
+  it('is reset by the next SEND_START', () => {
+    const first = reduce(generating(), token(3500));
+    const state = reduce(first, {
+      type: 'SEND_START',
+      message: userMessage('Again'),
+      requestId: 'req-2',
+      startedAt: 5000,
+    });
+    expect(state.thinkingMs).toBeNull();
+  });
+
+  it.each([
+    ['FAIL', { requestId: 'req-1', error: 'boom' }],
+    ['CANCEL', {}],
+  ])('is cleared by %s', (type, payload) => {
+    const state = reduce(reduce(generating(), token(3500)), { type, ...payload });
+    expect(state.thinkingMs).toBeNull();
   });
 });
 

@@ -4,7 +4,7 @@ export const STOPPED_PREFIX = '__stopped__:';
 // FAIL and openSession roll an unanswered turn back (ADR-009), so a user turn
 // nothing answers can only come from Stop, a reload mid-reply, or abandoning a
 // first turn. Deriving the marker here means no stored flag and no migration.
-export function displayMessages({ messages, status, streamed, startedAt }) {
+export function displayMessages({ messages, status, streamed, startedAt, thinkingMs }) {
   const isRunning = status === 'generating';
   const result = [];
 
@@ -25,6 +25,7 @@ export function displayMessages({ messages, status, streamed, startedAt }) {
       id: STREAMING_ID,
       role: 'assistant',
       startedAt,
+      thinkingMs,
       content: streamed ? [{ type: 'text', text: streamed }] : [],
     });
   }
