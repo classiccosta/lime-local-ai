@@ -64,6 +64,7 @@ export function ComposerModelPicker() {
         >
           <ModelPicker
             {...picker}
+            inComposer
             onPick={(id) => {
               picker.onPick(id);
               setOpen(false);

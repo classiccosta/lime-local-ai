@@ -22,8 +22,8 @@ src/
     useConversation.js owns the useReducer instance
 
   features/
-    chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, Title, ErrorBanner
-    models/      hooks/{useModels,useRuntime}.js, selection.js, ModelPicker, ModelList
+    chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, sendFailure.js, Title, ErrorBanner
+    models/      hooks/{useModels,useRuntime}.js, selection.js, endpointFailure.js, ModelPicker, ModelList
     sessions/    hooks/useSessions.js, SessionSidebar
     settings/    hooks/{useEndpoint,usePanel,useStorage}.js, SettingsDialog
     layout/      MobileHeader, MobileSheet
@@ -131,7 +131,7 @@ directly in Node.
 | `sessionId`       | UUID of the row this conversation saves to                    |
 | `messages`        | ordered turns, each `{ id, role, content: [{ type, text }] }` |
 | `status`          | `'idle'` or `'generating'`                                    |
-| `error`           | message from the last failed generation, or `null`            |
+| `error`           | user-facing message for the last failed send, or `null`       |
 | `streamed`        | partial assistant text for the in-flight reply                |
 | `dirty`           | whether `messages` holds changes the store has not seen       |
 | `activeRequestId` | the one in-flight generation whose result will be accepted    |
@@ -233,9 +233,9 @@ Each backend honours the signal differently:
   throwing_, so `llm.js` calls `signal.throwIfAborted()` afterwards; without that the
   caller would treat a cancelled generation as a successful short reply.
 
-Either way the rejection reaches `useSession`, which dispatches `FAIL` with a request id
-the reducer has already retired — so the error is dropped and nothing surfaces to the
-user. Ownership and cancellation are separate mechanisms: the reducer decides what is
+Either way the rejection reaches `useSession`, which sees the aborted signal and does not
+dispatch `FAIL` at all — the reducer has already retired that request id and would drop it
+anyway, so nothing surfaces to the user. Ownership and cancellation are separate mechanisms: the reducer decides what is
 still wanted, the controller stops what is not.
 
 ---
@@ -369,3 +369,20 @@ non-secure-context fallback. _This has not been verified empirically — it foll
 
 The practical consequence: the realistic deployment is the user running the app themselves,
 not a publicly hosted page reaching into their network.
+
+## Error messages
+
+Raw errors are English and written for developers (a server's whole JSON body, "Failed to
+fetch"), so none reaches the UI. Each is sorted into a cause the user can act on and worded
+through `useT()`; the original goes to `console.error`.
+
+- **Sending** — `describeSendFailure(error, t)` in `features/chat/sendFailure.js`, called by
+  `useSession` before it dispatches `FAIL`. It keys on fields, not text, where it can:
+  `code: 'NO_MODEL'` (thrown by `useSession`), `status` and `body` (an HTTP error from
+  `openai.js`, shown as the status only), `code: 'STREAM_FAILED'` (a `response.failed` or
+  `error` event, whose server message is shown if short and single-line). Network failures
+  are recognised by message, the only thing the browsers give (`lib/errors.js`).
+- **Endpoint probe** — `getModels` returns the `Error` itself as `endpointError`;
+  `useModels` logs it once and words it at render time with `describeEndpointFailure`, so
+  it follows a change of language.
+- **Model loads** — `describeLoadFailure` in `useModels.js`.

@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 
-const VISIBLE_MS = 3000;
+const VISIBLE_MS = 5000;
 const FADE_MS = 300;
 
 /**

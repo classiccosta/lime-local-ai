@@ -1,3 +1,4 @@
+import { httpError } from '@/lib/errors';
 import { parseSSE } from './sse';
 
 export async function getOpenAiModels({ baseURL, timeoutMs = 3000 }) {
@@ -5,7 +6,7 @@ export async function getOpenAiModels({ baseURL, timeoutMs = 3000 }) {
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status} ${await response.text()}`);
+    throw httpError(response.status, await response.text());
   }
 
   const data = await response.json();
@@ -35,7 +36,7 @@ export async function generate({ model, messages, onToken, baseURL, signal }) {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status} ${await response.text()}`);
+    throw httpError(response.status, await response.text());
   }
 
   // A server that ignores `stream` answers with plain JSON; keep that path so
@@ -63,7 +64,11 @@ export async function generate({ model, messages, onToken, baseURL, signal }) {
           text += event.delta;
           onToken?.(event.delta);
         } else if (event.type === 'response.failed' || event.type === 'error') {
-          throw new Error(event.response?.error?.message ?? event.message ?? 'Request failed');
+          // Tagged so the UI knows this message came from the server and may
+          // be worth showing, unlike the browser's own fetch errors.
+          throw Object.assign(new Error(event.response?.error?.message ?? event.message ?? ''), {
+            code: 'STREAM_FAILED',
+          });
         } else if (event.type === 'response.completed') {
           return { text };
         }
