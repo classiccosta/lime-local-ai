@@ -31,8 +31,7 @@ export function useModels({ endpoint } = {}) {
   const [endpointError, setEndpointError] = useState(null);
   const [fetching, setFetching] = useState(false);
   // Restored on mount so a refresh comes back to the same model rather than an
-  // empty picker. Paired with the persisted runtime, which keeps the restored id
-  // in a list that contains it.
+  // empty picker.
   const [selectedModelId, setSelectedModelId] = useState(
     () => localStorage.getItem(SELECTED_KEY) ?? '',
   );
@@ -154,7 +153,7 @@ export function useModels({ endpoint } = {}) {
    * this the model would go on reporting as loaded. A load still running for it
    * is aborted, or it would write the files straight back.
    */
-  const forgetModel = useCallback(async (id) => {
+  async function forgetModel(id) {
     if (loadingId.current === id) {
       controller.current?.abort();
       loadingId.current = '';
@@ -163,12 +162,12 @@ export function useModels({ endpoint } = {}) {
     setAttempt((current) => (current.id === id ? IDLE_ATTEMPT : current));
     setLoadedModelIds((ids) => ids.filter((loadedId) => loadedId !== id));
     if (wasClaimed) await unloadModel(id);
-  }, []);
+  }
 
-  const loader = useCallback(() => {
+  function loader() {
     if (!requiresLoad) return Promise.resolve();
     return loadModelById(selectedModelId);
-  }, [requiresLoad, selectedModelId, loadModelById]);
+  }
 
   return {
     models: models ?? [],

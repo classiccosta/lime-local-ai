@@ -45,10 +45,6 @@ export async function loadModel(modelId, signal) {
   }
 }
 
-export function isLoaded(modelId) {
-  return loaded.has(modelId);
-}
-
 /**
  * Release one loaded model, for a per-model delete.
  *

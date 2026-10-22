@@ -30,10 +30,7 @@ export const de = {
   'language.label': 'Sprache',
   'language.change': 'Ändern',
 
-  'runtime.label': 'Runtime',
-
   'model.label': 'Modell',
-  'model.placeholder': 'Modell auswählen',
   'model.loading': 'Wird geladen…',
   'model.listError':
     'Die Modellliste konnte nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut.',

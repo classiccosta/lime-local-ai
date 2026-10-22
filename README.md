@@ -5,8 +5,9 @@ OpenAI-compatible server (LM Studio, llama.cpp, vLLM) and chat in the browser, w
 streaming replies you can stop. No backend of its own: conversations stay in your
 browser (IndexedDB). English, Portuguese (pt-PT) and German.
 
+**"Explain CORS like you are a nightclub bouncer"**
 ![Lime streaming a reply from LM Studio](docs/media/lime-demo-cors.gif)
-
+**"Erklär mir, warum Berliner Döner besser ist als jeder andere”**
 ![Switching the UI to German and chatting in German](docs/media/lime-demo-doener-de.gif)
 
 ## Try it

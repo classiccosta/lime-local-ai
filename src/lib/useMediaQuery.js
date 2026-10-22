@@ -16,7 +16,7 @@ const MOBILE_QUERY = '(max-width: 767px)';
  * not by React, and subscribing to it this way keeps the first render and the
  * subscription consistent without a setState in an effect.
  */
-export function useMediaQuery(query) {
+function useMediaQuery(query) {
   const subscribe = useCallback(
     (onChange) => {
       const list = window.matchMedia?.(query);

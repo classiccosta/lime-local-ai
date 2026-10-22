@@ -30,10 +30,7 @@ export const pt = {
   'language.label': 'Idioma',
   'language.change': 'Alterar',
 
-  'runtime.label': 'Ambiente de Execução',
-
   'model.label': 'Modelo',
-  'model.placeholder': 'Selecionar um modelo',
   'model.loading': 'A carregar…',
   'model.listError':
     'Não foi possível obter a lista de modelos. Recarregue a página e tente de novo.',

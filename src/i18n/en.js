@@ -34,10 +34,7 @@ export const en = {
   'language.label': 'Language',
   'language.change': 'Change',
 
-  'runtime.label': 'Runtime',
-
   'model.label': 'Model',
-  'model.placeholder': 'Select a model',
   'model.loading': 'Loading…',
   'model.listError': "Couldn't load the model list. Reload the page to try again.",
   'model.restoring': 'Loading models…',
