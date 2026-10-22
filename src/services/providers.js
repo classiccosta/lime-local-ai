@@ -1,9 +1,9 @@
-import { LOCAL_MODELS, LOCAL_PROVIDER_ID } from './localModels';
+import { LOCAL_MODELS, LOCAL_PROVIDER_ID, WEBGPU_ENABLED } from './localModels';
 import { generate as generateOpenAi, getOpenAiModels } from './openai';
 
 function getLocalModels() {
   // Without WebGPU these cannot load at all, so do not offer them.
-  if (!('gpu' in navigator)) return [];
+  if (!WEBGPU_ENABLED || !('gpu' in navigator)) return [];
   return LOCAL_MODELS.map(({ id, label }) => ({
     modelId: id,
     label,

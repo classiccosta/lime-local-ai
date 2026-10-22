@@ -14,8 +14,7 @@ export const en = {
   'sessions.new': 'New',
   'sessions.settings': 'Settings',
   'settings.models': 'Models',
-  'settings.noWebgpu':
-    "WebGPU isn't available in this browser. Use Chrome or Edge, or connect an endpoint below.",
+  'settings.noModels': 'No models available. Connect an endpoint below.',
   'settings.changeEndpoint': 'Change',
   'settings.downloaded': 'Downloaded',
   'settings.remote': 'Runs on the endpoint',
@@ -59,10 +58,8 @@ export const en = {
   'composer.choose': 'Choose a model',
   'composer.textOnly': 'Text only in this version of Lime',
   'composer.attachmentsUnavailable': 'Attachments unavailable',
-  'composer.noWebgpu':
-    "WebGPU isn't available in this browser. Use Chrome or Edge, or connect an endpoint in Settings.",
-  'composer.noModels':
-    'No models available. Use Chrome or Edge to run them in the browser, or connect an endpoint in Settings.',
+  'composer.noModels': 'No models available.',
+  'composer.openSettings': 'Open Settings',
 
   'banner.noModel': 'Choose a model first.',
   'banner.unreachable': "Can't reach the endpoint. Check it's running and allows CORS.",

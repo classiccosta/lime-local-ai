@@ -10,8 +10,7 @@ export const de = {
   'sessions.new': 'Neu',
   'sessions.settings': 'Einstellungen',
   'settings.models': 'Modelle',
-  'settings.noWebgpu':
-    'WebGPU ist in diesem Browser nicht verfügbar. Verwenden Sie Chrome oder Edge, oder verbinden Sie unten einen Endpunkt.',
+  'settings.noModels': 'Keine Modelle verfügbar. Verbinden Sie unten einen Endpunkt.',
   'settings.changeEndpoint': 'Ändern',
   'settings.downloaded': 'Heruntergeladen',
   'settings.remote': 'Läuft auf dem Endpunkt',
@@ -57,10 +56,8 @@ export const de = {
   'composer.choose': 'Modell auswählen',
   'composer.textOnly': 'Diese Version von Lime unterstützt nur Text',
   'composer.attachmentsUnavailable': 'Anhänge nicht verfügbar',
-  'composer.noWebgpu':
-    'WebGPU ist in diesem Browser nicht verfügbar. Verwenden Sie Chrome oder Edge, oder verbinden Sie in den Einstellungen einen Endpunkt.',
-  'composer.noModels':
-    'Keine Modelle verfügbar. Verwenden Sie Chrome oder Edge, um sie im Browser auszuführen, oder verbinden Sie in den Einstellungen einen Endpunkt.',
+  'composer.noModels': 'Keine Modelle verfügbar.',
+  'composer.openSettings': 'Einstellungen öffnen',
 
   'banner.noModel': 'Wählen Sie zuerst ein Modell.',
   'banner.unreachable':
