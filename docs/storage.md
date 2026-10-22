@@ -4,6 +4,10 @@ What the app keeps on disk, how it knows which models are downloaded, and why
 the browser's storage figures are only approximate. There is no storage meter in
 the UI (ADR-011); the figures are read only to know what is cached.
 
+> **Dormant in v1.** Everything here serves the WebGPU backend, which is paused (ADR-012).
+> With `WEBGPU_ENABLED` off no weights are downloaded; only conversations (IndexedDB)
+> and preferences (`localStorage`) are written.
+
 - **Service:** [`src/services/modelCache.js`](../src/services/modelCache.js)
 - **Hook:** [`src/features/settings/hooks/useStorage.js`](../src/features/settings/hooks/useStorage.js)
 
