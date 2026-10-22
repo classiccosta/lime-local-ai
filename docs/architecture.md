@@ -28,9 +28,9 @@ src/
 
   features/
     chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, sendFailure.js, Title, ErrorBanner
-    models/      hooks/{useModels,useStorage}.js, selection.js, endpointFailure.js, ModelPicker, ModelList
+    models/      hooks/{useModelSetup,useModels,useStorage}.js, pickerItems.js, selection.js, endpointFailure.js, ModelPicker, ModelList
     sessions/    hooks/useSessions.js, SessionSidebar
-    settings/    hooks/{useEndpoint,usePanel}.js, SettingsDialog
+    settings/    hooks/{useEndpoint,usePanel}.js, SettingsDialog, SettingsContent
     layout/      MobileHeader, MobileSheet
 
   services/
@@ -79,6 +79,7 @@ flowchart TD
   subgraph hooks["Hooks"]
     UE["useEndpoint"]
     UAR["useAssistantRuntime"]
+    UMS["useModelSetup"]
     UM["useModels"]
     UC["useConversation"]
     US["useSession"]
@@ -101,7 +102,8 @@ flowchart TD
   end
 
   App --> Cmp
-  App --> UE & UM & UC & US & USS
+  App --> UE & UMS & UC & US & USS
+  UMS --> UM
   Cmp -- "useExternalStoreRuntime" --> UAR
   UAR -- "dispatch" --> R
 
