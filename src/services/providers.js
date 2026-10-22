@@ -34,19 +34,19 @@ export async function getModels(baseURL) {
 
   const arr = [...local, ...openaiCompatible];
   const models = arr.map(({ modelId, id, label, providerId }) => {
-    const provider = providerId === LOCAL_PROVIDER_ID ? 'Web-GPU' : 'LM-Studio';
+    const provider = providerId === LOCAL_PROVIDER_ID ? 'webgpu' : 'endpoint';
     const resolved = modelId ?? id;
     return {
       id: resolved,
       label: label ?? resolved,
       provider,
-      requiresLoad: provider === 'Web-GPU',
+      requiresLoad: provider === 'webgpu',
     };
   });
   return { models, endpointError };
 }
 
-// Load Web-GPU Model
+// Load a WebGPU model
 export async function modelLoader(modelId, signal) {
   const { loadModel } = await import('./llm');
   return loadModel(modelId, signal);
@@ -62,10 +62,10 @@ export async function unloadModel(modelId) {
 
 // Generate output
 export async function generate({ model, provider, messages, onToken, baseURL, signal }) {
-  if (provider === 'LM-Studio') {
+  if (provider === 'endpoint') {
     return generateOpenAi({ model, messages, onToken, baseURL, signal });
   }
-  if (provider === 'Web-GPU') {
+  if (provider === 'webgpu') {
     const { generate: generateLLM } = await import('./llm');
     // llm.js resolves to a bare string; wrap it so both providers return the
     // same shape.

@@ -44,8 +44,8 @@ export function useModelSetup({ endpoint, setEndpoint }) {
 
   // The model list is one flat set tagged by provider; settings splits it back
   // into its two sources.
-  const webgpuModels = models.filter((model) => model.provider === 'Web-GPU');
-  const endpointModels = models.filter((model) => model.provider === 'LM-Studio');
+  const webgpuModels = models.filter((model) => model.provider === 'webgpu');
+  const endpointModels = models.filter((model) => model.provider === 'endpoint');
   // On disk, whether or not on the GPU yet. A loaded model is on disk by
   // definition, and listing it here covers the moment before the storage
   // re-read that its load triggers comes back.
