@@ -50,12 +50,12 @@ export function SettingsDialog({ open, onOpenChange, children }) {
         // Closes on the touch itself, not the click after it: see closeOnTouchDown.
         onOverlayPointerDown={closeOnTouchDown(onOpenChange)}
         onFocus={keepFieldInView}
-        className="top-[calc(var(--app-height,100dvh)/2)] max-h-[min(85dvh,calc(var(--app-height,100dvh)-2rem))] overflow-y-auto border ring-0 sm:max-w-md"
+        className="top-[calc(var(--app-height,100dvh)/2)] max-h-[min(85dvh,calc(var(--app-height,100dvh)-2rem))] overflow-y-auto border ring-0 sm:w-md sm:max-w-md"
       >
         <DialogHeader>
           <DialogTitle>{t('settings.title')}</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-5 text-xs">{children}</div>
+        <div className="flex min-w-0 flex-col gap-5 text-xs">{children}</div>
       </DialogContent>
     </Dialog>
   );

@@ -29,39 +29,11 @@ export function EndpointField({ endpoint, onLoad, fetching, error, modelCount, f
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2">
-      {/* Two rows, label and field, the same as the plain value they replace,
-          so pressing Change does not resize the dialog. The outcome of the last
-          load — an error, or how many models came back — shares the label's
-          row rather than adding a third; the full error is in its tooltip. */}
-      <div className="flex items-center justify-between gap-3 text-xs">
-        <label htmlFor="endpoint-input" className="text-muted-foreground shrink-0">
-          {t('endpoint.label')}
-        </label>
-        {error ? (
-          <span role="alert" title={error} className="text-destructive min-w-0 truncate">
-            {error}
-          </span>
-        ) : (
-          !fetching &&
-          endpoint && (
-            // An endpoint that answers with nothing to chat to is as much a
-            // dead end as one that does not answer, so it reads in red too.
-            <span
-              role={modelCount === 0 ? 'alert' : undefined}
-              className={cn(
-                'min-w-0 truncate',
-                modelCount === 0 ? 'text-destructive' : 'text-muted-foreground opacity-70',
-              )}
-            >
-              {modelCount === 0
-                ? t('endpoint.none')
-                : t(modelCount === 1 ? 'endpoint.count_one' : 'endpoint.count_other', {
-                    count: modelCount,
-                  })}
-            </span>
-          )
-        )}
-      </div>
+      {/* The outcome goes under the field and wraps: the width never changes,
+          the height grows only when there's something to say. */}
+      <label htmlFor="endpoint-input" className="text-muted-foreground text-xs">
+        {t('endpoint.label')}
+      </label>
 
       {/* Load sits at the end of the field rather than under it: one row,
           28px tall like the plain value it replaces. Enter submits too. */}
@@ -98,6 +70,31 @@ export function EndpointField({ endpoint, onLoad, fetching, error, modelCount, f
           )}
         </button>
       </div>
+
+      {error ? (
+        <p role="alert" className="text-destructive text-xs [overflow-wrap:anywhere]">
+          {error}
+        </p>
+      ) : (
+        !fetching &&
+        endpoint && (
+          // An endpoint that answers with nothing to chat to is as much a
+          // dead end as one that does not answer, so it reads in red too.
+          <p
+            role={modelCount === 0 ? 'alert' : undefined}
+            className={cn(
+              'text-xs [overflow-wrap:anywhere]',
+              modelCount === 0 ? 'text-destructive' : 'text-muted-foreground opacity-70',
+            )}
+          >
+            {modelCount === 0
+              ? t('endpoint.none')
+              : t(modelCount === 1 ? 'endpoint.count_one' : 'endpoint.count_other', {
+                  count: modelCount,
+                })}
+          </p>
+        )
+      )}
     </form>
   );
 }
