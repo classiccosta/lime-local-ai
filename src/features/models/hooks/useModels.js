@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { describeEndpointFailure } from '@/features/models/endpointFailure';
 import { useT } from '@/i18n/context';
+import { readPref, writePref } from '@/lib/prefs';
 import { getModels, modelLoader, unloadModel } from '@/services/providers';
 
-const SELECTED_KEY = 'ai-chat:model';
+const SELECTED_KEY = 'model';
 
 // What the user reads when a model fails to load. The library's own messages
 // are written for developers — a stack of ONNX and WebGPU internals — so each
@@ -32,9 +33,7 @@ export function useModels({ endpoint } = {}) {
   const [fetching, setFetching] = useState(false);
   // Restored on mount so a refresh comes back to the same model rather than an
   // empty picker.
-  const [selectedModelId, setSelectedModelId] = useState(
-    () => localStorage.getItem(SELECTED_KEY) ?? '',
-  );
+  const [selectedModelId, setSelectedModelId] = useState(() => readPref(SELECTED_KEY, ''));
   // The single load attempt in flight, tagged with the model it belongs to.
   const [attempt, setAttempt] = useState(IDLE_ATTEMPT);
   // Which models this tab has actually loaded. `attempt` describes the most
@@ -90,7 +89,7 @@ export function useModels({ endpoint } = {}) {
   }, [load]);
 
   const selectModel = useCallback((id) => {
-    localStorage.setItem(SELECTED_KEY, id);
+    writePref(SELECTED_KEY, id);
     setSelectedModelId(id);
   }, []);
 

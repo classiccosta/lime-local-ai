@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { readPref, writePref } from './prefs';
 
 const FIELD = 'input, textarea, [contenteditable="true"]';
 // How long a prediction holds against readings that disagree with it. Safari
@@ -55,24 +56,16 @@ const DIRECTION_MS = 1000;
  * On Chrome the viewport meta shrinks the layout viewport itself, so the
  * visible height and `innerHeight` agree; the same code just follows them.
  */
-const HEIGHT_KEY = 'ai-chat:keyboard-height';
+const HEIGHT_KEY = 'keyboard-height';
 
-// localStorage throws where site data is blocked; a missing height is fine.
+// A missing height is fine: it is measured again on the next keyboard.
 function readStoredHeight() {
-  try {
-    const value = Number(localStorage.getItem(HEIGHT_KEY));
-    return value > KEYBOARD_MIN_PX ? value : null;
-  } catch {
-    return null;
-  }
+  const value = Number(readPref(HEIGHT_KEY));
+  return value > KEYBOARD_MIN_PX ? value : null;
 }
 
 function storeHeight(value) {
-  try {
-    localStorage.setItem(HEIGHT_KEY, String(Math.round(value)));
-  } catch {
-    /* not persisted, measured again next visit */
-  }
+  writePref(HEIGHT_KEY, Math.round(value));
 }
 
 export function useKeyboardInset() {
