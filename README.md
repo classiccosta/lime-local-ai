@@ -1,35 +1,63 @@
-# AI Chat
+# Lime — local AI chat
 
-Local-first LLM chat client. Run models in the browser on WebGPU, or point it at any
-OpenAI-compatible server (LM Studio, llama.cpp, vLLM). No backend of its own:
-conversations stay in IndexedDB, model weights in the browser cache. English,
-Portuguese (pt-PT) and German.
+A chat client for the language models you run yourself. Point it at any
+OpenAI-compatible server (LM Studio, llama.cpp, vLLM) and chat in the browser, with
+streaming replies you can stop. No backend of its own: conversations stay in your
+browser (IndexedDB). English, Portuguese (pt-PT) and German.
 
-**Live demo:** [lime-zeta-three.vercel.app](https://lime-zeta-three.vercel.app/) (in-browser
-models need a WebGPU browser, e.g. recent Chrome or Edge)...
+<!-- Demo recording (e-04): docs/demo.gif -->
+
+## Try it
+
+**Live:** [lime-zeta-three.vercel.app](https://lime-zeta-three.vercel.app/), with your
+own endpoint (below). Lime has no models of its own, so without one the model list is
+empty.
+
+### Connect LM Studio
+
+1. In [LM Studio](https://lmstudio.ai), download and load a chat model.
+2. Open the **Developer** tab, start the server (default port `1234`) and turn on
+   **Enable CORS** in its settings. Without CORS the browser blocks every request.
+3. In Lime, open **Settings → Endpoint**, enter `http://localhost:1234/v1` and press
+   **Load models**.
+4. Pick the model in the composer and send a message.
+
+Chrome or Edge recommended. The live site is HTTPS and LM Studio is plain HTTP on
+`localhost`: Chrome may ask to allow access to devices on your local network (allow it).
+If your browser refuses the connection, run Lime locally instead (below).
+
+### Run locally
 
 ```bash
 npm install
-npm run dev   # http://localhost:5173
+npm run dev   # http://localhost:5173, endpoint preset to http://localhost:1234/v1
 ```
 
-The endpoint must allow CORS. See [`docs/architecture.md`](docs/architecture.md) for the
-design, [`docs/storage.md`](docs/storage.md) for browser storage, and
-[`docs/adr/decisions.md`](docs/adr/decisions.md) for the decisions behind them.
+Node 24 (`.nvmrc`). `VITE_API_BASE_URL` in `.env.local` sets a different default endpoint.
 
-## Roadmap
+## What's in v1
 
-### v1
-
-- **Two ways to run models:** in your browser with WebGPU (no server, nothing leaves your machine), or via any OpenAI-compatible endpoint (LM Studio, llama.cpp, vLLM).
-- **Sessions saved locally:** create, rename and delete conversations; everything stays in your browser (IndexedDB).
-- **Streaming replies you can stop** at any time.
-- **Clear errors:** model load, endpoint and storage failures are explained in the UI, not swallowed.
+- **Any OpenAI-compatible endpoint**, through the Responses API, with **streaming** replies.
+- **Stop** a reply at any time; interrupted questions are kept and marked "Stopped".
+- **Sessions saved locally:** create, rename and delete conversations; nothing leaves your
+  browser except the request to your endpoint.
+- **Readable errors:** unreachable endpoint, HTTP errors and storage failures are explained
+  in the UI, translated, never shown as raw server output.
 - **English, Portuguese (pt-PT) and German.**
 
-Quality: unit-tested state logic; CI runs lint, format, tests and build on every PR.
+Quality: unit-tested state and decision logic (Vitest); CI runs lint, format check, tests
+and build on every PR; every PR gets a Vercel preview.
 
-### Not in v1
+## Not in v1
 
+- **In-browser models (WebGPU):** built and paused. The models small enough for a phone
+  got basic facts wrong too often to be the first impression
+  ([ADR-012](docs/adr/decisions.md)).
 - TypeScript migration
-- Performance tuning (bundle, model memory)
+- Regenerating or editing a message; showing model reasoning
+
+## Docs
+
+- [`docs/architecture.md`](docs/architecture.md): design, state, providers
+- [`docs/storage.md`](docs/storage.md): browser storage
+- [`docs/adr/decisions.md`](docs/adr/decisions.md): the decisions behind them

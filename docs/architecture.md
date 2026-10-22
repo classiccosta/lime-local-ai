@@ -4,6 +4,11 @@ A local-first chat client for large language models. Two backends are supported 
 presented identically to the user: a model running in the browser on WebGPU, and any
 OpenAI-compatible HTTP server reachable from the browser (LM Studio, llama.cpp, vLLM).
 
+> **v1 ships endpoint-only.** The WebGPU backend is paused behind `WEBGPU_ENABLED` in
+> `services/localModels.js` (ADR-012): with it off, `getModels` lists no in-browser models
+> and the app takes the same path as a browser without WebGPU. Everything below about
+> WebGPU describes that dormant path.
+
 Conversations are stored in IndexedDB. There is no backend of our own and no build-time
 secret; everything the app needs is either in the browser or on the user's network.
 
@@ -260,7 +265,7 @@ flowchart LR
 { id: string, provider: 'Web-GPU' | 'LM-Studio', requiresLoad: boolean }
 ```
 
-- The **WebGPU** models are offered only when `'gpu' in navigator`, and `requiresLoad`
+- The **WebGPU** models are offered only when `WEBGPU_ENABLED` (off for v1) and `'gpu' in navigator`, and `requiresLoad`
   is true — each must be downloaded (390 MB – 1.5 GB) and loaded before it can answer.
 - **LM-Studio** models are offered only when an endpoint is configured and answers
   `/models` within a 3-second timeout. An unreachable server drops the provider and the

@@ -64,7 +64,7 @@ Consequences: one rule for every interruption; abandonedMessages and its rollbac
 Context: three features sat behind SHOW_* flags set to false; v1 allows no dead code behind flags.
 Decision: delete WelcomeModal/first-run, ModelInfo, StorageMeter and the settings rail with their flags. Settings live only in SettingsDialog.
 Consequences: less code and UI. No pre-download storage warning or "Clear models": a full disk surfaces as the QuotaExceededError on load; models are deleted one by one in the model list. Persistence is still requested before the first download.
-No download progress or stop button: the model row shows a spinner until the load finishes.” It’s the most visible consequence, and it should be on record.
+No download progress or stop button: the model row shows a spinner until the load finishes.
 
 ## ADR-012 · 2026-10-22 · Accepted — WebGPU paused for v1; endpoint-only
 
