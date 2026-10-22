@@ -20,7 +20,16 @@ export function createConversation() {
     // When the in-flight request was sent, for the "Thinking…" counter. Comes
     // in on the action so the reducer stays pure.
     startedAt: null,
+    // Time to first token, kept on the reply as "Thought for …". Set by the
+    // first TOKEN, or by REPLY when the backend didn't stream.
+    thinkingMs: null,
   };
+}
+
+// `at` is optional on TOKEN/REPLY; without it (or a start time) there is no
+// figure, rather than a NaN that would be persisted.
+function sinceStart(state, at) {
+  return state.startedAt != null && at != null ? Math.max(0, at - state.startedAt) : null;
 }
 
 export function conversationReducer(state, action) {
@@ -35,23 +44,34 @@ export function conversationReducer(state, action) {
         dirty: true,
         activeRequestId: action.requestId,
         startedAt: action.startedAt,
+        thinkingMs: null,
       };
 
     case 'TOKEN':
       if (action.requestId !== state.activeRequestId) return state;
-      return { ...state, streamed: state.streamed + action.token };
-
-    case 'REPLY':
-      if (action.requestId !== state.activeRequestId) return state;
       return {
         ...state,
-        messages: [...state.messages, action.message],
+        streamed: state.streamed + action.token,
+        thinkingMs: state.thinkingMs ?? sinceStart(state, action.at),
+      };
+
+    case 'REPLY': {
+      if (action.requestId !== state.activeRequestId) return state;
+      const thinkingMs = state.thinkingMs ?? sinceStart(state, action.at);
+      return {
+        ...state,
+        messages: [
+          ...state.messages,
+          thinkingMs == null ? action.message : { ...action.message, thinkingMs },
+        ],
         status: 'idle',
         streamed: '',
         dirty: true,
         activeRequestId: null,
         startedAt: null,
+        thinkingMs: null,
       };
+    }
 
     case 'FAIL':
       if (action.requestId !== state.activeRequestId) return state;
@@ -65,11 +85,19 @@ export function conversationReducer(state, action) {
         dirty: true,
         activeRequestId: null,
         startedAt: null,
+        thinkingMs: null,
       };
 
     case 'CANCEL':
       if (state.activeRequestId === null) return state;
-      return { ...state, status: 'idle', streamed: '', activeRequestId: null, startedAt: null };
+      return {
+        ...state,
+        status: 'idle',
+        streamed: '',
+        activeRequestId: null,
+        startedAt: null,
+        thinkingMs: null,
+      };
 
     case 'LOAD_SESSION':
       return {
