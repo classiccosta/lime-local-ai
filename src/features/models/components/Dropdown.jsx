@@ -12,7 +12,7 @@ import { DropdownMenu } from 'radix-ui';
 export function Dropdown({ loading, error, value, options = [], onChange, label, hint, disabled }) {
   const t = useT();
   if (loading) return <p className="text-muted-foreground text-xs">{t('model.loading')}</p>;
-  if (error) return <p className="text-destructive text-xs">{t('model.listError', { error })}</p>;
+  if (error) return <p className="text-destructive text-xs">{t('model.listError')}</p>;
 
   const selected = options.find((option) => option.id === value);
 

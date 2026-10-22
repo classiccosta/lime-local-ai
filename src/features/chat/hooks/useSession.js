@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { describeSendFailure } from '@/features/chat/sendFailure';
+import { useT } from '@/i18n/context';
 import { generate } from '@/services/providers';
 
 export function useSession({
@@ -8,6 +10,7 @@ export function useSession({
   selectedModelId,
   endpoint,
 } = {}) {
+  const t = useT();
   const controllerRef = useRef(null);
 
   useEffect(() => {
@@ -35,7 +38,8 @@ export function useSession({
 
     try {
       const selectedModel = models?.find((model) => model.id === selectedModelId);
-      if (!selectedModel) throw new Error('No model selected.');
+      if (!selectedModel)
+        throw Object.assign(new Error('No model selected.'), { code: 'NO_MODEL' });
       const { text } = await generate({
         messages,
         model: selectedModel.id,
@@ -52,7 +56,11 @@ export function useSession({
         message: { id: crypto.randomUUID(), role: 'assistant', content: [{ type: 'text', text }] },
       });
     } catch (err) {
-      dispatch({ type: 'FAIL', requestId, error: err.message });
+      // An abort means the reducer has already moved on and would drop this
+      // FAIL; describing it would only log a spurious AbortError.
+      if (!controller.signal.aborted) {
+        dispatch({ type: 'FAIL', requestId, error: describeSendFailure(err, t) });
+      }
     } finally {
       if (controllerRef.current === controller) controllerRef.current = null;
     }

@@ -22,19 +22,28 @@ export function ModelPicker({
   noWebgpu,
   loadingError,
   ariaLabel,
+  inComposer = false,
 }) {
   const t = useT();
+  // The settings dialog has the endpoint field right below; the composer has
+  // to send the user there. With nothing to list at all, the composer says so
+  // first, or the open menu would look broken rather than empty.
+  const noWebgpuKey = !inComposer
+    ? 'settings.noWebgpu'
+    : items.length === 0
+      ? 'composer.noModels'
+      : 'composer.noWebgpu';
 
   return (
     <>
       {loading ? (
         <p className="text-muted-foreground">{t('model.loading')}</p>
       ) : error ? (
-        <p className="text-destructive">{t('model.listError', { error })}</p>
+        <p className="text-destructive">{t('model.listError')}</p>
       ) : !restored ? (
         <ModelPickerSkeleton />
       ) : (
-        noWebgpu && <p className="text-muted-foreground opacity-70">{t('settings.noWebgpu')}</p>
+        noWebgpu && <p className="text-muted-foreground opacity-70">{t(noWebgpuKey)}</p>
       )}
 
       {/* No progress bar: the spinner on the row is the whole report. */}
