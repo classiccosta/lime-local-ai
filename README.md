@@ -5,9 +5,15 @@ OpenAI-compatible server (LM Studio, llama.cpp, vLLM) and chat in the browser, w
 streaming replies you can stop. No backend of its own: conversations stay in your
 browser (IndexedDB). English, Portuguese (pt-PT) and German.
 
-**"Explain CORS like you are a nightclub bouncer"**
+## Demo
+
+Streaming a reply from LM Studio: _"Explain CORS like you are a nightclub bouncer."_
+
 ![Lime streaming a reply from LM Studio](docs/media/lime-demo-cors.gif)
-**"Erklär mir, warum Berliner Döner besser ist als jeder andere”**
+
+Switching the interface to German, then chatting in German: _"Erklär mir, warum Berliner
+Döner besser ist als jeder andere."_
+
 ![Switching the UI to German and chatting in German](docs/media/lime-demo-doener-de.gif)
 
 ## Try it
@@ -42,8 +48,9 @@ Node 24 (`.nvmrc`). `VITE_API_BASE_URL` in `.env.local` sets a different default
 
 - **Any OpenAI-compatible endpoint**, through the Responses API, with **streaming** replies.
 - **Stop** a reply at any time; interrupted questions are kept and marked "Stopped".
-- **Sessions saved locally:** create, rename and delete conversations; nothing leaves your
-  browser except the request to your endpoint.
+- **Sessions saved locally:** conversations are created as you chat, titled from the first
+  message, and can be deleted. Nothing leaves your browser except the request to your
+  endpoint.
 - **Readable errors:** unreachable endpoint, HTTP errors and storage failures are explained
   in the UI, translated, never shown as raw server output.
 - **English, Portuguese (pt-PT) and German.**
