@@ -28,6 +28,7 @@ function generating() {
     type: 'SEND_START',
     message: userMessage('Hello'),
     requestId: 'req-1',
+    startedAt: 1000,
   });
 }
 
@@ -42,6 +43,7 @@ describe('createConversation', () => {
       streamed: '',
       dirty: false,
       activeRequestId: null,
+      startedAt: null,
     });
     expect(typeof state.sessionId).toBe('string');
   });
@@ -76,6 +78,7 @@ describe('SEND_START', () => {
     expect(state.messages).toEqual([userMessage('Hello')]);
     expect(state.status).toBe('generating');
     expect(state.activeRequestId).toBe('req-1');
+    expect(state.startedAt).toBe(1000);
     expect(state.dirty).toBe(true);
   });
 
@@ -187,6 +190,16 @@ describe('FAIL', () => {
     const state = generating();
     const next = reduce(state, { type: 'FAIL', requestId: 'old', error: 'boom' });
     expect(next).toBe(state);
+  });
+});
+
+describe('startedAt', () => {
+  it.each([
+    ['REPLY', { requestId: 'req-1', message: assistantMessage('Hi') }],
+    ['FAIL', { requestId: 'req-1', error: 'boom' }],
+    ['CANCEL', {}],
+  ])('is cleared by %s', (type, payload) => {
+    expect(reduce(generating(), { type, ...payload }).startedAt).toBeNull();
   });
 });
 

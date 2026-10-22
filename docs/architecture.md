@@ -135,6 +135,7 @@ directly in Node.
 | `streamed`        | partial assistant text for the in-flight reply                |
 | `dirty`           | whether `messages` holds changes the store has not seen       |
 | `activeRequestId` | the one in-flight generation whose result will be accepted    |
+| `startedAt`       | `Date.now()` when the in-flight request was sent, else `null` |
 
 ### Transitions
 

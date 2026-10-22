@@ -17,6 +17,9 @@ export function createConversation() {
     streamed: '',
     dirty: false,
     activeRequestId: null,
+    // When the in-flight request was sent, for the "Thinking…" counter. Comes
+    // in on the action so the reducer stays pure.
+    startedAt: null,
   };
 }
 
@@ -31,6 +34,7 @@ export function conversationReducer(state, action) {
         streamed: '',
         dirty: true,
         activeRequestId: action.requestId,
+        startedAt: action.startedAt,
       };
 
     case 'TOKEN':
@@ -46,6 +50,7 @@ export function conversationReducer(state, action) {
         streamed: '',
         dirty: true,
         activeRequestId: null,
+        startedAt: null,
       };
 
     case 'FAIL':
@@ -59,11 +64,12 @@ export function conversationReducer(state, action) {
         streamed: '',
         dirty: true,
         activeRequestId: null,
+        startedAt: null,
       };
 
     case 'CANCEL':
       if (state.activeRequestId === null) return state;
-      return { ...state, status: 'idle', streamed: '', activeRequestId: null };
+      return { ...state, status: 'idle', streamed: '', activeRequestId: null, startedAt: null };
 
     case 'LOAD_SESSION':
       return {
