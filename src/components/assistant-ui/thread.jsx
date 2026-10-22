@@ -412,7 +412,7 @@ const ThoughtFor = () => {
   const time = formatElapsed(useAuiState((s) => s.message.metadata?.custom?.thinkingMs));
   if (!time) return null;
   return (
-    <div className="text-muted-foreground pt-1.5 text-sm tabular-nums">
+    <div className="text-muted-foreground pt-1.5 pb-2 text-sm tabular-nums">
       {t('thread.thoughtFor', { time })}
     </div>
   );
