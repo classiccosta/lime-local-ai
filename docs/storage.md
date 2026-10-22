@@ -59,7 +59,7 @@ disk still has to be read, compiled and uploaded to the GPU after a reload, so i
 is _cached_ but not _loaded_ until something loads it.
 
 In the settings model list ([`ModelList.jsx`](../src/features/models/components/ModelList.jsx),
-rows built in `App.jsx`), a model on disk gets a drive icon and can be picked; one
+rows built in `pickerItems.js`), a model on disk gets a drive icon and can be picked; one
 that isn't is dimmed and fetched from its own download icon. Only a model that is
 both selected _and_ in `loadedModelIds` is marked active.
 
@@ -80,7 +80,7 @@ Two pieces of state cooperate so a reload comes back where it left off:
 
 `loadedModelIds` is deliberately not persisted. Restoring it would mark as ready a
 model that `generate()` would reject with "Model is not loaded yet." Instead
-`App.jsx` re-establishes the fact: once the model list and cache contents are
+`useModelSetup` re-establishes the fact: once the model list and cache contents are
 known, an effect loads **every** in-browser model whose weights are in
 `cachedModelIds`, one at a time, selected model first. Reading from the cache
 costs GPU memory and compile time but no network, and a `useRef` guard stops a
@@ -89,7 +89,7 @@ hidden until this settles.
 
 A restored `selectedModelId` can point at a model the list no longer offers: the
 endpoint dropped it, or the browser has no WebGPU for a catalogue model. Once the
-restore settles, `App.jsx` clears such an id (persisting `''`) so auto-select can
+restore settles, `useModelSetup` clears such an id (persisting `''`) so auto-select can
 pick one that answers. The check is `isStaleSelection` in
 `features/models/selection.js`. It runs after the restore and on every list
 change. It waits for the restore because the list is `[]` while `/models` first
@@ -137,7 +137,7 @@ message text because transformers.js re-wraps some failures as a plain `Error`.
 
 A non-persisted origin can have its storage evicted under disk pressure — losing a
 1.5 GB download and every saved conversation. `requestPersistence()` calls
-`navigator.storage.persist()`, and `App.jsx` calls it via `loadFromComposer` **before**
+`navigator.storage.persist()`, and `useModelSetup` calls it via `loadFromComposer` **before**
 the first download rather than warning about its absence afterwards.
 
 Chromium decides silently from engagement heuristics and never prompts. Firefox
@@ -159,7 +159,7 @@ The optional call is awaited before anything is chained onto its result.
 
 1. **Mount** — once, in `useStorage`.
 2. **A download finishing or failing** — keyed on `loadedModelIds` and
-   `attemptError` in `App.jsx`.
+   `attemptError` in `useModelSetup`.
 3. **Deleting a model.**
 4. **A persistence grant.**
 
