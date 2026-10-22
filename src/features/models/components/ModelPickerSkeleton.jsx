@@ -1,6 +1,6 @@
+import { Spinner } from '@/components/Spinner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useT } from '@/i18n/context';
-import { Loader2 } from 'lucide-react';
 
 /**
  * Stand-in for the model picker while cached models are restored on startup.
@@ -17,7 +17,7 @@ export function ModelPickerSkeleton() {
   return (
     <div className="flex flex-col gap-4" aria-busy="true">
       <p role="status" className="text-muted-foreground flex items-center gap-1.5 text-xs">
-        <Loader2 aria-hidden="true" className="size-3 animate-spin motion-reduce:animate-none" />
+        <Spinner />
         {t('model.restoring')}
       </p>
       <div className="flex flex-col gap-2">

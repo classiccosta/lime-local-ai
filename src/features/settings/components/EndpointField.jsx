@@ -1,6 +1,8 @@
+import { Spinner } from '@/components/Spinner';
 import { useT } from '@/i18n/context';
+import { focusRing } from '@/lib/focusRing';
 import { cn } from '@/lib/utils';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export function EndpointField({ endpoint, onLoad, fetching, error, modelCount, focusSignal }) {
@@ -50,24 +52,22 @@ export function EndpointField({ endpoint, onLoad, fetching, error, modelCount, f
           placeholder="http://localhost:11434"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          className="bg-background border-border placeholder:text-muted-foreground/60 focus-visible:ring-ring h-7 min-w-0 flex-1 rounded-sm border px-3 text-xs focus-visible:ring-2 focus-visible:outline-none"
+          className={cn(
+            'bg-background border-border placeholder:text-muted-foreground/60 h-7 min-w-0 flex-1 rounded-sm border px-3 text-xs',
+            focusRing,
+          )}
         />
 
         <button
           type="submit"
           disabled={!trimmed || fetching}
           aria-label={fetching ? t('endpoint.submitting') : t('endpoint.submit')}
-          title={fetching ? t('endpoint.submitting') : t('endpoint.submit')}
-          className="bg-primary text-primary-foreground focus-visible:ring-ring flex size-7 shrink-0 items-center justify-center rounded-sm focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50"
-        >
-          {fetching ? (
-            <Loader2
-              aria-hidden="true"
-              className="size-3.5 animate-spin motion-reduce:animate-none"
-            />
-          ) : (
-            <ArrowRight aria-hidden="true" className="size-3.5" />
+          className={cn(
+            'bg-primary text-primary-foreground flex size-7 shrink-0 items-center justify-center rounded-sm disabled:opacity-50',
+            focusRing,
           )}
+        >
+          {fetching ? <Spinner /> : <ArrowRight aria-hidden="true" className="size-3.5" />}
         </button>
       </div>
 
@@ -84,7 +84,7 @@ export function EndpointField({ endpoint, onLoad, fetching, error, modelCount, f
             role={modelCount === 0 ? 'alert' : undefined}
             className={cn(
               'text-xs [overflow-wrap:anywhere]',
-              modelCount === 0 ? 'text-destructive' : 'text-muted-foreground opacity-70',
+              modelCount === 0 ? 'text-destructive' : 'text-muted-foreground/60',
             )}
           >
             {modelCount === 0

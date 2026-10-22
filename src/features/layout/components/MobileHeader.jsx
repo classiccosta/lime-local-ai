@@ -1,6 +1,9 @@
+import { Button } from '@/components/ui/button';
 import { Title } from '@/features/chat/components/Title';
 import { useT } from '@/i18n/context';
 import { Menu, Settings } from 'lucide-react';
+
+const HEADER_BUTTON = 'text-muted-foreground size-9 rounded-[10px]';
 
 /**
  * The mobile app bar, standing in for both side panels.
@@ -10,17 +13,20 @@ import { Menu, Settings } from 'lucide-react';
  */
 export function MobileHeader({ title, onOpenSessions, onOpenSettings }) {
   const t = useT();
+  const sessionsLabel = t('panel.show', { label: t('panel.sessions').toLowerCase() });
+  const settingsLabel = t('panel.show', { label: t('panel.settings').toLowerCase() });
 
   return (
     <header className="bg-background flex h-13 shrink-0 items-center gap-2.5 border-b px-3">
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={onOpenSessions}
-        aria-label={t('panel.show', { label: t('panel.sessions').toLowerCase() })}
-        className="text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:ring-ring grid size-9 shrink-0 place-items-center rounded-[10px] transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        aria-label={sessionsLabel}
+        className={HEADER_BUTTON}
       >
-        <Menu aria-hidden="true" className="size-[18px]" />
-      </button>
+        <Menu aria-hidden="true" className="size-4" />
+      </Button>
 
       {/* Centred by the two equal-width buttons flanking it, so the title stays
           put whatever its length rather than shifting with the controls. */}
@@ -28,14 +34,15 @@ export function MobileHeader({ title, onOpenSessions, onOpenSettings }) {
         <Title>{title}</Title>
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={onOpenSettings}
-        aria-label={t('panel.show', { label: t('panel.settings').toLowerCase() })}
-        className="text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:ring-ring grid size-9 shrink-0 place-items-center rounded-[10px] transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        aria-label={settingsLabel}
+        className={HEADER_BUTTON}
       >
-        <Settings aria-hidden="true" className="size-[17px]" />
-      </button>
+        <Settings aria-hidden="true" className="size-4" />
+      </Button>
     </header>
   );
 }

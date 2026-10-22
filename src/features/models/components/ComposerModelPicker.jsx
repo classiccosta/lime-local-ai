@@ -1,10 +1,12 @@
+import { Spinner } from '@/components/Spinner';
 import { ModelPicker } from '@/features/models/components/ModelPicker';
 import { useComposerModels } from '@/features/models/composerModels';
 import { shortLabel } from '@/features/models/labels';
 import { useT } from '@/i18n/context';
+import { focusRing } from '@/lib/focusRing';
 import { menuContent } from '@/lib/menu';
 import { cn } from '@/lib/utils';
-import { ChevronDown, Loader2 } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { Popover } from 'radix-ui';
 import { useState } from 'react';
 
@@ -29,9 +31,9 @@ export function ComposerModelPicker() {
     return (
       <span
         role="status"
-        className="text-muted-foreground/70 flex items-center gap-1.5 px-2 text-xs"
+        className="text-muted-foreground/60 flex items-center gap-1.5 px-2 text-xs"
       >
-        <Loader2 aria-hidden="true" className="size-3 animate-spin motion-reduce:animate-none" />
+        <Spinner />
         {t('model.restoring')}
       </span>
     );
@@ -41,12 +43,15 @@ export function ComposerModelPicker() {
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         aria-label={t('model.label')}
-        className="text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:ring-ring flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        className={cn(
+          'text-muted-foreground hover:bg-accent hover:text-foreground flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors',
+          focusRing,
+        )}
       >
         <span className="max-w-40 truncate">
           {selectedModel ? shortLabel(selectedModel) : t('composer.choose')}
         </span>
-        <ChevronDown aria-hidden="true" className="size-3 shrink-0" />
+        <ChevronDown aria-hidden="true" className="size-3.5 shrink-0" />
       </Popover.Trigger>
       <Popover.Portal>
         {/* Downward by preference, aligned to the trigger's right edge. Radix

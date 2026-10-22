@@ -45,12 +45,7 @@ export function ModelPicker({
         empty && (
           <>
             {/* In the popover, inset like the menu item below it. */}
-            <p
-              className={cn(
-                'text-muted-foreground opacity-70',
-                inComposer && 'pt-1 pr-1 pl-[0.55rem]',
-              )}
-            >
+            <p className={cn('text-muted-foreground/60', inComposer && 'pt-1 pr-1 pl-[0.55rem]')}>
               {t(inComposer ? 'composer.noModels' : 'settings.noModels')}
             </p>
             {inComposer && onOpenSettings && (

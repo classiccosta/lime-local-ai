@@ -15,6 +15,7 @@ import { SessionSidebar } from '@/features/sessions/components/SessionSidebar';
 import { useSessions } from '@/features/sessions/hooks/useSessions';
 import { EndpointField } from '@/features/settings/components/EndpointField';
 import { LanguageSwitch } from '@/features/settings/components/LanguageSwitch';
+import { SettingsSection } from '@/features/settings/components/SettingsSection';
 import { SettingsDialog } from '@/features/settings/components/SettingsDialog';
 import { SettingValue } from '@/features/settings/components/SettingValue';
 import { useEndpoint } from '@/features/settings/hooks/useEndpoint';
@@ -271,16 +272,13 @@ export default function App() {
   // provider hid half of what could be picked at any moment.
   const settingsSections = (
     <>
-      <section className="flex flex-col gap-2">
-        {/* Same face as the Endpoint and Language titles below it. */}
-        <h3 className="text-muted-foreground text-xs">{t('settings.models')}</h3>
-
+      <SettingsSection title={t('settings.models')}>
         <ModelPicker {...modelPicker} />
-      </section>
+      </SettingsSection>
 
       {/* The field carries its own "Endpoint" label, so the title is only
           drawn over the plain value. */}
-      <section className="flex flex-col gap-2 border-t pt-3">
+      <SettingsSection title={editEndpoint ? undefined : t('settings.endpointTitle')}>
         {editEndpoint ? (
           <EndpointField
             endpoint={endpoint}
@@ -290,16 +288,13 @@ export default function App() {
             modelCount={endpointModels.length}
           />
         ) : (
-          <>
-            <span className="text-muted-foreground text-xs">{t('settings.endpointTitle')}</span>
-            <SettingValue
-              value={endpoint}
-              changeLabel={t('settings.changeEndpoint')}
-              onChange={() => setEditingEndpoint(true)}
-            />
-          </>
+          <SettingValue
+            value={endpoint}
+            changeLabel={t('settings.changeEndpoint')}
+            onChange={() => setEditingEndpoint(true)}
+          />
         )}
-      </section>
+      </SettingsSection>
 
       <LanguageSwitch />
     </>
