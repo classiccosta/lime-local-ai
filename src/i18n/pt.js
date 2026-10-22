@@ -10,8 +10,7 @@ export const pt = {
   'sessions.new': 'Nova',
   'sessions.settings': 'Definições',
   'settings.models': 'Modelos',
-  'settings.noWebgpu':
-    'O WebGPU não está disponível neste navegador. Use o Chrome ou o Edge, ou ligue um endpoint abaixo.',
+  'settings.noModels': 'Não há modelos disponíveis. Ligue um endpoint abaixo.',
   'settings.changeEndpoint': 'Alterar',
   'settings.downloaded': 'Transferido',
   'settings.remote': 'Corre no servidor',
@@ -56,10 +55,8 @@ export const pt = {
   'composer.choose': 'Escolher um modelo',
   'composer.textOnly': 'Esta versão do Lime só aceita texto',
   'composer.attachmentsUnavailable': 'Anexos indisponíveis',
-  'composer.noWebgpu':
-    'O WebGPU não está disponível neste navegador. Use o Chrome ou o Edge, ou ligue um endpoint nas Definições.',
-  'composer.noModels':
-    'Não há modelos disponíveis. Use o Chrome ou o Edge para os executar no navegador, ou ligue um endpoint nas Definições.',
+  'composer.noModels': 'Não há modelos disponíveis.',
+  'composer.openSettings': 'Abrir Definições',
 
   'banner.noModel': 'Escolha primeiro um modelo.',
   'banner.unreachable':

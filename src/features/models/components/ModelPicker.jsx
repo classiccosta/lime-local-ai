@@ -1,6 +1,9 @@
 import { ModelList } from '@/features/models/components/ModelList';
 import { ModelPickerSkeleton } from '@/features/models/components/ModelPickerSkeleton';
 import { useT } from '@/i18n/context';
+import { menuItem } from '@/lib/menu';
+import { cn } from '@/lib/utils';
+import { Settings } from 'lucide-react';
 
 /**
  * The model list with its status lines, as one unit.
@@ -11,7 +14,7 @@ import { useT } from '@/i18n/context';
  *
  * Status sits above the list: the catalogue still loading or failed, the
  * cached in-browser models still being restored (the skeleton stands in for
- * their rows, which App leaves out until then), or no WebGPU at all.
+ * their rows, which App leaves out until then), or nothing to list at all.
  */
 export function ModelPicker({
   items,
@@ -19,20 +22,16 @@ export function ModelPicker({
   loading,
   error,
   restored,
-  noWebgpu,
   loadingError,
   ariaLabel,
   inComposer = false,
+  onOpenSettings,
 }) {
   const t = useT();
-  // The settings dialog has the endpoint field right below; the composer has
-  // to send the user there. With nothing to list at all, the composer says so
-  // first, or the open menu would look broken rather than empty.
-  const noWebgpuKey = !inComposer
-    ? 'settings.noWebgpu'
-    : items.length === 0
-      ? 'composer.noModels'
-      : 'composer.noWebgpu';
+  // Only an empty list gets a line, and it never says why a provider is
+  // missing: the endpoint is the one thing the user can fix from here. The
+  // settings dialog has its field right below; the composer links there.
+  const empty = items.length === 0;
 
   return (
     <>
@@ -43,7 +42,25 @@ export function ModelPicker({
       ) : !restored ? (
         <ModelPickerSkeleton />
       ) : (
-        noWebgpu && <p className="text-muted-foreground opacity-70">{t(noWebgpuKey)}</p>
+        empty && (
+          <>
+            {/* In the popover, inset like the menu item below it. */}
+            <p
+              className={cn(
+                'text-muted-foreground opacity-70',
+                inComposer && 'pt-1 pr-1 pl-[0.55rem]',
+              )}
+            >
+              {t(inComposer ? 'composer.noModels' : 'settings.noModels')}
+            </p>
+            {inComposer && onOpenSettings && (
+              <button type="button" onClick={onOpenSettings} className={cn(menuItem, 'text-xs')}>
+                <Settings aria-hidden="true" className="size-3.5" />
+                {t('composer.openSettings')}
+              </button>
+            )}
+          </>
+        )
       )}
 
       {/* No progress bar: the spinner on the row is the whole report. */}
