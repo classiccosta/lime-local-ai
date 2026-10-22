@@ -271,6 +271,7 @@ const Composer = () => {
         >
           <ComposerAttachments />
           <ComposerPrimitive.Input
+            name="message"
             placeholder={t('thread.placeholder')}
             className="aui-composer-input caret-primary placeholder:text-muted-foreground/60 max-h-48 min-h-9 w-full resize-none bg-transparent px-2.5 py-1 text-base leading-6 outline-none"
             rows={1}

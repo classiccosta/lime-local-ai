@@ -4,6 +4,7 @@ import { PanelToggle } from '@/features/sessions/components/PanelToggle';
 import { useT } from '@/i18n/context';
 import { focusRing } from '@/lib/focusRing';
 import { menuContent, menuItem } from '@/lib/menu';
+import { refuseSelection } from '@/lib/refuseSelection';
 import { cn } from '@/lib/utils';
 import { Ellipsis, MessagesSquare, Plus, Settings, Trash2 } from 'lucide-react';
 import { DropdownMenu } from 'radix-ui';
@@ -73,7 +74,7 @@ export function SessionSidebar({
     // element under the finger has none. Hence the whole panel, not the rows,
     // and `selectstart` refused as well as the CSS, which iOS got past.
     <div
-      onSelectStart={(event) => event.preventDefault()}
+      ref={refuseSelection}
       className="flex h-full flex-col gap-2 select-none [-webkit-touch-callout:none]"
     >
       <PanelToggle
@@ -208,7 +209,7 @@ export function SessionSidebar({
                         align="end"
                         sideOffset={4}
                         collisionPadding={8}
-                        className={cn(menuContent, 'outline-none')}
+                        className={cn(menuContent, 'outline-hidden')}
                       >
                         <DropdownMenu.Item
                           onSelect={() => onDelete(session.id)}

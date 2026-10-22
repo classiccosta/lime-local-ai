@@ -6,5 +6,5 @@ export const menuContent =
   'data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 ' +
   'data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2';
 export const menuItem =
-  'flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm outline-none select-none ' +
+  'flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm outline-hidden select-none ' +
   'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground';
