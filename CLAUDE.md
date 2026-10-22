@@ -24,6 +24,7 @@ npm test          # vitest run (once)
 npm run test:watch
 npm run format    # prettier --write . (singleQuote, trailingComma all, printWidth 100)
 npm run format:check
+npm run knip      # unused files/exports/deps (generated ui/ and assistant-ui/ ignored)
 ```
 
 Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); the other pure decisions have their own tests next to them (`displayMessages`, `sendFailure`, `endpointFailure`, `selection`, `services/sse`), and `i18n/locales.test.js` checks every language has exactly `en.js`'s keys. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
@@ -65,7 +66,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 
 - `navigator.storage.estimate()` numbers are fuzzed per browser. Use them to warn, never to gate. A `QuotaExceededError` is caught in `features/models/hooks/useModels.js`.
 - "Cached" (weights on disk, `storage.cachedModelIds`) is not "loaded" (on GPU, `loadedModelIds`, not persisted). On startup `App.jsx` reloads every cached model (selected first).
-- `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:runtime`, `ai-chat:model`). The runtime and model are persisted together on purpose. A restored model id the list no longer offers is cleared after the cache restore and on every list change (`isStaleSelection`), except an endpoint model while the endpoint is unreachable. A stale clear re-arms the once-only auto-select.
+- `localStorage` keys use the `ai-chat:` prefix (e.g. `ai-chat:model`, `ai-chat:locale`). A key nothing reads any more goes in `lib/legacyKeys.js`, which clears it on startup. A restored model id the list no longer offers is cleared after the cache restore and on every list change (`isStaleSelection`), except an endpoint model while the endpoint is unreachable. A stale clear re-arms the once-only auto-select.
 
 ### i18n
 

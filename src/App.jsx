@@ -11,7 +11,6 @@ import { shortLabel } from '@/features/models/labels';
 import { isStaleSelection } from '@/features/models/selection';
 import { ComposerModelsContext } from '@/features/models/composerModels';
 import { useModels } from '@/features/models/hooks/useModels';
-import { useRuntime } from '@/features/models/hooks/useRuntime';
 import { SessionSidebar } from '@/features/sessions/components/SessionSidebar';
 import { useSessions } from '@/features/sessions/hooks/useSessions';
 import { EndpointField } from '@/features/settings/components/EndpointField';
@@ -41,7 +40,7 @@ export default function App() {
     requestPersist,
     removeModel,
   } = useStorage();
-  const sessions = usePanel('sessions');
+  const sessions = usePanel();
   // Below `md` the sessions panel stops fitting beside the thread, so it becomes
   // a sheet over it. Its open state is separate from the desktop one and starts
   // shut: a remembered "expanded" rail is a reasonable thing to restore, a
@@ -68,9 +67,6 @@ export default function App() {
     endpointError,
   } = useModels({ endpoint });
 
-  // No longer a filter on what settings shows — both providers are listed in one
-  // column — but still persisted with the model, and set whenever one is chosen.
-  const { setRuntimeId } = useRuntime();
   // The model list is one flat set tagged by provider; settings splits it back
   // into its two sources.
   const webgpuModels = models.filter((model) => model.provider === 'Web-GPU');
@@ -125,22 +121,11 @@ export default function App() {
     })();
   }, [loading, storageReady, storage, models, selectedModelId, loadModelById]);
 
-  // Picking from the composer is a different act from picking in Settings: the
-  // model is one the user can send to right now, so the runtime switch follows
-  // the choice rather than filtering it. `generate` dispatches on the model's
-  // own provider, so this only keeps the panel showing what the composer did.
-  const chooseModel = (id) => {
-    const model = models.find((entry) => entry.id === id);
-    if (!model) return;
-    setRuntimeId(model.provider);
-    setSelectedModelId(id);
-  };
-
   // From the composer: a model that is not downloaded yet. Selecting it makes
   // the settings panel's progress bar and info card follow the download, and
   // persistence is requested first, exactly as the Load button does.
   const loadFromComposer = async (id) => {
-    chooseModel(id);
+    setSelectedModelId(id);
     await requestPersist();
     loadModelById(id);
   };
@@ -170,10 +155,8 @@ export default function App() {
       models.find((model) => !model.requiresLoad);
     if (!first) return;
     autoSelected.current = true;
-    chooseModel(first.id);
-    // chooseModel is redefined every render and would restart the effect.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restored, selectedModelId, models, loadedModelIds, error, endpointError]);
+    setSelectedModelId(first.id);
+  }, [restored, selectedModelId, models, loadedModelIds, error, endpointError, setSelectedModelId]);
 
   const loadFromEndpoint = (url) => {
     setEndpoint(url);
@@ -252,7 +235,7 @@ export default function App() {
   const webgpuReady = !loading && !error && restored;
   const pickModel = (id) => {
     if (!webgpuModels.some((model) => model.id === id) || loadedModelIds.includes(id)) {
-      chooseModel(id);
+      setSelectedModelId(id);
     } else {
       loadFromComposer(id);
     }
