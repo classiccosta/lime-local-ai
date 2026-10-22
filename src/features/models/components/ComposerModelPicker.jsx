@@ -1,6 +1,6 @@
 import { Spinner } from '@/components/Spinner';
 import { ModelPicker } from '@/features/models/components/ModelPicker';
-import { useComposerModels } from '@/features/models/composerModels';
+import { useComposerModels } from '@/state/composerModels';
 import { shortLabel } from '@/features/models/labels';
 import { useT } from '@/i18n/context';
 import { focusRing } from '@/lib/focusRing';

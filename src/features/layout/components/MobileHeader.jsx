@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Title } from '@/features/chat/components/Title';
+import { Title } from '@/features/layout/components/Title';
 import { useT } from '@/i18n/context';
 import { Menu, Settings } from 'lucide-react';
 
