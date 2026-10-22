@@ -28,9 +28,9 @@ src/
 
   features/
     chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, sendFailure.js, Title, ErrorBanner
-    models/      hooks/useModels.js, selection.js, endpointFailure.js, ModelPicker, ModelList
+    models/      hooks/{useModels,useStorage}.js, selection.js, endpointFailure.js, ModelPicker, ModelList
     sessions/    hooks/useSessions.js, SessionSidebar
-    settings/    hooks/{useEndpoint,usePanel,useStorage}.js, SettingsDialog
+    settings/    hooks/{useEndpoint,usePanel}.js, SettingsDialog
     layout/      MobileHeader, MobileSheet
 
   services/
