@@ -15,11 +15,8 @@ import { useModels } from '@/features/models/hooks/useModels';
 import { useStorage } from '@/features/models/hooks/useStorage';
 import { SessionSidebar } from '@/features/sessions/components/SessionSidebar';
 import { useSessions } from '@/features/sessions/hooks/useSessions';
-import { EndpointField } from '@/features/settings/components/EndpointField';
-import { LanguageSwitch } from '@/features/settings/components/LanguageSwitch';
-import { SettingsSection } from '@/features/settings/components/SettingsSection';
+import { SettingsContent } from '@/features/settings/components/SettingsContent';
 import { SettingsDialog } from '@/features/settings/components/SettingsDialog';
-import { SettingValue } from '@/features/settings/components/SettingValue';
 import { useEndpoint } from '@/features/settings/hooks/useEndpoint';
 import { usePanel } from '@/features/settings/hooks/usePanel';
 import { useT } from '@/i18n/context';
@@ -76,9 +73,6 @@ export default function App() {
   // definition, and listing it here covers the moment before the storage
   // re-read that its load triggers comes back.
   const downloaded = new Set([...(storage?.cachedModelIds ?? []), ...loadedModelIds]);
-  // Once an endpoint has answered with models, its list replaces the field; this
-  // brings the field back to point somewhere else.
-  const [editingEndpoint, setEditingEndpoint] = useState(false);
 
   // A finished download changes what is on disk. So does a failed one, which
   // may have filled the quota on the way to giving up. Keyed on the loaded list
@@ -169,7 +163,6 @@ export default function App() {
       autoSelected.current = false;
       setSelectedModelId('');
     }
-    setEditingEndpoint(false);
     load(url);
   };
 
@@ -241,41 +234,12 @@ export default function App() {
     onOpenSettings: () => setSettingsOpen(true),
   };
 
-  // A failing endpoint always shows the field, where its error is.
-  const editEndpoint = editingEndpoint || endpointModels.length === 0 || Boolean(endpointError);
-
-  // Written as elements rather than an extracted component because they read
-  // two dozen values from this scope. One column, both providers: a tab per
-  // provider hid half of what could be picked at any moment.
-  const settingsSections = (
-    <>
-      <SettingsSection title={t('settings.models')}>
-        <ModelPicker {...modelPicker} />
-      </SettingsSection>
-
-      {/* The field carries its own "Endpoint" label, so the title is only
-          drawn over the plain value. */}
-      <SettingsSection title={editEndpoint ? undefined : t('settings.endpointTitle')}>
-        {editEndpoint ? (
-          <EndpointField
-            endpoint={endpoint}
-            onLoad={loadFromEndpoint}
-            fetching={fetching}
-            error={endpointError}
-            modelCount={endpointModels.length}
-          />
-        ) : (
-          <SettingValue
-            value={endpoint}
-            changeLabel={t('settings.changeEndpoint')}
-            onChange={() => setEditingEndpoint(true)}
-          />
-        )}
-      </SettingsSection>
-
-      <LanguageSwitch />
-    </>
-  );
+  const endpointStatus = {
+    fetching,
+    error: endpointError,
+    modelCount: endpointModels.length,
+    load: loadFromEndpoint,
+  };
 
   const sessionsBody = (
     <div
@@ -320,7 +284,11 @@ export default function App() {
     <AssistantRuntimeProvider runtime={runtime}>
       <ComposerModelsContext.Provider value={composerModels}>
         <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-          {settingsSections}
+          <SettingsContent
+            models={<ModelPicker {...modelPicker} />}
+            endpoint={endpoint}
+            endpointStatus={endpointStatus}
+          />
         </SettingsDialog>
         {/* The visible height, measured by useKeyboardInset: with the keyboard
             open it is the area above it, so the whole layout shrinks and closes

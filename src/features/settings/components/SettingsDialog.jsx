@@ -5,8 +5,8 @@ import { closeOnTouchDown } from '@/lib/closeOnTouchDown';
 /**
  * Settings as a modal, opened from the foot of the session sidebar.
  *
- * Holds whatever App passes in rather than the controls themselves: they read
- * two dozen values from App's scope, and the rail renders the same element.
+ * Holds whatever App passes in (SettingsContent) rather than the controls
+ * themselves.
  * Scrolls inside itself, since a long endpoint list or a load error can push it
  * past a phone's height. The backdrop is set here, at half the shared default's
  * opacity, so the attachment preview that also uses the dialog keeps its own.
