@@ -65,3 +65,9 @@ Context: three features sat behind SHOW_* flags set to false; v1 allows no dead 
 Decision: delete WelcomeModal/first-run, ModelInfo, StorageMeter and the settings rail with their flags. Settings live only in SettingsDialog.
 Consequences: less code and UI. No pre-download storage warning or "Clear models": a full disk surfaces as the QuotaExceededError on load; models are deleted one by one in the model list. Persistence is still requested before the first download.
 No download progress or stop button: the model row shows a spinner until the load finishes.” It’s the most visible consequence, and it should be on record.
+
+## ADR-012 · 2026-10-22 · Accepted — WebGPU paused for v1; endpoint-only
+
+Context: in-browser models small enough for a phone (Qwen3-0.6B, SmolVLM) hallucinate on basic questions; the endpoint path works well.
+Decision: gate WebGPU off with one constant (WEBGPU_ENABLED in localModels.js). The code stays; the app behaves as in a browser without WebGPU. The live demo is documented as "bring your own endpoint", with a recorded demo in the README.
+Consequences: v1 needs an OpenAI-compatible endpoint (LM Studio with CORS on); no model works on mobile. Dormant code behind one flag, an exception to the no-flags rule with an expiry: if WebGPU isn't back by v1.1, it is removed (archive branch).

@@ -266,7 +266,6 @@ export default function App() {
     loading,
     error,
     restored,
-    noWebgpu: webgpuModels.length === 0,
     // Named, because it may belong to a model other than the selected one.
     loadingError: attemptError
       ? `${shortLabel(findLocalModel(attemptModelId) ?? { id: attemptModelId })}: ${attemptError}`
@@ -278,6 +277,7 @@ export default function App() {
     picker: modelPicker,
     selectedModel: models.find((model) => model.id === selectedModelId),
     restoring: !restored,
+    onOpenSettings: () => setSettingsOpen(true),
   };
 
   // A failing endpoint always shows the field, where its error is.
