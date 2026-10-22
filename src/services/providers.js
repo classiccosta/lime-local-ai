@@ -1,3 +1,4 @@
+import { isChatModel } from './chatModels';
 import { LOCAL_MODELS, LOCAL_PROVIDER_ID, WEBGPU_ENABLED } from './localModels';
 import { generate as generateOpenAi, getOpenAiModels } from './openai';
 
@@ -25,7 +26,7 @@ export async function getModels(baseURL) {
   if (baseURL) {
     try {
       const { data } = await getOpenAiModels({ baseURL });
-      openaiCompatible = data ?? [];
+      openaiCompatible = (data ?? []).filter(isChatModel);
     } catch (error) {
       endpointError = error;
     }
