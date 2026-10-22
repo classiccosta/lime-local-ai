@@ -9,6 +9,7 @@ export const de = {
 
   'sessions.new': 'Neu',
   'sessions.settings': 'Einstellungen',
+  'sessions.github': 'Quellcode auf GitHub',
   'settings.models': 'Modelle',
   'settings.noModels': 'Keine Modelle verfügbar. Verbinden Sie unten einen Endpunkt.',
   'settings.changeEndpoint': 'Ändern',

@@ -269,7 +269,9 @@ flowchart LR
   is true — each must be downloaded (390 MB – 1.5 GB) and loaded before it can answer.
 - **LM-Studio** models are offered only when an endpoint is configured and answers
   `/models` within a 3-second timeout. An unreachable server drops the provider and the
-  app continues with whatever remains.
+  app continues with whatever remains. Embedding models are filtered out
+  (`services/chatModels.js`: the `type` field if the server sends one, otherwise an
+  `embed` in the id), so an endpoint with only embedding models reads as empty.
 
 ### Full history, every request
 
