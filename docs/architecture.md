@@ -256,8 +256,8 @@ result. Callers never branch on backend.
 ```mermaid
 flowchart LR
   G["generate({ provider, ... })"]
-  G -->|"'LM-Studio'"| O["openai.js<br/>POST /responses"]
-  G -->|"'Web-GPU'"| L["llm.js<br/>await import()"]
+  G -->|"'endpoint'"| O["openai.js<br/>POST /responses"]
+  G -->|"'webgpu'"| L["llm.js<br/>await import()"]
   O --> T["{ text }"]
   L --> T
 ```
@@ -265,12 +265,12 @@ flowchart LR
 `getModels(baseURL)` returns entries of the shape:
 
 ```js
-{ id: string, provider: 'Web-GPU' | 'LM-Studio', requiresLoad: boolean }
+{ id: string, provider: 'webgpu' | 'endpoint', requiresLoad: boolean }
 ```
 
 - The **WebGPU** models are offered only when `WEBGPU_ENABLED` (off for v1) and `'gpu' in navigator`, and `requiresLoad`
   is true — each must be downloaded (390 MB – 1.5 GB) and loaded before it can answer.
-- **LM-Studio** models are offered only when an endpoint is configured and answers
+- The **endpoint** models are offered only when an endpoint is configured and answers
   `/models` within a 3-second timeout. An unreachable server drops the provider and the
   app continues with whatever remains. Embedding models are filtered out
   (`services/chatModels.js`: the `type` field if the server sends one, otherwise an
@@ -299,6 +299,10 @@ runtime.
 | `index.js`        | ~67 kB      | initial load     |
 | `llm.js`          | ~148 kB     | first WebGPU use |
 | ONNX runtime WASM | ~5.8 MB     | first WebGPU use |
+
+The COOP `same-origin` / COEP `credentialless` headers in `vercel.json` exist only for
+this runtime (its multi-threaded WASM needs a cross-origin-isolated page). They stay
+while WebGPU is paused, dormant until bl-07 decides its fate.
 
 ---
 

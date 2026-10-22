@@ -1,7 +1,7 @@
 // The in-browser model catalogue. Deliberately free of any @huggingface/transformers
 // import so that listing models never pulls in the ~23 MB runtime — services/llm.js
 // reads the same entries once a model is actually being loaded.
-export const LOCAL_PROVIDER_ID = 'Web-GPU';
+export const LOCAL_PROVIDER_ID = 'webgpu';
 
 // Paused for v1 (ADR-012): phone-sized models hallucinate on basic questions.
 // Off, the app behaves as in a browser without WebGPU. Back by v1.1 or removed.
