@@ -26,14 +26,14 @@ npm run format    # prettier --write . (singleQuote, trailingComma all, printWid
 npm run format:check
 ```
 
-Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); `features/chat/displayMessages.test.js` and `features/models/selection.test.js` cover the other pure decisions. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
+Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); the other pure decisions have their own tests next to them (`displayMessages`, `sendFailure`, `endpointFailure`, `selection`, `services/sse`), and `i18n/locales.test.js` checks every language has exactly `en.js`'s keys. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
 
 Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an optional default endpoint. Endpoint resolution: `localStorage` → `VITE_API_BASE_URL` → `http://localhost:1234/v1` in dev → `''` (endpoint provider disabled). There is no dev proxy, so the server must allow CORS in every mode.
 
 ## Architecture
 
 ```
-src/App.jsx        composition root: calls every hook, lays out components (large, ~600 lines)
+src/App.jsx        composition root: calls every hook, lays out components (large, ~450 lines)
 src/state/         conversation reducer (pure) + useConversation (owns the useReducer)
 src/features/<x>/  components/ + hooks/ per feature (chat, models, sessions, settings, layout)
 src/services/      browser/network I/O: providers facade, openai adapter, llm (WebGPU), sessionStore (IndexedDB), modelCache
@@ -69,7 +69,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 
 ### i18n
 
-Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a translation in `pt.js`. Keys are namespaced by where they appear (`panel.*`, `sessions.*`, `welcome.*`), not by their text. A string used in two places gets two keys. Placeholders look like `{name}`.
+Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a translation in `pt.js` and `de.js` (the parity test fails otherwise). Keys are namespaced by where they appear (`panel.*`, `sessions.*`, `thread.*`), not by their text. A string used in two places gets two keys. Placeholders look like `{name}`.
 
 ## Conventions
 
@@ -77,6 +77,9 @@ Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a tra
 - Prettier: single quotes, trailing commas, width 100, semis. ESLint flat config (react-hooks, react-refresh).
 - Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`; don't hand-edit them beyond small fixes.
 - Icons: lucide only (ADR-007).
+- Menus and popovers share one look: `menuContent` / `menuItem` from `src/lib/menu.js`. Don't restyle a menu inline.
+- Errors shown to the user go through a pure `describe…Failure(error, t)` (`features/chat/sendFailure.js`, `features/models/endpointFailure.js`, the load one in `useModels`): translated text only, never `error.message` or a response body; the original goes to `console.error`.
+- Following a streaming reply is `src/lib/followBottom.js`, not assistant-ui's `autoScroll` (set to `false` on the viewport): iOS Safari's post-scroll position jitter made assistant-ui stop following mid-reply. Keep both if `thread.jsx` is regenerated.
 - zustand is only used by generated code (`assistant-ui/attachment.jsx`). Don't use it for app state; that lives in the reducer and feature hooks.
 - React Compiler is enabled (babel preset in `vite.config.js`): no manual `useMemo`/`useCallback` unless profiled.
 - Tailwind v4 via `@tailwindcss/vite`; theme tokens are in `src/index.css`.
