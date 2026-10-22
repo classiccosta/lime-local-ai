@@ -1,4 +1,5 @@
 import { closeOnTouchDown } from '@/lib/closeOnTouchDown';
+import { refuseSelection } from '@/lib/refuseSelection';
 import { cn } from '@/lib/utils';
 import { Dialog } from 'radix-ui';
 
@@ -31,9 +32,9 @@ export function MobileSheet({ open, onOpenChange, label, selectable = true, chil
           // CSS alone did not stop a long press selecting on iOS: it reached
           // past the unselectable rows for the nearest text it could take,
           // the sr-only title. Refusing the selection outright leaves it none.
-          onSelectStart={selectable ? undefined : (event) => event.preventDefault()}
+          ref={selectable ? undefined : refuseSelection}
           className={cn(
-            'bg-sidebar fixed z-50 flex flex-col outline-none',
+            'bg-sidebar fixed z-50 flex flex-col outline-hidden',
             !selectable && 'select-none [-webkit-touch-callout:none]',
             'duration-200 ease-out data-[state=closed]:ease-in',
             'motion-reduce:duration-0',

@@ -1,13 +1,12 @@
 import { Thread } from '@/components/assistant-ui/thread';
 import { Mark } from '@/components/Mark';
 import { ErrorBanner } from '@/features/chat/components/ErrorBanner';
-import { Title } from '@/features/layout/components/Title';
 import { useAssistantRuntime } from '@/features/chat/hooks/useAssistantRuntime';
 import { useSession } from '@/features/chat/hooks/useSession';
 import { MobileHeader } from '@/features/layout/components/MobileHeader';
 import { MobileSheet } from '@/features/layout/components/MobileSheet';
+import { Title } from '@/features/layout/components/Title';
 import { ModelPicker } from '@/features/models/components/ModelPicker';
-import { ComposerModelsContext } from '@/state/composerModels';
 import { useModelSetup } from '@/features/models/hooks/useModelSetup';
 import { SessionSidebar } from '@/features/sessions/components/SessionSidebar';
 import { useSessions } from '@/features/sessions/hooks/useSessions';
@@ -19,6 +18,7 @@ import { useT } from '@/i18n/context';
 import { useKeyboardInset } from '@/lib/useKeyboardInset';
 import { useIsMobile } from '@/lib/useMediaQuery';
 import { cn } from '@/lib/utils';
+import { ComposerModelsContext } from '@/state/composerModels';
 import { useConversation } from '@/state/useConversation';
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
 import { useState } from 'react';
@@ -116,7 +116,7 @@ export default function App() {
             up instead of being pushed up. 100% until it has been measured. */}
         {/* The height changes in one step; what rides on the keyboard slides
             there on its own (useKeyboardInset, `data-keyboard-follow`). */}
-        <div className="flex h-[var(--app-height,100%)]">
+        <div className="flex h-(--app-height,100%)">
           <aside
             hidden={isMobile}
             className={cn(

@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- maximum-scale: stops iOS Safari zooming the page in when a control
-         whose text is under 16px takes focus, and never zooming back out.
-         Since iOS 10 Safari honours pinch-zoom regardless of this value, so it
-         suppresses the automatic zoom without taking manual zoom away.
+    <!-- No maximum-scale: it blocks zoom (WCAG 1.4.4) outside iOS Safari. The
+         cost is that iOS zooms in on any control whose text is under 16px when
+         it takes focus, and never zooms back out, so every text field is at
+         least text-base below md.
 
          interactive-widget: on Chrome the on-screen keyboard resizes only the
          visual viewport by default, so a height:100% app keeps its full height
@@ -15,7 +15,7 @@
          this, which is what useKeyboardInset is for. -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1, interactive-widget=resizes-content"
+      content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
     />
     <title>Lime | Local AI</title>
   </head>

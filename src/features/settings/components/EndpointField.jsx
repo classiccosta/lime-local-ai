@@ -49,11 +49,11 @@ export function EndpointField({ endpoint, onLoad, fetching, error, modelCount, f
           inputMode="url"
           spellCheck="false"
           autoComplete="off"
-          placeholder="http://localhost:11434"
+          placeholder="http://localhost:1234/v1"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           className={cn(
-            'bg-background border-border placeholder:text-muted-foreground/60 h-7 min-w-0 flex-1 rounded-sm border px-3 text-xs',
+            'bg-background border-border placeholder:text-muted-foreground/60 h-9 min-w-0 flex-1 rounded-sm border px-3 text-base md:h-7 md:text-xs',
             focusRing,
           )}
         />
@@ -63,7 +63,7 @@ export function EndpointField({ endpoint, onLoad, fetching, error, modelCount, f
           disabled={!trimmed || fetching}
           aria-label={fetching ? t('endpoint.submitting') : t('endpoint.submit')}
           className={cn(
-            'bg-primary text-primary-foreground flex size-7 shrink-0 items-center justify-center rounded-sm disabled:opacity-50',
+            'bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center md:size-7 rounded-sm disabled:opacity-50',
             focusRing,
           )}
         >
