@@ -25,13 +25,14 @@ src/
   state/
     conversation.js    pure reducer + factory + title derivation
     useConversation.js owns the useReducer instance
+    composerModels.js  context carrying picker state into the assistant-ui composer
 
   features/
-    chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, sendFailure.js, Title, ErrorBanner
-    models/      hooks/{useModelSetup,useModels,useStorage}.js, pickerItems.js, selection.js, endpointFailure.js, ModelPicker, ModelList
-    sessions/    hooks/useSessions.js, SessionSidebar
+    chat/        hooks/{useSession,useAssistantRuntime}.js, displayMessages.js, sendFailure.js, capabilities.js, ErrorBanner, ComposerAttachmentAction
+    models/      hooks/{useModelSetup,useModels,useStorage}.js, pickerItems.js, selection.js, endpointFailure.js, ModelPicker, ModelList, ComposerModelPicker
+    sessions/    hooks/useSessions.js, SessionSidebar, PanelToggle
     settings/    hooks/{useEndpoint,usePanel}.js, SettingsDialog, SettingsContent
-    layout/      MobileHeader, MobileSheet
+    layout/      MobileHeader, MobileSheet, Title
 
   services/
     providers.js     facade — chooses a backend, normalises the result
@@ -51,12 +52,12 @@ src/
 ### The dependency rule
 
 > A module in `features/*` may import from `state/`, `services/` and `lib/`.
-> It should not import from another `features/*`.
+> It does not import from another `features/*`.
 > `state/` and `services/` never import from `features/`.
 
-The second rule is currently broken in a few places (`chat` → `models`,
-`layout` → `chat`, `sessions` → `settings`). Don't treat
-it as enforced, but avoid adding new cross-feature imports.
+When two features need the same thing, it moves out of both: shared state to
+`state/` (e.g. `composerModels.js`, the context the composer's model picker and
+attachment button both read), framework-free helpers to `lib/`.
 
 Imports that cross a top-level folder use the `@/` alias, defined in `vite.config.js`
 and mirrored in `jsconfig.json` for editor resolution:

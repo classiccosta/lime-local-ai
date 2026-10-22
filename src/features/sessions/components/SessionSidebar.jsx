@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Version } from '@/components/Version';
-import { PanelToggle } from '@/features/settings/components/PanelToggle';
+import { PanelToggle } from '@/features/sessions/components/PanelToggle';
 import { useT } from '@/i18n/context';
 import { focusRing } from '@/lib/focusRing';
 import { menuContent, menuItem } from '@/lib/menu';

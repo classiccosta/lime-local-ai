@@ -1,7 +1,7 @@
 import { ComposerAddAttachment } from '@/components/assistant-ui/attachment';
 import { InfoHint } from '@/components/InfoHint';
-import { supportsFileInput } from '@/features/models/capabilities';
-import { useComposerModels } from '@/features/models/composerModels';
+import { supportsFileInput } from '@/features/chat/capabilities';
+import { useComposerModels } from '@/state/composerModels';
 import { useT } from '@/i18n/context';
 import { focusRing } from '@/lib/focusRing';
 import { cn } from '@/lib/utils';

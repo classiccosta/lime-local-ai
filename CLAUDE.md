@@ -35,7 +35,7 @@ Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an 
 
 ```
 src/App.jsx        composition root: calls every hook, lays out components
-src/state/         conversation reducer (pure) + useConversation (owns the useReducer)
+src/state/         conversation reducer (pure) + useConversation (owns the useReducer) + composerModels context
 src/features/<x>/  components/ + hooks/ per feature (chat, models, sessions, settings, layout)
 src/services/      browser/network I/O: providers facade, openai adapter, llm (WebGPU), sessionStore (IndexedDB), modelCache
 src/i18n/          en.js (source language) + pt.js, LocaleProvider, useT()
@@ -43,7 +43,7 @@ src/lib/           framework-free helpers and generic hooks
 src/components/ui/ and src/components/assistant-ui/   shadcn / assistant-ui generated components (eslint-ignored)
 ```
 
-Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored in `jsconfig.json`). `state/` and `services/` must not import from `features/`. The docs also say features must not import from each other; that rule is currently broken in a few places (e.g. `chat` → `models`, `layout` → `chat`), so don't treat it as enforced, but avoid adding new cross-feature imports.
+Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored in `jsconfig.json`). `state/` and `services/` must not import from `features/`. Features must not import from each other: shared state goes in `state/`, shared helpers in `lib/`.
 
 ### Conversation flow
 
