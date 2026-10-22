@@ -31,7 +31,7 @@ export function useSession({
     // Built here because `conversation.messages` from this render is what we
     // must send — the dispatch below is not visible until the next render.
     const messages = [...conversation.messages, message];
-    dispatch({ type: 'SEND_START', message, requestId });
+    dispatch({ type: 'SEND_START', message, requestId, startedAt: Date.now() });
 
     try {
       const selectedModel = models?.find((model) => model.id === selectedModelId);

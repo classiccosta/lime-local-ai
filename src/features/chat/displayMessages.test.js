@@ -30,6 +30,13 @@ describe('displayMessages', () => {
     expect(result[1].content).toEqual([]);
   });
 
+  it('carries the request start time on the streaming message', () => {
+    const result = displayMessages(
+      deepFreeze({ messages: [user('u1')], status: 'generating', streamed: '', startedAt: 42 }),
+    );
+    expect(result[1].startedAt).toBe(42);
+  });
+
   it('marks a trailing user turn as stopped when idle', () => {
     expect(display({ messages: [user('u1')], status: 'idle', streamed: '' })).toEqual([
       'u1',

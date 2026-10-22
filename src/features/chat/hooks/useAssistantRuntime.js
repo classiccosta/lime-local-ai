@@ -8,7 +8,10 @@ function convertMessage(message) {
     content: message.content
       .filter((part) => part.type === 'text')
       .map((part) => ({ type: 'text', text: part.text })),
-    ...(message.id === STREAMING_ID && { status: { type: 'running' } }),
+    ...(message.id === STREAMING_ID && {
+      status: { type: 'running' },
+      ...(message.startedAt && { createdAt: new Date(message.startedAt) }),
+    }),
     ...(message.id?.startsWith(STOPPED_PREFIX) && {
       status: { type: 'incomplete', reason: 'cancelled' },
     }),
