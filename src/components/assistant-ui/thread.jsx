@@ -41,7 +41,6 @@ import {
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  BrainIcon,
   CheckIcon,
   CopyIcon,
   DownloadIcon,
@@ -458,10 +457,10 @@ const AssistantMessage = () => {
                     role="status"
                     className="text-muted-foreground flex items-center gap-2 py-1.5 text-sm"
                   >
-                    {/* background-clip: text can't reach an SVG stroke, so the icon pulses instead. */}
-                    <BrainIcon
+                    {/* Same blinking block as the welcome screen and the streaming cursor. */}
+                    <span
                       aria-hidden
-                      className="size-4 shrink-0 animate-pulse motion-reduce:animate-none"
+                      className="bg-primary animate-blink inline-block h-[0.8em] w-[0.42em] shrink-0 motion-reduce:animate-none"
                     />
                     <span className="relative inline-block leading-none">
                       {t('thread.thinking')}
