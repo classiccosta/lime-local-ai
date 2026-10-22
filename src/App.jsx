@@ -7,6 +7,7 @@ import { useSession } from '@/features/chat/hooks/useSession';
 import { MobileHeader } from '@/features/layout/components/MobileHeader';
 import { MobileSheet } from '@/features/layout/components/MobileSheet';
 import { ModelPicker } from '@/features/models/components/ModelPicker';
+import { buildPickerItems } from '@/features/models/pickerItems';
 import { shortLabel } from '@/features/models/labels';
 import { isStaleSelection } from '@/features/models/selection';
 import { ComposerModelsContext } from '@/features/models/composerModels';
@@ -28,7 +29,6 @@ import { cn } from '@/lib/utils';
 import { findLocalModel } from '@/services/localModels';
 import { useConversation } from '@/state/useConversation';
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
-import { Cloud, HardDrive } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function App() {
@@ -196,41 +196,6 @@ export default function App() {
     if (selectedModelId === id) setSelectedModelId('');
   };
 
-  // Downloaded models are marked rather than the rest: on-disk is the state
-  // worth seeing at a glance, and the rest already carry a download mark and
-  // their size. Picking a loaded one just selects it; one on disk but not on
-  // the GPU loads from disk. A model not downloaded is fetched only from its
-  // download icon, through the composer's path (select, ask for persistence,
-  // load). Only one model compiles at a time, so the rest wait while one is
-  // in flight.
-  const webgpuItems = webgpuModels.map((model) => {
-    const onDisk = downloaded.has(model.id);
-    const loadingThis = loadingModelId === model.id;
-    return {
-      id: model.id,
-      label: onDisk ? shortLabel(model) : (model.label ?? model.id),
-      icon: onDisk ? HardDrive : null,
-      iconLabel: t('settings.downloaded'),
-      active: model.id === selectedModelId && loadedModelIds.includes(model.id),
-      busy: loadingThis,
-      disabled: busy && !loadingThis,
-      dim: !onDisk,
-      pickable: onDisk,
-      onDownload: onDisk ? undefined : () => loadFromComposer(model.id),
-      downloadLabel: t('settings.download', { name: shortLabel(model) }),
-      onDelete: onDisk && !loadingThis ? () => deleteModel(model.id) : undefined,
-      deleteLabel: t('settings.deleteHint', { name: shortLabel(model) }),
-    };
-  });
-
-  const endpointItems = endpointModels.map((model) => ({
-    id: model.id,
-    label: model.label ?? model.id,
-    icon: Cloud,
-    iconLabel: t('settings.remote'),
-    active: model.id === selectedModelId,
-  }));
-
   // The in-browser rows only once the restore has settled: until then the
   // skeleton stands in for them, and the endpoint's rows need no such wait.
   const webgpuReady = !loading && !error && restored;
@@ -245,7 +210,19 @@ export default function App() {
   // Built once and handed to both pickers — the settings dialog and the
   // composer's menu — so they show and do exactly the same thing.
   const modelPicker = {
-    items: [...(webgpuReady ? webgpuItems : []), ...endpointItems],
+    items: buildPickerItems({
+      webgpuModels,
+      endpointModels,
+      downloaded,
+      loadedModelIds,
+      selectedModelId,
+      loadingModelId,
+      busy,
+      webgpuReady,
+      onDownload: loadFromComposer,
+      onDelete: deleteModel,
+      t,
+    }),
     onPick: pickModel,
     loading,
     error,
