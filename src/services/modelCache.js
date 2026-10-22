@@ -129,6 +129,43 @@ async function modelCacheNames() {
   return names.filter((name) => name === MODEL_CACHE_NAME || name.includes('transformers'));
 }
 
+// transformers.js fetches `{host}/{org}/{repo}/resolve/{revision}/{file}`. Anything
+// else in the cache is not a model file we can attribute, so it yields null.
+export function repoIdOf(url) {
+  let segments;
+  try {
+    segments = new URL(url).pathname.split('/').filter(Boolean);
+  } catch {
+    return null;
+  }
+  return segments[2] === 'resolve' ? `${segments[0]}/${segments[1]}` : null;
+}
+
+/**
+ * Delete the files of models the catalogue no longer offers.
+ *
+ * A model dropped from the catalogue vanishes from the list, so there is no row
+ * left to delete it from — without this its weights stay on disk for good.
+ * Entries that are not recognisably a model file are left alone.
+ */
+export async function pruneRetiredModels() {
+  if (typeof caches === 'undefined') return;
+
+  const offered = new Set(LOCAL_MODELS.map((model) => model.id));
+  for (const name of await modelCacheNames()) {
+    const cache = await caches.open(name);
+    const requests = await cache.keys();
+    await Promise.all(
+      requests
+        .filter((request) => {
+          const repoId = repoIdOf(request.url);
+          return repoId != null && !offered.has(repoId);
+        })
+        .map((request) => cache.delete(request)),
+    );
+  }
+}
+
 /**
  * Delete one model's files, leaving the others on disk.
  *
