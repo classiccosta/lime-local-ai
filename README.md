@@ -31,9 +31,7 @@ empty.
    **Load models**.
 4. Pick the model in the composer and send a message.
 
-Chrome or Edge recommended. The live site is HTTPS and LM Studio is plain HTTP on
-`localhost`: Chrome may ask to allow access to devices on your local network (allow it).
-If your browser refuses the connection, run Lime locally instead (below).
+Chrome or Safari is recommended.
 
 ### Run locally
 
