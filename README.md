@@ -7,7 +7,14 @@
 </picture>
 </p>
 
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-react-dark-024b3cd.svg"><img alt="React 19" src="docs/media/readme/tag-react-light-5a3d0f8.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-tailwind-dark-30079ce.svg"><img alt="Tailwind CSS" src="docs/media/readme/tag-tailwind-light-f174d85.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-indexeddb-dark-cb64f5e.svg"><img alt="IndexedDB" src="docs/media/readme/tag-indexeddb-light-4e1e646.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-vitest-dark-ccc497f.svg"><img alt="Vitest" src="docs/media/readme/tag-vitest-light-dab8bcb.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-ci-dark-1b3e310.svg"><img alt="CI · Actions" src="docs/media/readme/tag-ci-light-6094b9a.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-cd-dark-0f3110d.svg"><img alt="CD · Vercel" src="docs/media/readme/tag-cd-light-705d157.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-i18n-dark-0468c4e.svg"><img alt="English, Portuguese, German" src="docs/media/readme/tag-i18n-light-18ca8e0.svg"></picture></p>
+<p>
+<picture>
+  <source media="(max-width: 900px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/tags-mobile-dark-39ebe01.svg">
+  <source media="(max-width: 900px)" srcset="docs/media/readme/tags-mobile-light-c9ade7a.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tags-dark-3c8cd1a.svg">
+  <img alt="React 19, Tailwind CSS, IndexedDB, Vitest, CI on GitHub Actions, CD on Vercel, English/Portuguese/German" src="docs/media/readme/tags-light-2f334a9.svg">
+</picture>
+</p>
 
 A chat client for the language models you run yourself. Point it at any
 OpenAI-compatible server (LM Studio, llama.cpp, vLLM) and chat in the browser, with
