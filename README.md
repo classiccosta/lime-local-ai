@@ -1,20 +1,20 @@
 <p>
 <picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark-23495e1.svg">
-  <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light-079e885.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark-f3359e0.svg">
-  <img alt="Lime — local AI chat" src="docs/media/readme/banner-light-555d4e3.svg" width="846">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark-2fd41c2.svg">
+  <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light-6286f0f.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark-0560b85.svg">
+  <img alt="Lime — local AI chat" src="docs/media/readme/banner-light-880dee6.svg" width="846">
 </picture>
 </p>
 
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-react-dark-4d764d3.svg"><img alt="React 19" src="docs/media/readme/tag-react-light-0c66209.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-tailwind-dark-ac46e69.svg"><img alt="Tailwind CSS" src="docs/media/readme/tag-tailwind-light-5589217.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-indexeddb-dark-cc245a7.svg"><img alt="IndexedDB" src="docs/media/readme/tag-indexeddb-light-740f065.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-vitest-dark-f486dff.svg"><img alt="Vitest" src="docs/media/readme/tag-vitest-light-173eeb6.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-ci-dark-e493960.svg"><img alt="CI · Actions" src="docs/media/readme/tag-ci-light-5b5eff0.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-cd-dark-63427bd.svg"><img alt="CD · Vercel" src="docs/media/readme/tag-cd-light-7f2ff03.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-i18n-dark-2eb958f.svg"><img alt="English, Portuguese, German" src="docs/media/readme/tag-i18n-light-2b2de43.svg"></picture></p>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-react-dark-024b3cd.svg"><img alt="React 19" src="docs/media/readme/tag-react-light-5a3d0f8.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-tailwind-dark-30079ce.svg"><img alt="Tailwind CSS" src="docs/media/readme/tag-tailwind-light-f174d85.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-indexeddb-dark-cb64f5e.svg"><img alt="IndexedDB" src="docs/media/readme/tag-indexeddb-light-4e1e646.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-vitest-dark-ccc497f.svg"><img alt="Vitest" src="docs/media/readme/tag-vitest-light-dab8bcb.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-ci-dark-1b3e310.svg"><img alt="CI · Actions" src="docs/media/readme/tag-ci-light-6094b9a.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-cd-dark-0f3110d.svg"><img alt="CD · Vercel" src="docs/media/readme/tag-cd-light-705d157.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-i18n-dark-0468c4e.svg"><img alt="English, Portuguese, German" src="docs/media/readme/tag-i18n-light-18ca8e0.svg"></picture></p>
 
 A chat client for the language models you run yourself. Point it at any
 OpenAI-compatible server (LM Studio, llama.cpp, vLLM) and chat in the browser, with
 streaming replies you can stop. No backend of its own: conversations stay in your
 browser (IndexedDB). English, Portuguese (pt-PT) and German.
 
-<p><a href="https://lime-zeta-three.vercel.app"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/demo-dark-823e640.svg"><img alt="Live demo" src="docs/media/readme/demo-light-2320b5a.svg"></picture></a></p>
+<p><a href="https://lime-zeta-three.vercel.app"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/demo-dark-45f9270.svg"><img alt="Live demo" src="docs/media/readme/demo-light-a02c057.svg"></picture></a></p>
 
 ## Demo
 
