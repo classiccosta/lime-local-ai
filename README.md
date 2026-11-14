@@ -1,9 +1,18 @@
-# Lime — local AI chat
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark.svg">
+  <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark.svg">
+  <img alt="Lime — local AI chat" src="docs/media/readme/banner-light.svg" width="100%">
+</picture>
+
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-react-dark.svg"><img alt="React 19" src="docs/media/readme/tag-react-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-tailwind-dark.svg"><img alt="Tailwind CSS" src="docs/media/readme/tag-tailwind-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-indexeddb-dark.svg"><img alt="IndexedDB" src="docs/media/readme/tag-indexeddb-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-vitest-dark.svg"><img alt="Vitest" src="docs/media/readme/tag-vitest-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-ci-dark.svg"><img alt="CI · Actions" src="docs/media/readme/tag-ci-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-cd-dark.svg"><img alt="CD · Vercel" src="docs/media/readme/tag-cd-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-i18n-dark.svg"><img alt="English, Portuguese, German" src="docs/media/readme/tag-i18n-light.svg"></picture></p>
 
 A chat client for the language models you run yourself. Point it at any
 OpenAI-compatible server (LM Studio, llama.cpp, vLLM) and chat in the browser, with
 streaming replies you can stop. No backend of its own: conversations stay in your
 browser (IndexedDB). English, Portuguese (pt-PT) and German.
+
+<p><a href="https://lime-zeta-three.vercel.app"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/demo-dark.svg"><img alt="Live demo" src="docs/media/readme/demo-light.svg"></picture></a></p>
 
 ## Demo
 
