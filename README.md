@@ -1,9 +1,9 @@
 <p>
 <picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark-14bcc89.svg">
-  <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light-65437a7.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark-f0e1973.svg">
-  <img alt="Lime — local AI chat" src="docs/media/readme/banner-light-3551da0.svg" width="846">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark-96ca6a4.svg">
+  <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light-9bcb770.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark-9019b70.svg">
+  <img alt="Lime — local AI chat" src="docs/media/readme/banner-light-fe7c603.svg" width="846">
 </picture>
 </p>
 
