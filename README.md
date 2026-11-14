@@ -1,20 +1,20 @@
 <p>
 <picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark.svg">
-  <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark.svg">
-  <img alt="Lime — local AI chat" src="docs/media/readme/banner-light.svg" width="100%">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark-23495e1.svg">
+  <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light-079e885.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark-f3359e0.svg">
+  <img alt="Lime — local AI chat" src="docs/media/readme/banner-light-555d4e3.svg" width="846">
 </picture>
 </p>
 
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-react-dark.svg"><img alt="React 19" src="docs/media/readme/tag-react-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-tailwind-dark.svg"><img alt="Tailwind CSS" src="docs/media/readme/tag-tailwind-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-indexeddb-dark.svg"><img alt="IndexedDB" src="docs/media/readme/tag-indexeddb-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-vitest-dark.svg"><img alt="Vitest" src="docs/media/readme/tag-vitest-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-ci-dark.svg"><img alt="CI · Actions" src="docs/media/readme/tag-ci-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-cd-dark.svg"><img alt="CD · Vercel" src="docs/media/readme/tag-cd-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-i18n-dark.svg"><img alt="English, Portuguese, German" src="docs/media/readme/tag-i18n-light.svg"></picture></p>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-react-dark-4d764d3.svg"><img alt="React 19" src="docs/media/readme/tag-react-light-0c66209.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-tailwind-dark-ac46e69.svg"><img alt="Tailwind CSS" src="docs/media/readme/tag-tailwind-light-5589217.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-indexeddb-dark-cc245a7.svg"><img alt="IndexedDB" src="docs/media/readme/tag-indexeddb-light-740f065.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-vitest-dark-f486dff.svg"><img alt="Vitest" src="docs/media/readme/tag-vitest-light-173eeb6.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-ci-dark-e493960.svg"><img alt="CI · Actions" src="docs/media/readme/tag-ci-light-5b5eff0.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-cd-dark-63427bd.svg"><img alt="CD · Vercel" src="docs/media/readme/tag-cd-light-7f2ff03.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-i18n-dark-2eb958f.svg"><img alt="English, Portuguese, German" src="docs/media/readme/tag-i18n-light-2b2de43.svg"></picture></p>
 
 A chat client for the language models you run yourself. Point it at any
 OpenAI-compatible server (LM Studio, llama.cpp, vLLM) and chat in the browser, with
 streaming replies you can stop. No backend of its own: conversations stay in your
 browser (IndexedDB). English, Portuguese (pt-PT) and German.
 
-<p><a href="https://lime-zeta-three.vercel.app"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/demo-dark.svg"><img alt="Live demo" src="docs/media/readme/demo-light.svg"></picture></a></p>
+<p><a href="https://lime-zeta-three.vercel.app"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/demo-dark-823e640.svg"><img alt="Live demo" src="docs/media/readme/demo-light-2320b5a.svg"></picture></a></p>
 
 ## Demo
 
