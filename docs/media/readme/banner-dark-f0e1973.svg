@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="846" height="94" viewBox="0 0 846 94">
-<defs><pattern id="p" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#d2ee46"/></pattern>
+<defs><pattern id="p" width="56" height="56" patternUnits="userSpaceOnUse"><g fill="#d2ee46"><circle cx="18.8" cy="9.8" r="1.1" fill-opacity="0.45"/><circle cx="5.8" cy="29.9" r="1" fill-opacity="1"/><circle cx="24.1" cy="45.0" r="0.9" fill-opacity="0.45"/><circle cx="34.8" cy="32.3" r="0.9" fill-opacity="1"/><circle cx="32.4" cy="4.6" r="0.9" fill-opacity="0.45"/><circle cx="50.0" cy="20.8" r="0.9" fill-opacity="0.45"/><circle cx="47.5" cy="39.9" r="1" fill-opacity="1"/><circle cx="35.7" cy="53.6" r="1" fill-opacity="0.7"/><circle cx="53.6" cy="3.4" r="1.1" fill-opacity="0.7"/></g></pattern>
 <linearGradient id="g"><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".6"/></linearGradient>
 <mask id="m"><rect width="846" height="94" fill="url(#g)"/></mask></defs>
 <rect width="846" height="94" fill="url(#p)" mask="url(#m)"/>
