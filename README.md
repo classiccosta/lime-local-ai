@@ -1,9 +1,11 @@
+<p>
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="docs/media/readme/banner-mobile-dark.svg">
   <source media="(max-width: 600px)" srcset="docs/media/readme/banner-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/banner-dark.svg">
   <img alt="Lime — local AI chat" src="docs/media/readme/banner-light.svg" width="100%">
 </picture>
+</p>
 
 <p><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-react-dark.svg"><img alt="React 19" src="docs/media/readme/tag-react-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-tailwind-dark.svg"><img alt="Tailwind CSS" src="docs/media/readme/tag-tailwind-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-indexeddb-dark.svg"><img alt="IndexedDB" src="docs/media/readme/tag-indexeddb-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-vitest-dark.svg"><img alt="Vitest" src="docs/media/readme/tag-vitest-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-ci-dark.svg"><img alt="CI · Actions" src="docs/media/readme/tag-ci-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-cd-dark.svg"><img alt="CD · Vercel" src="docs/media/readme/tag-cd-light.svg"></picture><picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/readme/tag-i18n-dark.svg"><img alt="English, Portuguese, German" src="docs/media/readme/tag-i18n-light.svg"></picture></p>
 
