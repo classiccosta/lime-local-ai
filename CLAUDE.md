@@ -59,7 +59,7 @@ Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored 
 ### Providers and lazy loading
 
 - `services/providers.js` is the only entry point: `getModels(baseURL)`, `generate(...)`, `modelLoader(...)`, `unloadModel(id)`. Callers never branch on backend. Provider ids are the strings `'webgpu'` and `'endpoint'`.
-- `services/llm.js` (and so `@huggingface/transformers`, ~23 MB of WASM) must only be reached through `await import('./llm')`. Anything needed just to _list_ models or read cache state (`localModels.js`, the `transformers-cache` name in `modelCache.js`) is deliberately kept free of transformers imports. Don't add a static import of `llm.js` or transformers anywhere.
+- `services/llm.js` (and so `@huggingface/transformers`, ~23 MB of WASM) must only be reached through `await import('./llm')`. Anything needed just to _list_ models or read cache state (`localModels.js`, the `transformers-cache` name in `modelCache.js`) is deliberately kept free of transformers imports. Don't add a static import of `llm.js` or transformers anywhere: lint rejects it (`import type` is allowed).
 - WebGPU models are offered only when `WEBGPU_ENABLED` and `'gpu' in navigator`. The endpoint's models are offered only if `/models` answers within 3 s, minus embedding models (`isChatModel`). An unreachable endpoint returns `endpointError` instead of throwing.
 - `llm.js` keeps every loaded model in a module-level `Map` and disposes one only when the user deletes it.
 
@@ -76,7 +76,7 @@ Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a tra
 ## Conventions
 
 - TypeScript migration in progress (ADR-013, #68): write new files as `.ts`/`.tsx`, and convert a file only inside its migration ticket. Generated folders stay JSX; `eslint.config.js` may stay JS.
-- Prettier: single quotes, trailing commas, width 100, semis. ESLint flat config (react-hooks, react-refresh, typescript-eslint on `.ts`/`.tsx`).
+- Prettier: single quotes, trailing commas, width 100, semis. ESLint flat config (react-hooks, react-refresh, typescript-eslint on `.ts`/`.tsx`). Lint bans `any`, `@ts-ignore` and `@ts-nocheck`; `@ts-expect-error` needs a reason of 10+ characters, and every `eslint-disable` needs one after `--`.
 - Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`; don't hand-edit them beyond small fixes.
 - Icons: lucide only (ADR-007).
 - Menus and popovers share one look: `menuContent` / `menuItem` from `src/lib/menu.js`. Don't restyle a menu inline.
