@@ -60,7 +60,7 @@ When two features need the same thing, it moves out of both: shared state to
 attachment button both read), framework-free helpers to `lib/`.
 
 Imports that cross a top-level folder use the `@/` alias, defined in `vite.config.js`
-and mirrored in `jsconfig.json` for editor resolution:
+and mirrored in `tsconfig.json` for the type check and editor resolution:
 
 ```js
 import { generate } from '@/services/providers';

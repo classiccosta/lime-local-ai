@@ -71,7 +71,7 @@ Node 24 (`.nvmrc`). `VITE_API_BASE_URL` in `.env.local` sets a different default
   in the UI, translated, never shown as raw server output.
 - **English, Portuguese (pt-PT) and German.**
 
-Quality: unit-tested state and decision logic (Vitest); CI runs lint, format check, tests
+Quality: unit-tested state and decision logic (Vitest); CI runs lint, type check, format check, tests
 and build on every PR; every PR gets a Vercel preview.
 
 ## Not in v1
