@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Local-first LLM chat client (React 19 + Vite 8, plain JS/JSX, no TypeScript). Two backends shown to the user as one model list:
+Local-first LLM chat client (React 19 + Vite 8, being migrated from JS/JSX to strict TypeScript, ADR-013). Two backends shown to the user as one model list:
 
 - **WebGPU** — models run in the browser via `@huggingface/transformers` (catalogue in `src/services/localModels.js`). **Paused for v1 (ADR-012):** `WEBGPU_ENABLED = false` in `localModels.js` makes the app behave as in a browser without WebGPU. Keep the code working (tests, lint) but don't build on it; bl-07 decides at v1.1 whether it returns or is removed.
 - **Endpoint** — any OpenAI-compatible server (LM Studio, llama.cpp, vLLM), called via the Responses API (`POST {baseURL}/responses`).
@@ -74,7 +74,7 @@ Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a tra
 
 ## Conventions
 
-- Plain JS/JSX until the post-v1 TypeScript migration (ADR-001).
+- TypeScript migration in progress (ADR-013, #68): write new files as `.ts`/`.tsx`, and convert a file only inside its migration ticket. Generated folders stay JSX; `eslint.config.js` may stay JS.
 - Prettier: single quotes, trailing commas, width 100, semis. ESLint flat config (react-hooks, react-refresh).
 - Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`; don't hand-edit them beyond small fixes.
 - Icons: lucide only (ADR-007).
