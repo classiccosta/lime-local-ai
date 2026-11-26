@@ -104,3 +104,17 @@ Per ADR-006: `main` always deployable; one ticket → one branch (`type/short-na
 - Deployed on Vercel through its Git integration: `main` deploys to production, every PR gets a preview URL. No deploy workflow in `.github/`; CI gates the merge. Vercel builds with `engines.node` (kept in step with `.nvmrc`). `vercel.json` sets COOP `same-origin` and COEP `credentialless`, which the WebGPU/WASM runtime needs; keep them.
 - An HTTPS page can't reach an HTTP LAN server, and the endpoint must allow CORS. Realistic use is running the app locally.
 - `crypto.randomUUID()` (used for all ids) needs a secure context: `localhost` or HTTPS.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (`classiccosta/lime-local-ai`), via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context. ADRs are one file, `docs/adr/decisions.md`. See `docs/agents/domain.md`.
