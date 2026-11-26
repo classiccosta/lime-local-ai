@@ -76,7 +76,7 @@ Every UI string goes through `useT()` with a key in `src/i18n/en.js`, plus a tra
 ## Conventions
 
 - TypeScript migration in progress (ADR-013, #68): write new files as `.ts`/`.tsx`, and convert a file only inside its migration ticket. Generated folders stay JSX; `eslint.config.js` may stay JS.
-- Prettier: single quotes, trailing commas, width 100, semis. ESLint flat config (react-hooks, react-refresh).
+- Prettier: single quotes, trailing commas, width 100, semis. ESLint flat config (react-hooks, react-refresh, typescript-eslint on `.ts`/`.tsx`).
 - Generated UI lives in `src/components/ui/` (shadcn, style `radix-mira`) and `src/components/assistant-ui/` (assistant-ui registry). Add components with the `shadcn` CLI per `components.json`; don't hand-edit them beyond small fixes.
 - Icons: lucide only (ADR-007).
 - Menus and popovers share one look: `menuContent` / `menuItem` from `src/lib/menu.js`. Don't restyle a menu inline.

@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { readdirSync } from 'node:fs';
 
@@ -13,7 +14,7 @@ const FEATURES = readdirSync(new URL('./src/features', import.meta.url), { withF
 export default defineConfig([
   globalIgnores(['dist', 'src/components/ui/**', 'src/components/assistant-ui/**']),
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -25,6 +26,9 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  // Not type-aware: `npm run typecheck` covers types. This also turns off the core
+  // rules TypeScript makes redundant, such as no-undef.
+  { files: ['**/*.{ts,tsx}'], extends: [tseslint.configs.recommended] },
   // The dependency rule (CLAUDE.md): a feature may use state/, services/, lib/
   // and components/, never another feature; state/ and services/ use no feature.
   // Relative paths that climb out of a feature are refused too, so the rule
