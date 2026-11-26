@@ -16,6 +16,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # A PR checks out its merge commit; the first parent is the base to diff against.
+          fetch-depth: 2
+      # Only warns: one oversized single file is allowed, which a count can't judge.
+      - name: PR size warning
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        shell: bash
+        run: |
+          lines=$(git diff --numstat -M HEAD^1 HEAD -- . ':(exclude)package-lock.json' \
+            ':(exclude,glob)**/fixtures/**' ':(exclude,glob)**/__fixtures__/**' |
+            awk '{ n += $1 + $2 } END { print n + 0 }')
+          echo "Changed lines: $lines (cap 100)"
+          if [ "$lines" -gt 100 ]; then
+            echo "::warning title=PR size::$lines changed lines, over the cap of 100. Split the PR, or flag the oversized file in its body."
+          fi
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
