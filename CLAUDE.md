@@ -19,6 +19,7 @@ No backend of our own. Conversations live in IndexedDB; model weights in the Cac
 npm run dev       # Vite dev server (port 5173)
 npm run build     # production build to dist/
 npm run lint      # eslint .
+npm run typecheck # tsc, strict (JS files are not checked)
 npm run preview   # serve the build
 npm test          # vitest run (once)
 npm run test:watch
@@ -27,7 +28,7 @@ npm run format:check
 npm run knip      # unused files/exports/deps (generated ui/ and assistant-ui/ ignored)
 ```
 
-Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); the other pure decisions have their own tests next to them (`displayMessages`, `sendFailure`, `endpointFailure`, `selection`, `services/sse`), and `i18n/locales.test.js` checks every language has exactly `en.js`'s keys. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → format:check → test → build` on every PR.
+Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); the other pure decisions have their own tests next to them (`displayMessages`, `sendFailure`, `endpointFailure`, `selection`, `services/sse`), and `i18n/locales.test.js` checks every language has exactly `en.js`'s keys. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → typecheck → format:check → knip → test → build` on every PR.
 
 Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an optional default endpoint. Endpoint resolution: `localStorage` → `VITE_API_BASE_URL` → `http://localhost:1234/v1` in dev → `''` (endpoint provider disabled). There is no dev proxy, so the server must allow CORS in every mode.
 
@@ -43,7 +44,7 @@ src/lib/           framework-free helpers and generic hooks
 src/components/ui/ and src/components/assistant-ui/   shadcn / assistant-ui generated components (eslint-ignored)
 ```
 
-Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored in `jsconfig.json`). `state/` and `services/` must not import from `features/`. Features must not import from each other: shared state goes in `state/`, shared helpers in `lib/`.
+Imports across top-level folders use the `@/` alias (`vite.config.js`, mirrored in `tsconfig.json`). `state/` and `services/` must not import from `features/`. Features must not import from each other: shared state goes in `state/`, shared helpers in `lib/`.
 
 ### Conversation flow
 
@@ -97,7 +98,7 @@ Per ADR-006: `main` always deployable; one ticket → one branch (`type/short-na
 
 ### Definition of Done
 
-- Lint + format + tests + build pass · strings in en + pt · docs updated if behaviour changed · checked on mobile + desktop.
+- Lint + typecheck + format + tests + build pass · strings in en + pt · docs updated if behaviour changed · checked on mobile + desktop.
 
 ## Deployment constraints
 
