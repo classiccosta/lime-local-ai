@@ -1,3 +1,4 @@
+import comments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -28,7 +29,56 @@ export default defineConfig([
   },
   // Not type-aware: `npm run typecheck` covers types. This also turns off the core
   // rules TypeScript makes redundant, such as no-undef.
-  { files: ['**/*.{ts,tsx}'], extends: [tseslint.configs.recommended] },
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [tseslint.configs.recommended],
+    rules: {
+      // Stated here so a preset update can't loosen them (ADR-013).
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/ban-ts-comment': [
+        'error',
+        {
+          'ts-expect-error': 'allow-with-description',
+          'ts-ignore': true,
+          'ts-nocheck': true,
+          minimumDescriptionLength: 10,
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      '@eslint-community/eslint-comments': comments,
+      '@typescript-eslint': tseslint.plugin,
+    },
+    rules: {
+      '@eslint-community/eslint-comments/require-description': [
+        'error',
+        { ignore: ['eslint-enable'] },
+      ],
+      // The typescript-eslint copy of the rule: the folder rules below set the core
+      // one, and a second setting of the same rule would replace this one.
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '(^|/)llm(\\.[jt]s)?$|^@huggingface/transformers(/|$)',
+              allowTypeImports: true,
+              message:
+                'Use await import() or import type: the WebGPU runtime stays lazy (ADR-005).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // The one module that is the lazy chunk.
+  {
+    files: ['src/services/llm.{js,ts}'],
+    rules: { '@typescript-eslint/no-restricted-imports': 'off' },
+  },
   // The dependency rule (CLAUDE.md): a feature may use state/, services/, lib/
   // and components/, never another feature; state/ and services/ use no feature.
   // Relative paths that climb out of a feature are refused too, so the rule
