@@ -2,7 +2,7 @@
 
 Format: ID · date · status. Context → Decision → Consequences.
 
-## ADR-001 · 2026-10-20 · Accepted — Plain JS until v1
+## ADR-001 · 2026-10-20 · Superseded by ADR-013 — Plain JS until v1
 
 Context: codebase is JS; v1 target 2026-11-20; target roles expect TS.
 Decision: stay JS through v1, migrate to TS post-v1.
@@ -71,3 +71,9 @@ No download progress or stop button: the model row shows a spinner until the loa
 Context: in-browser models small enough for a phone (Qwen3-0.6B, SmolVLM) hallucinate on basic questions; the endpoint path works well.
 Decision: gate WebGPU off with one constant (WEBGPU_ENABLED in localModels.js). The code stays; the app behaves as in a browser without WebGPU. The live demo is documented as "bring your own endpoint", with a recorded demo in the README.
 Consequences: v1 needs an OpenAI-compatible endpoint (LM Studio with CORS on); no model works on mobile. Dormant code behind one flag, an exception to the no-flags rule with an expiry: if WebGPU isn't back by v1.1, it is removed (archive branch).
+
+## ADR-013 · 2026-11-26 · Accepted — Migrate to strict TypeScript as 1.0.1
+
+Context: v1.0.0 is tagged and ADR-001 deferred TypeScript to after v1. Lint and tests are the only static checks, and the stack default is strict TypeScript.
+Decision: migrate gradually (JS allowed during the migration), strict mode, ship as 1.0.1 with no intended behaviour change. Generated components stay JSX. Guardrails land first: type check, lint bans on any/ts-ignore/ts-nocheck, test-count protection, size warning, browser smoke test. `llm.js` stays lazy-loaded and WebGPU stays off. PRs are capped at 100 changed lines, one oversized single file allowed and flagged. Real bugs found by strict mode get their own `fix:` tickets. Tracked in #68.
+Consequences: about 33 small PRs, each deployable on its own. ADR-012's v1.1 deadline is not triggered by 1.0.1. `noUncheckedIndexedAccess` and runtime validation of stored data are left for later.
