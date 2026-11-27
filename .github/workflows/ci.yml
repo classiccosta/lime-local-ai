@@ -43,3 +43,11 @@ jobs:
       - run: npm run knip
       - run: npm run test:ci
       - run: npm run build
+      # The lockfile pins the Playwright version, and with it the browser build.
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      # Skips the cached download; the system libraries are not cacheable.
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npm run test:e2e
