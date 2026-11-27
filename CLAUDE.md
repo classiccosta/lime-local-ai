@@ -22,13 +22,14 @@ npm run lint      # eslint .
 npm run typecheck # tsc, strict (JS files are not checked)
 npm run preview   # serve the build
 npm test          # vitest run (once)
+npm run test:ci   # the tests plus the guard CI runs (test-baseline.json)
 npm run test:watch
 npm run format    # prettier --write . (singleQuote, trailingComma all, printWidth 100)
 npm run format:check
 npm run knip      # unused files/exports/deps (generated ui/ and assistant-ui/ ignored)
 ```
 
-Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); the other pure decisions have their own tests next to them (`displayMessages`, `sendFailure`, `endpointFailure`, `selection`, `services/sse`), and `i18n/locales.test.js` checks every language has exactly `en.js`'s keys. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → typecheck → format:check → knip → test → build` on every PR. A PR over 100 changed lines (lockfile and fixtures excluded) gets a warning, never a failure.
+Tests use Vitest, co-located as `*.test.js`. `src/state/conversation.test.js` covers the reducer (all actions, stale-request guards, deep-frozen inputs); the other pure decisions have their own tests next to them (`displayMessages`, `sendFailure`, `endpointFailure`, `selection`, `services/sse`), and `i18n/locales.test.js` checks every language has exactly `en.js`'s keys. Logic with a rule worth testing goes in a pure function next to its hook. CI (`.github/workflows`) runs `npm ci → lint → typecheck → format:check → knip → test:ci → build` on every PR. `test:ci` fails on a skipped or todo test, or when the file or passing-test count drops below `test-baseline.json`; `.only` always fails. Raise the baseline by hand in the PR that adds tests. A PR over 100 changed lines (lockfile and fixtures excluded) gets a warning, never a failure.
 
 Env (`.env.example`, machine values in `.env.local`): `VITE_API_BASE_URL` is an optional default endpoint. Endpoint resolution: `localStorage` → `VITE_API_BASE_URL` → `http://localhost:1234/v1` in dev → `''` (endpoint provider disabled). There is no dev proxy, so the server must allow CORS in every mode.
 

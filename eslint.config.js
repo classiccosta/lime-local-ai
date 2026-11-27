@@ -27,6 +27,7 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  { files: ['scripts/**'], languageOptions: { globals: globals.node } },
   // Not type-aware: `npm run typecheck` covers types. This also turns off the core
   // rules TypeScript makes redundant, such as no-undef.
   {
