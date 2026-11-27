@@ -13,6 +13,7 @@
     "typecheck": "tsc",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:ci": "vitest run --reporter=default --reporter=json --outputFile.json=node_modules/.cache/vitest.json && node scripts/check-tests.js node_modules/.cache/vitest.json",
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

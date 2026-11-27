@@ -15,5 +15,6 @@ export default defineConfig({
   resolve: {
     alias: { '@': `${import.meta.dirname}/src` },
   },
-  test: { environment: 'node' },
+  // Vitest only refuses .only when it detects CI; refuse it everywhere.
+  test: { environment: 'node', allowOnly: false },
 });
