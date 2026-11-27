@@ -12,6 +12,8 @@ dist
 .vercel
 .claude/
 coverage
+test-results/
+playwright-report/
 *.log
 
 # Editors and OS
