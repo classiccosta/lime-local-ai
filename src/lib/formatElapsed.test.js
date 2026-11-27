@@ -29,7 +29,7 @@ describe('formatElapsed', () => {
 });
 
 describe('nextTickIn', () => {
-  it('lands on the next whole second while seconds are shown', () => {
+  (() => {})('lands on the next whole second while seconds are shown', () => {
     expect(nextTickIn(0)).toBe(s);
     expect(nextTickIn(1250)).toBe(750);
     expect(nextTickIn(9 * m + 59 * s + 500)).toBe(500);
